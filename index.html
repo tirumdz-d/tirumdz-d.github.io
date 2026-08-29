@@ -10,400 +10,228 @@
     <style>
         * {
             box-sizing: border-box; margin: 0; padding: 0;
-            /* Chống select/copy toàn bộ */
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
+            -webkit-user-select: none; -moz-user-select: none;
+            -ms-user-select: none; user-select: none;
         }
-
-        /* Custom cursor toàn trang */
         body {
             background: url('https://cdn.discordapp.com/attachments/1524246966777675828/1543313588624560249/tiktok_7521722474061466888-ezgif.com-video-to-gif-converter.gif?ex=6a946a48&is=6a9318c8&hm=67515bf942a1acc2c9091465d053fbfe5baaf2d91c4f42bfe3bb887abc0bd0a4&') no-repeat center center fixed;
             background-size: cover;
             font-family: 'Inter', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-            cursor: none;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; padding: 20px; cursor: none;
         }
-
-        /* Con trỏ tùy chỉnh */
         #cursor-dot {
-            position: fixed;
-            width: 8px;
-            height: 8px;
-            background: #fff;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 99999;
-            transform: translate(-50%, -50%);
-            transition: transform 0.08s ease, background 0.2s;
+            position: fixed; width: 8px; height: 8px; background: #fff;
+            border-radius: 50%; pointer-events: none; z-index: 99999;
+            transform: translate(-50%,-50%);
             box-shadow: 0 0 6px rgba(255,255,255,0.8);
         }
         #cursor-ring {
-            position: fixed;
-            width: 28px;
-            height: 28px;
-            border: 1.5px solid rgba(255,255,255,0.65);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 99998;
-            transform: translate(-50%, -50%);
-            transition: transform 0.18s ease, width 0.2s ease, height 0.2s ease, border-color 0.2s;
+            position: fixed; width: 28px; height: 28px;
+            border: 1.5px solid rgba(255,255,255,0.65); border-radius: 50%;
+            pointer-events: none; z-index: 99998; transform: translate(-50%,-50%);
+            transition: width 0.2s, height 0.2s, border-color 0.2s;
         }
-        /* Hover lên card/button → ring nở ra */
-        body.hovering #cursor-ring {
-            width: 44px;
-            height: 44px;
-            border-color: rgba(255,255,255,0.9);
-        }
-        body.hovering #cursor-dot {
-            background: #43b581;
-            box-shadow: 0 0 10px rgba(67,181,129,0.9);
-        }
-        /* Hover lên clickable */
-        a, button, .play-btn, .ctrl-btn, .progress-track, .social-btn {
-            cursor: none !important;
-        }
+        body.hovering #cursor-ring { width: 44px; height: 44px; border-color: rgba(255,255,255,0.9); }
+        body.hovering #cursor-dot { background: #ff6eb4; box-shadow: 0 0 10px rgba(255,110,180,0.9); }
+        a, button, .play-btn, .ctrl-btn, .progress-track, .social-btn, .lyric-toggle { cursor: none !important; }
 
         .card {
-            width: 100%;
-            max-width: 480px;
-            background: rgba(28, 55, 35, 0.75);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+            width: 100%; max-width: 480px;
+            background: rgba(28,55,35,0.75);
+            backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
             border: 1.5px solid rgba(255,255,255,0.22);
-            border-radius: 22px;
-            overflow: hidden;
-            color: #fff;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+            border-radius: 22px; overflow: hidden;
+            color: #fff; box-shadow: 0 12px 40px rgba(0,0,0,0.5);
         }
-
-        /* BANNER */
-        .banner {
-            width: 100%;
-            height: 120px;
-            object-fit: cover;
-            display: block;
-        }
-
-        /* PROFILE */
-        .profile-area {
-            padding: 0 22px 8px;
-            position: relative;
-        }
-
+        .banner { width: 100%; height: 120px; object-fit: cover; display: block; }
+        .profile-area { padding: 0 22px 8px; position: relative; }
         .avatar-wrap {
-            position: relative;
-            display: inline-block;
-            margin-top: -44px;
-            margin-bottom: 8px;
+            position: relative; display: inline-block;
+            margin-top: -44px; margin-bottom: 8px;
         }
         .avatar {
-            width: 86px;
-            height: 86px;
-            border-radius: 50%;
+            width: 86px; height: 86px; border-radius: 50%;
             border: 3px solid rgba(255,255,255,0.55);
-            object-fit: cover;
-            display: block;
-            background: #2a5535;
+            object-fit: cover; display: block; background: #2a5535;
         }
         .online-dot {
-            position: absolute;
-            bottom: 5px;
-            right: 5px;
-            width: 14px;
-            height: 14px;
-            background: #43b581;
-            border-radius: 50%;
-            border: 2.5px solid rgba(28,55,35,1);
+            position: absolute; bottom: 5px; right: 5px;
+            width: 14px; height: 14px; background: #43b581;
+            border-radius: 50%; border: 2.5px solid rgba(28,55,35,1);
         }
+        .name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+        .name { font-family: 'VT323', monospace; font-size: 34px; letter-spacing: 1px; }
+        .bio-text { font-size: 13px; opacity: 0.75; margin-bottom: 16px; }
 
-        .name-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 2px;
-        }
-        .name {
-            font-family: 'VT323', monospace;
-            font-size: 34px;
-            letter-spacing: 1px;
-        }
-        .bio-text {
-            font-size: 13px;
-            opacity: 0.75;
-            margin-bottom: 16px;
-        }
-
-        /* SOCIAL */
         .social-row {
-            display: flex;
-            justify-content: center;
-            gap: 14px;
+            display: flex; justify-content: center; gap: 14px;
             padding: 10px 22px 14px;
             border-bottom: 1px solid rgba(255,255,255,0.15);
         }
         .social-btn {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
+            width: 42px; height: 42px; border-radius: 50%;
             border: 1.5px solid rgba(255,255,255,0.45);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            text-decoration: none;
-            font-size: 17px;
-            transition: all 0.2s;
-            background: rgba(255,255,255,0.07);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; text-decoration: none; font-size: 17px;
+            transition: all 0.2s; background: rgba(255,255,255,0.07);
         }
-        .social-btn:hover {
-            background: rgba(255,255,255,0.2);
-            transform: scale(1.1);
-        }
+        .social-btn:hover { background: rgba(255,255,255,0.2); transform: scale(1.1); }
 
-        /* DISCORD BOX */
         .section {
-            margin: 12px 14px;
-            border: 1px solid rgba(255,255,255,0.18);
-            border-radius: 14px;
-            padding: 13px;
-            background: rgba(0,0,0,0.18);
+            margin: 12px 14px; border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 14px; padding: 13px; background: rgba(0,0,0,0.18);
         }
-
-        .discord-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
+        .discord-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
         .discord-avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #5b6ee1, #2c3e99);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            position: relative;
-            flex-shrink: 0;
+            width: 44px; height: 44px; border-radius: 50%;
+            background: linear-gradient(135deg,#5b6ee1,#2c3e99);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; position: relative; flex-shrink: 0;
         }
         .discord-status-dot {
-            position: absolute;
-            bottom: 1px;
-            right: 1px;
-            width: 11px;
-            height: 11px;
-            background: #43b581;
-            border-radius: 50%;
-            border: 2px solid rgba(28,55,35,1);
+            position: absolute; bottom: 1px; right: 1px;
+            width: 11px; height: 11px; background: #43b581;
+            border-radius: 50%; border: 2px solid rgba(28,55,35,1);
         }
         .discord-info { flex: 1; min-width: 0; }
-        .discord-name {
-            font-family: 'VT323', monospace;
-            font-size: 17px;
-            letter-spacing: 0.4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .discord-activity {
-            font-family: 'VT323', monospace;
-            font-size: 13px;
-            opacity: 0.6;
-        }
+        .discord-name { font-family: 'VT323',monospace; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .discord-activity { font-family: 'VT323',monospace; font-size: 13px; opacity: 0.6; }
         .discord-add-btn {
-            border: 1.5px solid rgba(255,255,255,0.45);
-            border-radius: 20px;
-            padding: 5px 13px;
-            font-size: 12px;
-            color: #fff;
-            cursor: pointer;
-            background: transparent;
-            font-family: 'Inter', sans-serif;
-            white-space: nowrap;
-            transition: background 0.2s;
+            border: 1.5px solid rgba(255,255,255,0.45); border-radius: 20px;
+            padding: 5px 13px; font-size: 12px; color: #fff; cursor: pointer;
+            background: transparent; font-family: 'Inter',sans-serif;
+            white-space: nowrap; transition: background 0.2s;
         }
         .discord-add-btn:hover { background: rgba(255,255,255,0.12); }
-
-        .copy-notif {
-            display: none;
-            font-size: 12px;
-            color: #43b581;
-            text-align: center;
-            margin-top: 5px;
-        }
-        .discord-divider {
-            border: none;
-            border-top: 1px solid rgba(255,255,255,0.12);
-            margin: 10px 0;
-        }
-        .status-box-inner {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
+        .copy-notif { display: none; font-size: 12px; color: #43b581; text-align: center; margin-top: 5px; }
+        .discord-divider { border: none; border-top: 1px solid rgba(255,255,255,0.12); margin: 10px 0; }
+        .status-box-inner { display: flex; align-items: flex-start; gap: 10px; }
         .status-thumb {
-            width: 50px;
-            height: 50px;
-            border-radius: 8px;
-            background: rgba(0,0,0,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            flex-shrink: 0;
+            width: 50px; height: 50px; border-radius: 8px;
+            background: rgba(0,0,0,0.3); display: flex;
+            align-items: center; justify-content: center;
+            font-size: 24px; flex-shrink: 0;
         }
         .status-details { flex: 1; }
-        .status-title {
-            font-family: 'VT323', monospace;
-            font-size: 16px;
-            margin-bottom: 3px;
-        }
-        .status-sub {
-            font-family: 'VT323', monospace;
-            font-size: 13px;
-            opacity: 0.6;
-            line-height: 1.5;
-        }
+        .status-title { font-family: 'VT323',monospace; font-size: 16px; margin-bottom: 3px; }
+        .status-sub { font-family: 'VT323',monospace; font-size: 13px; opacity: 0.6; line-height: 1.5; }
 
         /* MUSIC PLAYER */
         .music-section {
             margin: 0 14px 14px;
             border: 1px solid rgba(255,255,255,0.18);
-            border-radius: 14px;
-            padding: 13px;
+            border-radius: 14px; padding: 13px;
             background: rgba(0,0,0,0.18);
         }
-        .music-top {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
+        .music-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
         .music-vol-icon { font-size: 14px; opacity: 0.7; }
         .song-name {
-            flex: 1;
-            font-family: 'VT323', monospace;
-            font-size: 20px;
-            text-align: center;
-            letter-spacing: 0.4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            flex: 1; font-family: 'VT323',monospace; font-size: 20px;
+            text-align: center; letter-spacing: 0.4px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
+        .lyric-toggle {
+            font-size: 12px; opacity: 0.65; background: none; border: none;
+            color: #fff; padding: 2px 6px; border-radius: 8px;
+            transition: opacity 0.2s; white-space: nowrap;
+        }
+        .lyric-toggle:hover { opacity: 1; background: rgba(255,255,255,0.1); }
 
-        .progress-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-        .time-label {
-            font-family: 'VT323', monospace;
-            font-size: 15px;
-            opacity: 0.7;
-            min-width: 36px;
-        }
+        .progress-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+        .time-label { font-family: 'VT323',monospace; font-size: 15px; opacity: 0.7; min-width: 36px; }
         .time-label.right { text-align: right; }
-
         .progress-track {
-            flex: 1;
-            height: 4px;
-            background: rgba(255,255,255,0.25);
-            border-radius: 2px;
-            cursor: pointer;
-            position: relative;
+            flex: 1; height: 4px; background: rgba(255,255,255,0.25);
+            border-radius: 2px; cursor: pointer; position: relative;
         }
         .progress-fill {
-            height: 100%;
-            background: #fff;
-            border-radius: 2px;
-            width: 0%;
-            position: relative;
-            pointer-events: none;
+            height: 100%; background: #fff; border-radius: 2px;
+            width: 0%; position: relative; pointer-events: none;
         }
         .progress-fill::after {
-            content: '';
-            position: absolute;
-            right: -5px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 10px;
-            height: 10px;
-            background: #fff;
-            border-radius: 50%;
+            content: ''; position: absolute; right: -5px; top: 50%;
+            transform: translateY(-50%); width: 10px; height: 10px;
+            background: #fff; border-radius: 50%;
         }
-
-        .controls-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 24px;
-        }
+        .controls-row { display: flex; justify-content: center; align-items: center; gap: 24px; }
         .ctrl-btn {
-            background: none;
-            border: none;
-            color: #fff;
-            cursor: pointer;
-            font-size: 17px;
-            opacity: 0.75;
-            transition: all 0.15s;
-            padding: 4px;
+            background: none; border: none; color: #fff; cursor: pointer;
+            font-size: 17px; opacity: 0.75; transition: all 0.15s; padding: 4px;
         }
         .ctrl-btn:hover { opacity: 1; transform: scale(1.12); }
         .play-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            width: 40px; height: 40px; border-radius: 50%;
             border: 2px solid rgba(255,255,255,0.65);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255,255,255,0.1);
-            cursor: pointer;
-            color: #fff;
-            font-size: 15px;
-            transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.1); cursor: pointer;
+            color: #fff; font-size: 15px; transition: all 0.2s;
         }
         .play-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.06); }
 
-        /* YouTube embeds - visible but tiny, stacked */
-        .yt-container {
-            position: fixed;
-            bottom: 0;
-            left: -9999px;
-            width: 1px;
-            height: 1px;
+        /* LYRIC BOX */
+        .lyric-box {
+            margin-top: 12px;
+            max-height: 0;
             overflow: hidden;
-            pointer-events: none;
+            transition: max-height 0.4s ease;
+        }
+        .lyric-box.open { max-height: 220px; }
+        .lyric-inner {
+            height: 200px; overflow-y: auto;
+            padding: 8px 4px;
+            scrollbar-width: none;
+        }
+        .lyric-inner::-webkit-scrollbar { display: none; }
+
+        /* Bouncing ball trên lyric đang hát */
+        .lyric-line {
+            font-family: 'VT323', monospace;
+            font-size: 15px;
+            line-height: 1.8;
+            opacity: 0.45;
+            transition: opacity 0.3s, color 0.3s;
+            text-align: center;
+            padding: 1px 0;
+            position: relative;
+        }
+        .lyric-line.active {
+            opacity: 1;
+            color: #ff6eb4;
+        }
+        .lyric-line.active::before {
+            content: '●';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: -16px;
+            font-size: 9px;
+            color: #ff6eb4;
+            animation: bounce 0.5s infinite alternate;
+        }
+        @keyframes bounce {
+            from { transform: translateX(-50%) translateY(0px); }
+            to   { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        .yt-container {
+            position: fixed; bottom: 0; left: -9999px;
+            width: 1px; height: 1px; overflow: hidden; pointer-events: none;
         }
     </style>
 </head>
 <body>
 
-<!-- Custom cursor elements -->
 <div id="cursor-dot"></div>
 <div id="cursor-ring"></div>
 
 <div class="card">
 
-    <!-- BANNER GIF -->
-    <img class="banner"
-         src="https://media1.tenor.com/m/2ZCW0X3e_UgAAAAd/hoshino-think-classes.gif"
-         alt="Banner">
+    <img class="banner" src="https://media1.tenor.com/m/2ZCW0X3e_UgAAAAd/hoshino-think-classes.gif" alt="Banner">
 
-    <!-- PROFILE -->
     <div class="profile-area">
         <div class="avatar-wrap">
-            <img class="avatar"
-                 src="https://i.postimg.cc/W1fMSC61/1788024223506-1270636166193830298-1270636166193830298-54cd274eb289c64e09ea3cc9eb61817a.jpg"
-                 alt="Avatar">
+            <img class="avatar" src="https://cdn.discordapp.com/attachments/1524246966777675828/1543326141971177613/1788024223506_1270636166193830298_1270636166193830298_54cd274eb289c64e09ea3cc9eb61817a.jpg?ex=6a9475f9&is=6a932479&hm=ae4dc9c999f27137cd7149e1435df6abafca7e2af6b83f5f07878efacbb19e85&" alt="Avatar">
             <div class="online-dot"></div>
         </div>
         <div class="name-row">
@@ -413,7 +241,6 @@
         <p class="bio-text">Welcome to my space ✨</p>
     </div>
 
-    <!-- SOCIAL ICONS -->
     <div class="social-row">
         <a class="social-btn" href="https://www.youtube.com/@tirumclone3314" target="_blank" title="YouTube">
             <i class="fa-brands fa-youtube"></i>
@@ -421,12 +248,11 @@
         <a class="social-btn" href="https://www.tiktok.com/@tirumclone3314" target="_blank" title="TikTok">
             <i class="fa-brands fa-tiktok"></i>
         </a>
-        <a class="social-btn" href="#" title="Discord — click để copy" onclick="copyDiscord(event)">
+        <a class="social-btn" href="#" title="Discord" onclick="copyDiscord(event)">
             <i class="fa-brands fa-discord"></i>
         </a>
     </div>
 
-    <!-- DISCORD BOX -->
     <div class="section">
         <div class="discord-header">
             <div class="discord-avatar">
@@ -440,9 +266,7 @@
             <button class="discord-add-btn" onclick="copyDiscord(event)">Copy Discord →</button>
         </div>
         <div id="copy-notif" class="copy-notif">✓ Đã copy: tirumclone3314</div>
-
         <hr class="discord-divider">
-
         <div class="status-box-inner">
             <div class="status-thumb">💤</div>
             <div class="status-details">
@@ -452,11 +276,11 @@
         </div>
     </div>
 
-    <!-- MUSIC PLAYER -->
     <div class="music-section">
         <div class="music-top">
             <span class="music-vol-icon"><i class="fa-solid fa-volume-high"></i></span>
-            <span class="song-name" id="song-display">Nơi Này Có Anh (Speed Up)</span>
+            <span class="song-name" id="song-display">Nơi Này Có Anh</span>
+            <button class="lyric-toggle" onclick="toggleLyric()">🎵 lyric</button>
         </div>
         <div class="progress-row">
             <span class="time-label" id="time-current">00:00</span>
@@ -467,16 +291,20 @@
         </div>
         <div class="controls-row">
             <button class="ctrl-btn" onclick="prevSong()"><i class="fa-solid fa-backward-step"></i></button>
-            <div class="play-btn" id="play-btn" onclick="togglePlay()">
+            <div class="play-btn" onclick="togglePlay()">
                 <i class="fa-solid fa-play" id="play-icon"></i>
             </div>
             <button class="ctrl-btn" onclick="nextSong()"><i class="fa-solid fa-forward-step"></i></button>
+        </div>
+
+        <!-- LYRIC BOX -->
+        <div class="lyric-box" id="lyric-box">
+            <div class="lyric-inner" id="lyric-inner"></div>
         </div>
     </div>
 
 </div>
 
-<!-- YouTube iframes ẩn hoàn toàn -->
 <div class="yt-container">
     <div id="player0"></div>
     <div id="player1"></div>
@@ -488,24 +316,194 @@
 function copyDiscord(e) {
     e && e.preventDefault();
     navigator.clipboard.writeText('tirumclone3314').catch(() => {
-        // fallback cho trình duyệt cũ
         const el = document.createElement('textarea');
         el.value = 'tirumclone3314';
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand('copy');
-        document.body.removeChild(el);
+        document.body.appendChild(el); el.select();
+        document.execCommand('copy'); document.body.removeChild(el);
     });
-    const notif = document.getElementById('copy-notif');
-    notif.style.display = 'block';
-    setTimeout(() => notif.style.display = 'none', 2500);
+    const n = document.getElementById('copy-notif');
+    n.style.display = 'block';
+    setTimeout(() => n.style.display = 'none', 2500);
 }
+
+// ===== LYRICS =====
+// Mỗi dòng: [thời gian giây bắt đầu, "lời"]
+// Timestamp ước tính theo bài — có thể chỉnh thêm sau khi nghe
+const LYRICS = [
+    // BÀI 0: Nơi Này Có Anh
+    [
+        [0,   "Em là ai từ đâu bước đến nơi đây dịu dàng chân phương"],
+        [5,   "Em là ai tựa như ánh nắng ban mai ngọt ngào trong sương"],
+        [10,  "Ngắm em thật lâu"],
+        [13,  "Con tim anh yếu mềm"],
+        [16,  "Đắm say từ phút đó"],
+        [19,  "Từng giây trôi yêu thêm"],
+        [22,  "Bao ngày qua bình minh đánh thức xua tan bộn bề nơi anh"],
+        [28,  "Bao ngày qua niềm thương nỗi nhớ bay theo bầu trời trong xanh"],
+        [34,  "Liếc đôi hàng mi"],
+        [37,  "Mong manh anh thẫn thờ"],
+        [40,  "Muốn hôn nhẹ mái tóc"],
+        [43,  "Bờ môi em anh mơ"],
+        [46,  "Cầm tay anh dựa vai anh"],
+        [49,  "Kề bên anh nơi này có anh"],
+        [53,  "Gió mang câu tình ca"],
+        [56,  "Ngàn ánh sao vụt qua nhẹ ôm lấy em"],
+        [61,  "Cầm tay anh dựa vai anh"],
+        [64,  "Kề bên anh nơi này có anh"],
+        [68,  "Khép đôi mi thật lâu"],
+        [71,  "Nguyện mãi bên cạnh nhau yêu say đắm như ngày đầu"],
+        [77,  "Mùa xuân đến bình yên"],
+        [80,  "Cho anh những giấc mơ"],
+        [83,  "Hạ lưu giữ ngày mưa"],
+        [86,  "Ngọt ngào nên thơ"],
+        [89,  "Mùa thu lá vàng rơi"],
+        [92,  "Đông sang anh nhớ em"],
+        [95,  "Tình yêu bé nhỏ xin"],
+        [98,  "Dành tặng riêng em"],
+        [101, "Còn đó tiếng nói ấy bên tai vấn vương bao ngày qua"],
+        [107, "Ánh mắt bối rối nhớ thương bao ngày qua"],
+        [112, "Yêu em anh thẫn thờ"],
+        [115, "Con tim bâng khuâng đâu có ngờ"],
+        [119, "Chẳng bao giờ phải mong chờ"],
+        [122, "Đợi ai trong chiều hoàng hôn mờ"],
+        [126, "Đắm chìm hòa vào vần thơ"],
+        [129, "Ngắm nhìn khờ dại mộng mơ"],
+        [132, "Đừng bước vội vàng rồi làm ngơ"],
+        [135, "Lạnh lùng đó làm bộ dạng thờ ơ"],
+        [139, "Nhìn anh đi em nha"],
+        [142, "Hướng nụ cười cho riêng anh nha"],
+        [145, "Đơn giản là yêu"],
+        [148, "Con tim anh lên tiếng thôi"],
+        [151, "Cầm tay anh dựa vai anh"],
+        [154, "Kề bên anh nơi này có anh"],
+        [158, "Gió mang câu tình ca"],
+        [161, "Ngàn ánh sao vụt qua nhẹ ôm lấy em"],
+        [166, "Cầm tay anh dựa vai anh"],
+        [169, "Kề bên anh nơi này có anh"],
+        [173, "Khép đôi mi thật lâu"],
+        [176, "Nguyện mãi bên cạnh nhau yêu say đắm như ngày đầu"],
+        [182, "Mùa xuân đến bình yên"],
+        [185, "Cho anh những giấc mơ"],
+        [188, "Hạ lưu giữ ngày mưa"],
+        [191, "Ngọt ngào nên thơ"],
+        [194, "Mùa thu lá vàng rơi"],
+        [197, "Đông sang anh nhớ em"],
+        [200, "Tình yêu bé nhỏ xin"],
+        [203, "Dành tặng riêng em"],
+        [206, "Oh-oh-oh-oh nhớ thương em"],
+        [210, "Oh-oh-oh-oh nhớ thương em lắm"],
+        [215, "Ah phía sau chân trời"],
+        [218, "Có ai băng qua lối về"],
+        [221, "Cùng em đi trên đoạn đường dài"],
+        [225, "Cầm tay anh dựa vai anh"],
+        [228, "Kề bên anh nơi này có anh"],
+        [232, "Gió mang câu tình ca"],
+        [235, "Ngàn ánh sao vụt qua nhẹ ôm lấy em"],
+        [240, "Cầm tay anh dựa vai anh"],
+        [243, "Kề bên anh nơi này có anh"],
+        [247, "Khép đôi mi thật lâu"],
+        [250, "Nguyện mãi bên cạnh nhau yêu say đắm như ngày đầu"],
+        [256, "Mùa xuân đến bình yên"],
+        [259, "Cho anh những giấc mơ"],
+        [262, "Hạ lưu giữ ngày mưa"],
+        [265, "Ngọt ngào nên thơ"],
+        [268, "Mùa thu lá vàng rơi"],
+        [271, "Đông sang anh nhớ em"],
+        [274, "Tình yêu bé nhỏ xin"],
+        [277, "Dành tặng riêng em"],
+    ],
+    // BÀI 1: Không Buông
+    [
+        [0,  "Anh nhớ từng phút yên bình tay nắm tay"],
+        [5,  "Nhớ khoảnh khắc đôi mình còn đắm say"],
+        [10, "Chỉ vừa như mới hôm nào"],
+        [13, "Mà sao giờ lại xa quá?"],
+        [17, "Anh vẫn nhớ khi trời vừa nhá nhem"],
+        [22, "Qua đón em dạo cùng phố đêm"],
+        [27, "Giờ thì không còn nữa"],
+        [30, "Cô đơn thân với anh thêm"],
+        [34, "Anh cố để chi vậy rồi cũng ra như này"],
+        [39, "Cứ vun mối tình mặc tấm thân hao gầy"],
+        [44, "Liệu có phút giây nào người xót anh không vậy?"],
+        [49, "Mọi thứ chỉ để anh gánh lấy"],
+        [53, "Chẳng phút giây nào anh hết yêu em"],
+        [58, "Mỗi lần ướt mi hoen là do anh nhớ em thêm"],
+        [63, "Tại sao lại nói yêu anh mà lại để mi anh ướt nhèm?"],
+        [69, "Em cũng có nỗi niềm của riêng mình"],
+        [74, "Em xin lỗi đã bỏ anh một mình"],
+        [79, "Sau bao tháng năm ta cùng chung đường"],
+        [84, "Giờ hai đứa hai nơi"],
+        [87, "Đoạn cảm xúc tưởng như là lâu dài"],
+        [92, "Nhưng lại kết thúc bất ngờ vì hiểu lầm"],
+        [97, "Em trách sao lúc đó mình không vì nhau mà cố"],
+        [103,"Em vẫn còn nhớ những lần mình đã hứa hẹn"],
+        [108,"Cùng nhau mãi mãi chẳng rời xa"],
+        [112,"Và môi hôn vẫn để lại đó bao ngọt ngào xưa"],
+        [117,"Giờ thì đã quá trễ rồi"],
+        [120,"Vì phút bốc đồng mà đôi ta chẳng thể nào cạnh bên"],
+        [126,"Hỏi em còn yêu không, em trả lời là không còn"],
+        [131,"Nhưng đó chỉ là dối lòng"],
+        [135,"Anh cố để chi vậy rồi cũng ra như này"],
+        [140,"Cứ vun mối tình mặc tấm thân hao gầy"],
+        [145,"Liệu có phút giây nào người xót anh không vậy?"],
+        [150,"Mọi thứ chỉ để anh gánh lấy"],
+        [154,"Chẳng phút giây nào anh hết yêu em"],
+        [159,"Mỗi lần ướt mi hoen là do anh nhớ em thêm"],
+        [164,"Tại sao lại nói yêu anh mà lại để mi anh ướt nhèm?"],
+        [170,"Thật ra anh biết từ đầu rồi, bae"],
+        [174,"Rằng lời yêu đó chỉ là gió bay"],
+        [178,"Giờ tim vỡ nát như này"],
+        [181,"Do anh cố chấp nên vậy"],
+        [185,"Mong em hạnh phúc đi bên người ta"],
+        [190,"Phần anh sẽ cố gắng để vượt qua"],
+        [195,"Đến đây thôi em à"],
+        [198,"Đến lúc ta phải chia xa"],
+    ],
+    // BÀI 2: Điểm Đến Cuối Cùng
+    [
+        [0,  "Trông rất quen mà anh không nhớ đến đây bao giờ"],
+        [6,  "Không nhớ tên của ai dòng chữ trên tay đã mờ"],
+        [12, "Có dáng ai vừa đi đến đây"],
+        [16, "Người ta cúi chào mời anh đứng dậy"],
+        [21, "Ai cũng đã bỏ đi khi mỗi anh ngủ quên"],
+        [26, "Người ta báo điểm đến cuối cùng"],
+        [30, "Anh thấy trong mình cứ mông lung"],
+        [34, "Khi lái xe dừng giữa không trung"],
+        [38, "Mời anh xuống đây"],
+        [41, "Vòng qua đám mây có cái gì"],
+        [45, "Anh thấy như mình cứ phai đi"],
+        [49, "Vào lãng du từng bước anh đi"],
+        [53, "Làm anh trắng hơn"],
+        [56, "Trắng hơn"],
+        [58, "Trắng"],
+        [61, "Không muốn đi mà anh không muốn nán chân ở lại"],
+        [67, "Nghe phía sau người ta đang tiễn anh đi thở dài"],
+        [73, "Anh cũng thương người ta đứng lâu"],
+        [77, "Anh cúi nhìn bàn tay mất màu"],
+        [81, "Trong cách anh rời đi anh có thể nhìn thấu"],
+        [86, "Người ta báo điểm đến cuối cùng"],
+        [90, "Anh thấy trong mình cứ mông lung"],
+        [94, "Khi lái xe dừng giữa không trung"],
+        [98, "Mời anh xuống đây"],
+        [101,"Vòng qua đám mây có cái gì"],
+        [105,"Anh thấy như mình cứ phai đi"],
+        [109,"Vào lãng du từng bước anh đi"],
+        [113,"Làm anh trắng hơn"],
+        [116,"Người ta nói điểm đến cuối cùng"],
+        [120,"Luôn có cái gì rất mông lung"],
+        [124,"Khi lái xe dừng giữa không trung"],
+        [128,"Mời anh xuống đây"],
+        [131,"Xuống đây"],
+        [134,"Trắng hơn"],
+        [137,"Trắng hơn"],
+    ],
+];
 
 // ===== MUSIC =====
 const SONGS = [
-    { title: 'Nơi Này Có Anh (Speed Up)', ytId: 'FN7ALfpGxiI' },
-    { title: 'Không Buông',               ytId: '59YbarIOuY0' },
-    { title: 'Điểm Đến Cuối Cùng',        ytId: 'b-kllJ9c3l4' },
+    { title: 'Nơi Này Có Anh', ytId: 'v9GlvPzvprg' },
+    { title: 'Không Buông',    ytId: '59YbarIOuY0' },
+    { title: 'Điểm Đến Cuối Cùng', ytId: 'b-kllJ9c3l4' },
 ];
 
 let currentSong = 0;
@@ -513,8 +511,47 @@ let players = [];
 let activePlayer = null;
 let playing = false;
 let progressTimer = null;
+let lyricOpen = false;
+let activeLyricIdx = -1;
 
-// Load YouTube IFrame API
+// ===== LYRIC TOGGLE =====
+function toggleLyric() {
+    lyricOpen = !lyricOpen;
+    document.getElementById('lyric-box').classList.toggle('open', lyricOpen);
+    if (lyricOpen) renderLyrics();
+}
+
+function renderLyrics() {
+    const inner = document.getElementById('lyric-inner');
+    const lines = LYRICS[currentSong] || [];
+    inner.innerHTML = lines.map((l, i) =>
+        `<div class="lyric-line" id="ll${i}">${l[1]}</div>`
+    ).join('');
+    activeLyricIdx = -1;
+}
+
+function updateLyric(currentTime) {
+    const lines = LYRICS[currentSong] || [];
+    if (!lines.length) return;
+    let idx = 0;
+    for (let i = 0; i < lines.length; i++) {
+        if (currentTime >= lines[i][0]) idx = i;
+        else break;
+    }
+    if (idx === activeLyricIdx) return;
+    activeLyricIdx = idx;
+    const inner = document.getElementById('lyric-inner');
+    inner.querySelectorAll('.lyric-line').forEach((el, i) => {
+        el.classList.toggle('active', i === idx);
+    });
+    // Auto scroll
+    const activeEl = document.getElementById('ll' + idx);
+    if (activeEl) {
+        activeEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }
+}
+
+// ===== YOUTUBE =====
 const tag = document.createElement('script');
 tag.src = 'https://www.youtube.com/iframe_api';
 document.head.appendChild(tag);
@@ -523,15 +560,7 @@ window.onYouTubeIframeAPIReady = function () {
     SONGS.forEach((s, i) => {
         players[i] = new YT.Player('player' + i, {
             videoId: s.ytId,
-            playerVars: {
-                autoplay: 0,
-                controls: 0,
-                disablekb: 1,
-                fs: 0,
-                modestbranding: 1,
-                rel: 0,
-                playsinline: 1,
-            },
+            playerVars: { autoplay:0, controls:0, disablekb:1, fs:0, modestbranding:1, rel:0, playsinline:1 },
             events: {
                 onStateChange: (e) => onStateChange(e, i),
                 onError: (e) => console.log('YT error', e.data),
@@ -553,19 +582,13 @@ function onStateChange(event, idx) {
         document.getElementById('play-icon').className = 'fa-solid fa-play';
         clearInterval(progressTimer);
     } else if (event.data === YT.PlayerState.ENDED) {
-        playing = false;
-        clearInterval(progressTimer);
-        nextSong();
+        playing = false; clearInterval(progressTimer); nextSong();
     }
 }
 
 function togglePlay() {
     if (!activePlayer || typeof activePlayer.getPlayerState !== 'function') return;
-    if (playing) {
-        activePlayer.pauseVideo();
-    } else {
-        activePlayer.playVideo();
-    }
+    playing ? activePlayer.pauseVideo() : activePlayer.playVideo();
 }
 
 function nextSong() {
@@ -585,12 +608,9 @@ function prevSong() {
 }
 
 function stopCurrent() {
-    clearInterval(progressTimer);
-    playing = false;
+    clearInterval(progressTimer); playing = false;
     document.getElementById('play-icon').className = 'fa-solid fa-play';
-    if (activePlayer && typeof activePlayer.stopVideo === 'function') {
-        activePlayer.stopVideo();
-    }
+    if (activePlayer && typeof activePlayer.stopVideo === 'function') activePlayer.stopVideo();
     document.getElementById('progress-fill').style.width = '0%';
     document.getElementById('time-current').textContent = '00:00';
 }
@@ -600,6 +620,7 @@ function updateDisplay() {
     document.getElementById('progress-fill').style.width = '0%';
     document.getElementById('time-current').textContent = '00:00';
     document.getElementById('time-total').textContent = '00:00';
+    if (lyricOpen) renderLyrics();
 }
 
 function startTimer() {
@@ -609,83 +630,54 @@ function startTimer() {
         const dur = activePlayer.getDuration();
         const cur = activePlayer.getCurrentTime();
         if (!dur || dur <= 0) return;
-        const pct = (cur / dur) * 100;
-        document.getElementById('progress-fill').style.width = Math.min(pct, 100) + '%';
+        document.getElementById('progress-fill').style.width = Math.min((cur/dur)*100,100) + '%';
         document.getElementById('time-current').textContent = fmtTime(cur);
         document.getElementById('time-total').textContent = fmtTime(dur);
-    }, 500);
+        if (lyricOpen) updateLyric(cur);
+    }, 300);
 }
 
 function fmtTime(s) {
-    s = Math.floor(s || 0);
-    const m = Math.floor(s / 60);
-    const sec = s % 60;
-    return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+    s = Math.floor(s||0);
+    return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
 }
 
-// Click thanh progress để seek
 document.getElementById('progress-track').addEventListener('click', function(e) {
     if (!activePlayer || typeof activePlayer.getDuration !== 'function') return;
     const rect = this.getBoundingClientRect();
-    const pct = (e.clientX - rect.left) / rect.width;
     const dur = activePlayer.getDuration();
-    if (dur > 0) activePlayer.seekTo(dur * pct, true);
+    if (dur > 0) activePlayer.seekTo(dur * (e.clientX - rect.left) / rect.width, true);
 });
 
-// ===== CHỐNG COPY / CHUỘT PHẢI =====
+// ===== CHỐNG COPY =====
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('copy', e => e.preventDefault());
 document.addEventListener('cut', e => e.preventDefault());
 document.addEventListener('keydown', e => {
-    // Chặn Ctrl+C, Ctrl+A, Ctrl+U, F12, Ctrl+Shift+I/J/C
-    if (
-        (e.ctrlKey && ['c','a','u','s'].includes(e.key.toLowerCase())) ||
+    if ((e.ctrlKey && ['c','a','u','s'].includes(e.key.toLowerCase())) ||
         (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(e.key.toLowerCase())) ||
-        e.key === 'F12'
-    ) {
-        e.preventDefault();
-    }
+        e.key === 'F12') e.preventDefault();
 });
 
 // ===== CUSTOM CURSOR =====
-const dot  = document.getElementById('cursor-dot');
+const dot = document.getElementById('cursor-dot');
 const ring = document.getElementById('cursor-ring');
-let mouseX = 0, mouseY = 0;
-let ringX  = 0, ringY  = 0;
-
+let mouseX=0, mouseY=0, ringX=0, ringY=0;
 document.addEventListener('mousemove', e => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    dot.style.left = mouseX + 'px';
-    dot.style.top  = mouseY + 'px';
+    mouseX = e.clientX; mouseY = e.clientY;
+    dot.style.left = mouseX+'px'; dot.style.top = mouseY+'px';
 });
-
-// Ring theo sau mượt hơn
-function animateRing() {
-    ringX += (mouseX - ringX) * 0.18;
-    ringY += (mouseY - ringY) * 0.18;
-    ring.style.left = ringX + 'px';
-    ring.style.top  = ringY + 'px';
+(function animateRing() {
+    ringX += (mouseX-ringX)*0.18; ringY += (mouseY-ringY)*0.18;
+    ring.style.left = ringX+'px'; ring.style.top = ringY+'px';
     requestAnimationFrame(animateRing);
-}
-animateRing();
-
-// Hover detection cho hiệu ứng ring nở
-const hoverTargets = document.querySelectorAll('a, button, .play-btn, .ctrl-btn, .progress-track, .social-btn');
-hoverTargets.forEach(el => {
+})();
+document.querySelectorAll('a,button,.play-btn,.ctrl-btn,.progress-track,.social-btn,.lyric-toggle').forEach(el => {
     el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
     el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
 });
-
-// Ẩn cursor khi ra khỏi trang
-document.addEventListener('mouseleave', () => {
-    dot.style.opacity  = '0';
-    ring.style.opacity = '0';
-});
-document.addEventListener('mouseenter', () => {
-    dot.style.opacity  = '1';
-    ring.style.opacity = '1';
-});
+document.addEventListener('mouseleave', () => { dot.style.opacity='0'; ring.style.opacity='0'; });
+document.addEventListener('mouseenter', () => { dot.style.opacity='1'; ring.style.opacity='1'; });
 </script>
 
 </body>

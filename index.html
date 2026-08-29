@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tirum's Bio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box; margin: 0; padding: 0;
+            /* Chống select/copy toàn bộ */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* Custom cursor toàn trang */
+        body {
+            background: url('https://cdn.discordapp.com/attachments/1524246966777675828/1543313588624560249/tiktok_7521722474061466888-ezgif.com-video-to-gif-converter.gif?ex=6a946a48&is=6a9318c8&hm=67515bf942a1acc2c9091465d053fbfe5baaf2d91c4f42bfe3bb887abc0bd0a4&') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            cursor: none;
+        }
+
+        /* Con trỏ tùy chỉnh */
+        #cursor-dot {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.08s ease, background 0.2s;
+            box-shadow: 0 0 6px rgba(255,255,255,0.8);
+        }
+        #cursor-ring {
+            position: fixed;
+            width: 28px;
+            height: 28px;
+            border: 1.5px solid rgba(255,255,255,0.65);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99998;
+            transform: translate(-50%, -50%);
+            transition: transform 0.18s ease, width 0.2s ease, height 0.2s ease, border-color 0.2s;
+        }
+        /* Hover lên card/button → ring nở ra */
+        body.hovering #cursor-ring {
+            width: 44px;
+            height: 44px;
+            border-color: rgba(255,255,255,0.9);
+        }
+        body.hovering #cursor-dot {
+            background: #43b581;
+            box-shadow: 0 0 10px rgba(67,181,129,0.9);
+        }
+        /* Hover lên clickable */
+        a, button, .play-btn, .ctrl-btn, .progress-track, .social-btn {
+            cursor: none !important;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 480px;
+            background: rgba(28, 55, 35, 0.75);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1.5px solid rgba(255,255,255,0.22);
+            border-radius: 22px;
+            overflow: hidden;
+            color: #fff;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+        }
+
+        /* BANNER */
+        .banner {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* PROFILE */
+        .profile-area {
+            padding: 0 22px 8px;
+            position: relative;
+        }
+
+        .avatar-wrap {
+            position: relative;
+            display: inline-block;
+            margin-top: -44px;
+            margin-bottom: 8px;
+        }
+        .avatar {
+            width: 86px;
+            height: 86px;
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,0.55);
+            object-fit: cover;
+            display: block;
+            background: #2a5535;
+        }
+        .online-dot {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 14px;
+            height: 14px;
+            background: #43b581;
+            border-radius: 50%;
+            border: 2.5px solid rgba(28,55,35,1);
+        }
+
+        .name-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 2px;
+        }
+        .name {
+            font-family: 'VT323', monospace;
+            font-size: 34px;
+            letter-spacing: 1px;
+        }
+        .bio-text {
+            font-size: 13px;
+            opacity: 0.75;
+            margin-bottom: 16px;
+        }
+
+        /* SOCIAL */
+        .social-row {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            padding: 10px 22px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+        }
+        .social-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(255,255,255,0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-decoration: none;
+            font-size: 17px;
+            transition: all 0.2s;
+            background: rgba(255,255,255,0.07);
+        }
+        .social-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.1);
+        }
+
+        /* DISCORD BOX */
+        .section {
+            margin: 12px 14px;
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 14px;
+            padding: 13px;
+            background: rgba(0,0,0,0.18);
+        }
+
+        .discord-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .discord-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #5b6ee1, #2c3e99);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .discord-status-dot {
+            position: absolute;
+            bottom: 1px;
+            right: 1px;
+            width: 11px;
+            height: 11px;
+            background: #43b581;
+            border-radius: 50%;
+            border: 2px solid rgba(28,55,35,1);
+        }
+        .discord-info { flex: 1; min-width: 0; }
+        .discord-name {
+            font-family: 'VT323', monospace;
+            font-size: 17px;
+            letter-spacing: 0.4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .discord-activity {
+            font-family: 'VT323', monospace;
+            font-size: 13px;
+            opacity: 0.6;
+        }
+        .discord-add-btn {
+            border: 1.5px solid rgba(255,255,255,0.45);
+            border-radius: 20px;
+            padding: 5px 13px;
+            font-size: 12px;
+            color: #fff;
+            cursor: pointer;
+            background: transparent;
+            font-family: 'Inter', sans-serif;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+        .discord-add-btn:hover { background: rgba(255,255,255,0.12); }
+
+        .copy-notif {
+            display: none;
+            font-size: 12px;
+            color: #43b581;
+            text-align: center;
+            margin-top: 5px;
+        }
+        .discord-divider {
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.12);
+            margin: 10px 0;
+        }
+        .status-box-inner {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .status-thumb {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .status-details { flex: 1; }
+        .status-title {
+            font-family: 'VT323', monospace;
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+        .status-sub {
+            font-family: 'VT323', monospace;
+            font-size: 13px;
+            opacity: 0.6;
+            line-height: 1.5;
+        }
+
+        /* MUSIC PLAYER */
+        .music-section {
+            margin: 0 14px 14px;
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 14px;
+            padding: 13px;
+            background: rgba(0,0,0,0.18);
+        }
+        .music-top {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .music-vol-icon { font-size: 14px; opacity: 0.7; }
+        .song-name {
+            flex: 1;
+            font-family: 'VT323', monospace;
+            font-size: 20px;
+            text-align: center;
+            letter-spacing: 0.4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .progress-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .time-label {
+            font-family: 'VT323', monospace;
+            font-size: 15px;
+            opacity: 0.7;
+            min-width: 36px;
+        }
+        .time-label.right { text-align: right; }
+
+        .progress-track {
+            flex: 1;
+            height: 4px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #fff;
+            border-radius: 2px;
+            width: 0%;
+            position: relative;
+            pointer-events: none;
+        }
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            right: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            background: #fff;
+            border-radius: 50%;
+        }
+
+        .controls-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+        }
+        .ctrl-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 17px;
+            opacity: 0.75;
+            transition: all 0.15s;
+            padding: 4px;
+        }
+        .ctrl-btn:hover { opacity: 1; transform: scale(1.12); }
+        .play-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.65);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.1);
+            cursor: pointer;
+            color: #fff;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+        .play-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.06); }
+
+        /* YouTube embeds - visible but tiny, stacked */
+        .yt-container {
+            position: fixed;
+            bottom: 0;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Custom cursor elements -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<div class="card">
+
+    <!-- BANNER GIF -->
+    <img class="banner"
+         src="https://media1.tenor.com/m/2ZCW0X3e_UgAAAAd/hoshino-think-classes.gif"
+         alt="Banner">
+
+    <!-- PROFILE -->
+    <div class="profile-area">
+        <div class="avatar-wrap">
+            <img class="avatar"
+                 src="https://i.postimg.cc/W1fMSC61/1788024223506-1270636166193830298-1270636166193830298-54cd274eb289c64e09ea3cc9eb61817a.jpg"
+                 alt="Avatar">
+            <div class="online-dot"></div>
+        </div>
+        <div class="name-row">
+            <span class="name">Tirum</span>
+            <i class="fa-regular fa-gem" style="font-size:15px;opacity:0.85;"></i>
+        </div>
+        <p class="bio-text">Welcome to my space ✨</p>
+    </div>
+
+    <!-- SOCIAL ICONS -->
+    <div class="social-row">
+        <a class="social-btn" href="https://www.youtube.com/@tirumclone3314" target="_blank" title="YouTube">
+            <i class="fa-brands fa-youtube"></i>
+        </a>
+        <a class="social-btn" href="https://www.tiktok.com/@tirumclone3314" target="_blank" title="TikTok">
+            <i class="fa-brands fa-tiktok"></i>
+        </a>
+        <a class="social-btn" href="#" title="Discord — click để copy" onclick="copyDiscord(event)">
+            <i class="fa-brands fa-discord"></i>
+        </a>
+    </div>
+
+    <!-- DISCORD BOX -->
+    <div class="section">
+        <div class="discord-header">
+            <div class="discord-avatar">
+                <i class="fa-brands fa-discord"></i>
+                <div class="discord-status-dot"></div>
+            </div>
+            <div class="discord-info">
+                <div class="discord-name">@tirumclone3314 <i class="fa-brands fa-discord" style="font-size:12px;opacity:0.55;"></i></div>
+                <div class="discord-activity">Ngủ 💤</div>
+            </div>
+            <button class="discord-add-btn" onclick="copyDiscord(event)">Copy Discord →</button>
+        </div>
+        <div id="copy-notif" class="copy-notif">✓ Đã copy: tirumclone3314</div>
+
+        <hr class="discord-divider">
+
+        <div class="status-box-inner">
+            <div class="status-thumb">💤</div>
+            <div class="status-details">
+                <div class="status-title">Trạng thái hiện tại</div>
+                <div class="status-sub">Đang ngủ<br>no reply = offline</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MUSIC PLAYER -->
+    <div class="music-section">
+        <div class="music-top">
+            <span class="music-vol-icon"><i class="fa-solid fa-volume-high"></i></span>
+            <span class="song-name" id="song-display">Nơi Này Có Anh (Speed Up)</span>
+        </div>
+        <div class="progress-row">
+            <span class="time-label" id="time-current">00:00</span>
+            <div class="progress-track" id="progress-track">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <span class="time-label right" id="time-total">00:00</span>
+        </div>
+        <div class="controls-row">
+            <button class="ctrl-btn" onclick="prevSong()"><i class="fa-solid fa-backward-step"></i></button>
+            <div class="play-btn" id="play-btn" onclick="togglePlay()">
+                <i class="fa-solid fa-play" id="play-icon"></i>
+            </div>
+            <button class="ctrl-btn" onclick="nextSong()"><i class="fa-solid fa-forward-step"></i></button>
+        </div>
+    </div>
+
+</div>
+
+<!-- YouTube iframes ẩn hoàn toàn -->
+<div class="yt-container">
+    <div id="player0"></div>
+    <div id="player1"></div>
+    <div id="player2"></div>
+</div>
+
+<script>
+// ===== DISCORD =====
+function copyDiscord(e) {
+    e && e.preventDefault();
+    navigator.clipboard.writeText('tirumclone3314').catch(() => {
+        // fallback cho trình duyệt cũ
+        const el = document.createElement('textarea');
+        el.value = 'tirumclone3314';
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+    });
+    const notif = document.getElementById('copy-notif');
+    notif.style.display = 'block';
+    setTimeout(() => notif.style.display = 'none', 2500);
+}
+
+// ===== MUSIC =====
+const SONGS = [
+    { title: 'Nơi Này Có Anh (Speed Up)', ytId: 'FN7ALfpGxiI' },
+    { title: 'Không Buông',               ytId: '59YbarIOuY0' },
+    { title: 'Điểm Đến Cuối Cùng',        ytId: 'b-kllJ9c3l4' },
+];
+
+let currentSong = 0;
+let players = [];
+let activePlayer = null;
+let playing = false;
+let progressTimer = null;
+
+// Load YouTube IFrame API
+const tag = document.createElement('script');
+tag.src = 'https://www.youtube.com/iframe_api';
+document.head.appendChild(tag);
+
+window.onYouTubeIframeAPIReady = function () {
+    SONGS.forEach((s, i) => {
+        players[i] = new YT.Player('player' + i, {
+            videoId: s.ytId,
+            playerVars: {
+                autoplay: 0,
+                controls: 0,
+                disablekb: 1,
+                fs: 0,
+                modestbranding: 1,
+                rel: 0,
+                playsinline: 1,
+            },
+            events: {
+                onStateChange: (e) => onStateChange(e, i),
+                onError: (e) => console.log('YT error', e.data),
+            }
+        });
+    });
+    activePlayer = players[0];
+    updateDisplay();
+};
+
+function onStateChange(event, idx) {
+    if (idx !== currentSong) return;
+    if (event.data === YT.PlayerState.PLAYING) {
+        playing = true;
+        document.getElementById('play-icon').className = 'fa-solid fa-pause';
+        startTimer();
+    } else if (event.data === YT.PlayerState.PAUSED) {
+        playing = false;
+        document.getElementById('play-icon').className = 'fa-solid fa-play';
+        clearInterval(progressTimer);
+    } else if (event.data === YT.PlayerState.ENDED) {
+        playing = false;
+        clearInterval(progressTimer);
+        nextSong();
+    }
+}
+
+function togglePlay() {
+    if (!activePlayer || typeof activePlayer.getPlayerState !== 'function') return;
+    if (playing) {
+        activePlayer.pauseVideo();
+    } else {
+        activePlayer.playVideo();
+    }
+}
+
+function nextSong() {
+    stopCurrent();
+    currentSong = (currentSong + 1) % SONGS.length;
+    activePlayer = players[currentSong];
+    updateDisplay();
+    setTimeout(() => activePlayer && activePlayer.playVideo(), 300);
+}
+
+function prevSong() {
+    stopCurrent();
+    currentSong = (currentSong - 1 + SONGS.length) % SONGS.length;
+    activePlayer = players[currentSong];
+    updateDisplay();
+    setTimeout(() => activePlayer && activePlayer.playVideo(), 300);
+}
+
+function stopCurrent() {
+    clearInterval(progressTimer);
+    playing = false;
+    document.getElementById('play-icon').className = 'fa-solid fa-play';
+    if (activePlayer && typeof activePlayer.stopVideo === 'function') {
+        activePlayer.stopVideo();
+    }
+    document.getElementById('progress-fill').style.width = '0%';
+    document.getElementById('time-current').textContent = '00:00';
+}
+
+function updateDisplay() {
+    document.getElementById('song-display').textContent = SONGS[currentSong].title;
+    document.getElementById('progress-fill').style.width = '0%';
+    document.getElementById('time-current').textContent = '00:00';
+    document.getElementById('time-total').textContent = '00:00';
+}
+
+function startTimer() {
+    clearInterval(progressTimer);
+    progressTimer = setInterval(() => {
+        if (!activePlayer || typeof activePlayer.getDuration !== 'function') return;
+        const dur = activePlayer.getDuration();
+        const cur = activePlayer.getCurrentTime();
+        if (!dur || dur <= 0) return;
+        const pct = (cur / dur) * 100;
+        document.getElementById('progress-fill').style.width = Math.min(pct, 100) + '%';
+        document.getElementById('time-current').textContent = fmtTime(cur);
+        document.getElementById('time-total').textContent = fmtTime(dur);
+    }, 500);
+}
+
+function fmtTime(s) {
+    s = Math.floor(s || 0);
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+}
+
+// Click thanh progress để seek
+document.getElementById('progress-track').addEventListener('click', function(e) {
+    if (!activePlayer || typeof activePlayer.getDuration !== 'function') return;
+    const rect = this.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    const dur = activePlayer.getDuration();
+    if (dur > 0) activePlayer.seekTo(dur * pct, true);
+});
+
+// ===== CHỐNG COPY / CHUỘT PHẢI =====
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('copy', e => e.preventDefault());
+document.addEventListener('cut', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+    // Chặn Ctrl+C, Ctrl+A, Ctrl+U, F12, Ctrl+Shift+I/J/C
+    if (
+        (e.ctrlKey && ['c','a','u','s'].includes(e.key.toLowerCase())) ||
+        (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(e.key.toLowerCase())) ||
+        e.key === 'F12'
+    ) {
+        e.preventDefault();
+    }
+});
+
+// ===== CUSTOM CURSOR =====
+const dot  = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+let mouseX = 0, mouseY = 0;
+let ringX  = 0, ringY  = 0;
+
+document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    dot.style.left = mouseX + 'px';
+    dot.style.top  = mouseY + 'px';
+});
+
+// Ring theo sau mượt hơn
+function animateRing() {
+    ringX += (mouseX - ringX) * 0.18;
+    ringY += (mouseY - ringY) * 0.18;
+    ring.style.left = ringX + 'px';
+    ring.style.top  = ringY + 'px';
+    requestAnimationFrame(animateRing);
+}
+animateRing();
+
+// Hover detection cho hiệu ứng ring nở
+const hoverTargets = document.querySelectorAll('a, button, .play-btn, .ctrl-btn, .progress-track, .social-btn');
+hoverTargets.forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+});
+
+// Ẩn cursor khi ra khỏi trang
+document.addEventListener('mouseleave', () => {
+    dot.style.opacity  = '0';
+    ring.style.opacity = '0';
+});
+document.addEventListener('mouseenter', () => {
+    dot.style.opacity  = '1';
+    ring.style.opacity = '1';
+});
+</script>
+
+</body>
+</html>

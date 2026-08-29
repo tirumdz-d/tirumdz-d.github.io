@@ -326,11 +326,8 @@ function copyDiscord(e) {
     setTimeout(() => n.style.display = 'none', 2500);
 }
 
-// ===== LYRICS =====
-// Mỗi dòng: [thời gian giây bắt đầu, "lời"]
-// Timestamp ước tính theo bài — có thể chỉnh thêm sau khi nghe
 const LYRICS = [
-    // BÀI 0: Nơi Này Có Anh
+-
     [
         [0,   "Em là ai từ đâu bước đến nơi đây dịu dàng chân phương"],
         [5,   "Em là ai tựa như ánh nắng ban mai ngọt ngào trong sương"],
@@ -412,7 +409,7 @@ const LYRICS = [
         [274, "Tình yêu bé nhỏ xin"],
         [277, "Dành tặng riêng em"],
     ],
-    // BÀI 1: Không Buông
+
     [
         [0,  "Anh nhớ từng phút yên bình tay nắm tay"],
         [5,  "Nhớ khoảnh khắc đôi mình còn đắm say"],
@@ -459,7 +456,7 @@ const LYRICS = [
         [195,"Đến đây thôi em à"],
         [198,"Đến lúc ta phải chia xa"],
     ],
-    // BÀI 2: Điểm Đến Cuối Cùng
+
     [
         [0,  "Trông rất quen mà anh không nhớ đến đây bao giờ"],
         [6,  "Không nhớ tên của ai dòng chữ trên tay đã mờ"],
@@ -499,7 +496,6 @@ const LYRICS = [
     ],
 ];
 
-// ===== MUSIC =====
 const SONGS = [
     { title: 'Nơi Này Có Anh', ytId: 'v9GlvPzvprg' },
     { title: 'Không Buông',    ytId: '59YbarIOuY0' },
@@ -514,7 +510,6 @@ let progressTimer = null;
 let lyricOpen = false;
 let activeLyricIdx = -1;
 
-// ===== LYRIC TOGGLE =====
 function toggleLyric() {
     lyricOpen = !lyricOpen;
     document.getElementById('lyric-box').classList.toggle('open', lyricOpen);
@@ -544,7 +539,6 @@ function updateLyric(currentTime) {
     inner.querySelectorAll('.lyric-line').forEach((el, i) => {
         el.classList.toggle('active', i === idx);
     });
-    // Auto scroll
     const activeEl = document.getElementById('ll' + idx);
     if (activeEl) {
         activeEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
@@ -649,7 +643,6 @@ document.getElementById('progress-track').addEventListener('click', function(e) 
     if (dur > 0) activePlayer.seekTo(dur * (e.clientX - rect.left) / rect.width, true);
 });
 
-// ===== CHỐNG COPY =====
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('copy', e => e.preventDefault());
 document.addEventListener('cut', e => e.preventDefault());

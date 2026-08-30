@@ -117,7 +117,6 @@
         .status-title { font-family: 'VT323',monospace; font-size: 16px; margin-bottom: 3px; }
         .status-sub { font-family: 'VT323',monospace; font-size: 13px; opacity: 0.6; line-height: 1.5; }
 
-        /* MUSIC PLAYER */
         .music-section {
             margin: 0 14px 14px;
             border: 1px solid rgba(255,255,255,0.18);
@@ -126,11 +125,15 @@
         }
         .music-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
         .music-vol-icon { font-size: 14px; opacity: 0.7; }
-        .song-name {
-            flex: 1; font-family: 'VT323',monospace; font-size: 20px;
-            text-align: center; letter-spacing: 0.4px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
+.song-name {
+             flex: 1; font-family: 'VT323',monospace; font-size: 20px;
+             text-align: center; letter-spacing: 0.4px;
+             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+         }
+         .offset-indicator {
+             font-family: 'VT323',monospace; font-size: 12px;
+             opacity: 0.5; color: #ff6eb4; min-width: 50px; text-align: right;
+         }
         .lyric-toggle {
             font-size: 12px; opacity: 0.65; background: none; border: none;
             color: #fff; padding: 2px 6px; border-radius: 8px;
@@ -169,7 +172,6 @@
         }
         .play-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.06); }
 
-        /* LYRIC BOX */
         .lyric-box {
             margin-top: 12px;
             max-height: 0;
@@ -205,13 +207,14 @@
             left: 50%;
             transform: translateX(-50%);
             top: -16px;
-            font-size: 9px;
+            font-size: 14px;
             color: #ff6eb4;
-            animation: bounce 0.5s infinite alternate;
+            text-shadow: 0 0 8px rgba(255,110,180,0.8);
+            animation: bounce 0.45s infinite alternate ease-in-out;
         }
         @keyframes bounce {
             from { transform: translateX(-50%) translateY(0px); }
-            to   { transform: translateX(-50%) translateY(-5px); }
+            to   { transform: translateX(-50%) translateY(-8px); }
         }
 
         .yt-container {
@@ -280,7 +283,11 @@
         <div class="music-top">
             <span class="music-vol-icon"><i class="fa-solid fa-volume-high"></i></span>
             <span class="song-name" id="song-display">Nơi Này Có Anh</span>
+            <span class="offset-indicator" id="offset-indicator">+0.0s</span>
             <button class="lyric-toggle" onclick="toggleLyric()">🎵 lyric</button>
+        </div>
+        <div style="text-align:center;font-size:10px;opacity:0.35;margin-top:-6px;margin-bottom:4px;">
+            ← → điều chỉnh sync &nbsp;|&nbsp; <kbd style="background:rgba(255,255,255,0.1);padding:0 4px;border-radius:3px;">0</kbd> reset offset
         </div>
         <div class="progress-row">
             <span class="time-label" id="time-current">00:00</span>
@@ -312,7 +319,7 @@
 </div>
 
 <script>
-// ===== DISCORD =====
+
 function copyDiscord(e) {
     e && e.preventDefault();
     navigator.clipboard.writeText('tirumclone3314').catch(() => {
@@ -327,7 +334,7 @@ function copyDiscord(e) {
 }
 
 const LYRICS = [
--
+
     [
         [0,   "Em là ai từ đâu bước đến nơi đây dịu dàng chân phương"],
         [5,   "Em là ai tựa như ánh nắng ban mai ngọt ngào trong sương"],
@@ -509,6 +516,7 @@ let playing = false;
 let progressTimer = null;
 let lyricOpen = false;
 let activeLyricIdx = -1;
+let lyricOffset = 0;
 
 function toggleLyric() {
     lyricOpen = !lyricOpen;
@@ -539,13 +547,13 @@ function updateLyric(currentTime) {
     inner.querySelectorAll('.lyric-line').forEach((el, i) => {
         el.classList.toggle('active', i === idx);
     });
+
     const activeEl = document.getElementById('ll' + idx);
     if (activeEl) {
         activeEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
     }
 }
 
-// ===== YOUTUBE =====
 const tag = document.createElement('script');
 tag.src = 'https://www.youtube.com/iframe_api';
 document.head.appendChild(tag);
@@ -610,28 +618,35 @@ function stopCurrent() {
 }
 
 function updateDisplay() {
-    document.getElementById('song-display').textContent = SONGS[currentSong].title;
-    document.getElementById('progress-fill').style.width = '0%';
-    document.getElementById('time-current').textContent = '00:00';
-    document.getElementById('time-total').textContent = '00:00';
-    if (lyricOpen) renderLyrics();
-}
+     document.getElementById('song-display').textContent = SONGS[currentSong].title;
+     document.getElementById('progress-fill').style.width = '0%';
+     document.getElementById('time-current').textContent = '00:00';
+     document.getElementById('time-total').textContent = '00:00';
+     document.getElementById('offset-indicator').textContent = fmtOffset();
+     if (lyricOpen) renderLyrics();
+ }
 
 function startTimer() {
-    clearInterval(progressTimer);
-    progressTimer = setInterval(() => {
-        if (!activePlayer || typeof activePlayer.getDuration !== 'function') return;
-        const dur = activePlayer.getDuration();
-        const cur = activePlayer.getCurrentTime();
-        if (!dur || dur <= 0) return;
-        document.getElementById('progress-fill').style.width = Math.min((cur/dur)*100,100) + '%';
-        document.getElementById('time-current').textContent = fmtTime(cur);
-        document.getElementById('time-total').textContent = fmtTime(dur);
-        if (lyricOpen) updateLyric(cur);
-    }, 300);
-}
+     clearInterval(progressTimer);
+     progressTimer = setInterval(() => {
+         if (!activePlayer || typeof activePlayer.getDuration !== 'function') return;
+         const dur = activePlayer.getDuration();
+         const cur = activePlayer.getCurrentTime();
+         if (!dur || dur <= 0) return;
+         document.getElementById('progress-fill').style.width = Math.min((cur/dur)*100,100) + '%';
+         document.getElementById('time-current').textContent = fmtTime(cur);
+         document.getElementById('time-total').textContent = fmtTime(dur);
+         if (lyricOpen) updateLyric(cur + lyricOffset);
+         document.getElementById('offset-indicator').textContent = fmtOffset();
+     }, 100);
+ }
 
-function fmtTime(s) {
+function fmtOffset() {
+     const s = lyricOffset;
+     return (s >= 0 ? '+' : '') + s.toFixed(1) + 's';
+ }
+
+ function fmtTime(s) {
     s = Math.floor(s||0);
     return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
 }
@@ -643,6 +658,13 @@ document.getElementById('progress-track').addEventListener('click', function(e) 
     if (dur > 0) activePlayer.seekTo(dur * (e.clientX - rect.left) / rect.width, true);
 });
 
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowLeft') { lyricOffset = Math.max(-5, lyricOffset - 0.1); e.preventDefault(); }
+    else if (e.key === 'ArrowRight') { lyricOffset = Math.min(5, lyricOffset + 0.1); e.preventDefault(); }
+    else if (e.key === '0') { lyricOffset = 0; }
+});
+
+
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('copy', e => e.preventDefault());
 document.addEventListener('cut', e => e.preventDefault());
@@ -652,7 +674,6 @@ document.addEventListener('keydown', e => {
         e.key === 'F12') e.preventDefault();
 });
 
-// ===== CUSTOM CURSOR =====
 const dot = document.getElementById('cursor-dot');
 const ring = document.getElementById('cursor-ring');
 let mouseX=0, mouseY=0, ringX=0, ringY=0;

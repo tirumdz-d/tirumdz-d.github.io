@@ -188,6 +188,7 @@
         }
         .play-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.06); }
 
+        /* LYRIC BOX */
         .lyric-box {
             margin-top: 12px;
             max-height: 0;
@@ -202,6 +203,7 @@
         }
         .lyric-inner::-webkit-scrollbar { display: none; }
 
+        /* Bouncing ball trên lyric đang hát */
         .lyric-line {
             font-family: 'VT323', monospace;
             font-size: 15px;
@@ -231,6 +233,7 @@
             to   { transform: translateX(-50%) translateY(-5px); }
         }
 
+        /* OFFSET ADJUSTER */
         .offset-row {
             display: flex; align-items: center; justify-content: center;
             gap: 8px; padding: 6px 0 4px;
@@ -329,7 +332,9 @@
             <button class="ctrl-btn" onclick="nextSong()"><i class="fa-solid fa-forward-step"></i></button>
         </div>
 
+        <!-- LYRIC BOX -->
         <div class="lyric-box" id="lyric-box">
+            <!-- Offset adjuster -->
             <div class="offset-row">
                 <span style="font-size:11px;opacity:0.55;">sync:</span>
                 <button class="offset-btn" onclick="adjustOffset(-0.5)">－</button>
@@ -349,6 +354,7 @@
 </div>
 
 <script>
+
 function copyDiscord(e) {
     e && e.preventDefault();
     navigator.clipboard.writeText('tirumclone3314').catch(() => {
@@ -363,89 +369,89 @@ function copyDiscord(e) {
 }
 
 const LYRICS_RAW = [
-    // Nơi Này Có Anh
+    
     [
-        [16.4, "Em là ai từ đâu bước đến nơi đây dịu dàng chân phương"],
-        [20.2, "Em là ai tựa như ánh nắng ban mai ngọt ngào trong sương"],
-        [24.2, "Ngắm em thật lâu"],
-        [26.1, "Con tim anh yếu mềm"],
-        [28.2, "Đắm say từ phút đó"],
-        [29.4, "Từng giây trôi yêu thêm"],
-        [32.3, "Bao ngày qua bình minh đánh thức xua tan bộn bề nơi anh"],
-        [36.3, "Bao ngày qua niềm thương nỗi nhớ bay theo bầu trời trong xanh"],
-        [40.4, "Liếc đôi hàng mi"],
-        [42.3, "Mong manh anh thẫn thờ"],
-        [44.4, "Muốn hôn nhẹ mái tóc"],
-        [45.5, "Bờ môi em anh mơ"],
-        [48.4, "Cầm tay anh dựa vai anh"],
-        [49.3, "Kề bên anh nơi này có anh"],
-        [50.2, "Gió mang câu tình ca"],
-        [55.8, "Ngàn ánh sao vụt qua nhẹ ôm lấy em"],
-        [56.7, "Cầm tay anh dựa vai anh"],
-        [59.1, "Kề bên anh nơi này có anh"],
-        [60.7, "Khép đôi mi thật lâu"],
-        [61.7, "Nguyện mãi bên cạnh nhau yêu say đắm như ngày đầu"],
-        [64.7, "Mùa xuân đến bình yên"],
-        [66.7, "Cho anh những giấc mơ"],
-        [69.3, "Hạ lưu giữ ngày mưa"],
-        [70.6, "Ngọt ngào nên thơ"],
-        [72.8, "Mùa thu lá vàng rơi"],
-        [74.8, "Đông sang anh nhớ em"],
-        [76.5, "Tình yêu bé nhỏ xin"],
-        [78.4, "Dành tặng riêng em"],
-        [89.8, "Còn đó tiếng nói ấy bên tai vấn vương bao ngày qua"],
+        [16.6, "Em là ai từ đâu bước đến nơi đây dịu dàng chân phương"],
+        [20.4, "Em là ai tựa như ánh nắng ban mai ngọt ngào trong sương"],
+        [24.5, "Ngắm em thật lâu"],
+        [26.4, "Con tim anh yếu mềm"],
+        [28.6, "Đắm say từ phút đó"],
+        [29.9, "Từng giây trôi yêu thêm"],
+        [32.8, "Bao ngày qua bình minh đánh thức xua tan bộn bề nơi anh"],
+        [36.5, "Bao ngày qua niềm thương nỗi nhớ bay theo bầu trời trong xanh"],
+        [40.6, "Liếc đôi hàng mi"],
+        [42.7, "Mong manh anh thẫn thờ"],
+        [44.8, "Muốn hôn nhẹ mái tóc"],
+        [45.9, "Bờ môi em anh mơ"],
+        [48.7, "Cầm tay anh dựa vai anh"],
+        [50.6, "Kề bên anh nơi này có anh"],
+        [52.6, "Gió mang câu tình ca"],
+        [53.7, "Ngàn ánh sao vụt qua nhẹ ôm lấy em"],
+        [56.9, "Cầm tay anh dựa vai anh"],
+        [58.4, "Kề bên anh nơi này có anh"],
+        [60.8, "Khép đôi mi thật lâu"],
+        [61.9, "Nguyện mãi bên cạnh nhau yêu say đắm như ngày đầu"],
+        [65.3, "Mùa xuân đến bình yên"],
+        [67,   "Cho anh những giấc mơ"],
+        [68.8, "Hạ lưu giữ ngày mưa"],
+        [70.7, "Ngọt ngào nên thơ"],
+        [72.9, "Mùa thu lá vàng rơi"],
+        [74.7, "Đông sang anh nhớ em"],
+        [76.6, "Tình yêu bé nhỏ xin"],
+        [78.9, "Dành tặng riêng em"],
+        [89.2, "Còn đó tiếng nói ấy bên tai vấn vương bao ngày qua"],
         [91.3, "Ánh mắt bối rối nhớ thương bao ngày qua"],
-        [93,   "Yêu em anh thẫn thờ"],
-        [93.9, "Con tim bâng khuâng đâu có ngờ"],
-        [95.1, "Chẳng bao giờ phải mong chờ"],
-        [95.8, "Đợi ai trong chiều hoàng hôn mờ"],
-        [97.4, "Đắm chìm hòa vào vần thơ"],
-        [98.2, "Ngắm nhìn khờ dại mộng mơ"],
-        [99.1, "Đừng bước vội vàng rồi làm ngơ"],
-        [100,  "Lạnh lùng đó làm bộ dạng thờ ơ"],
-        [101.3,"Nhìn anh đi em nha"],
-        [102,  "Hướng nụ cười cho riêng anh nha"],
-        [102.9,"Đơn giản là yêu"],
-        [103.8,"Con tim anh lên tiếng thôi"],
-        [104.8,"Cầm tay anh dựa vai anh"],
-        [105.6,"Kề bên anh nơi này có anh"],
-        [108.5,"Gió mang câu tình ca"],
-        [109.6,"Ngàn ánh sao vụt qua nhẹ ôm lấy em"],
-        [112.8,"Cầm tay anh dựa vai anh"],
-        [113.8,"Kề bên anh nơi này có anh"],
-        [116.8,"Khép đôi mi thật lâu"],
+        [93.4, "Yêu em anh thẫn thờ"],
+        [94.3, "Con tim bâng khuâng đâu có ngờ"],
+        [95.5, "Chẳng bao giờ phải mong chờ"],
+        [96.8, "Đợi ai trong chiều hoàng hôn mờ"],
+        [97.9, "Đắm chìm hòa vào vần thơ"],
+        [98.7, "Ngắm nhìn khờ dại mộng mơ"],
+        [99.6, "Đừng bước vội vàng rồi làm ngơ"],
+        [100.6,"Lạnh lùng đó làm bộ dạng thờ ơ"],
+        [101.6,"Nhìn anh đi em nha"],
+        [102.8,"Hướng nụ cười cho riêng anh nha"],
+        [103.7,"Đơn giản là yêu"],
+        [104.6,"Con tim anh lên tiếng thôi"],
+        [105.6,"Cầm tay anh dựa vai anh"],
+        [107.1,"Kề bên anh nơi này có anh"],
+        [108.7,"Gió mang câu tình ca"],
+        [109.9,"Ngàn ánh sao vụt qua nhẹ ôm lấy em"],
+        [112.7,"Cầm tay anh dựa vai anh"],
+        [114.4,"Kề bên anh nơi này có anh"],
+        [116.7,"Khép đôi mi thật lâu"],
         [117.9,"Nguyện mãi bên cạnh nhau yêu say đắm như ngày đầu"],
-        [120.9,"Mùa xuân đến bình yên"],
-        [122.8,"Cho anh những giấc mơ"],
-        [125.8,"Hạ lưu giữ ngày mưa"],
-        [128.4,"Ngọt ngào nên thơ"],
-        [129.7,"Mùa thu lá vàng rơi"],
-        [131.5,"Đông sang anh nhớ em"],
-        [133.8,"Tình yêu bé nhỏ xin"],
-        [135.4,"Dành tặng riêng em"],
+        [121.1,"Mùa xuân đến bình yên"],
+        [123.1,"Cho anh những giấc mơ"],
+        [124.9,"Hạ lưu giữ ngày mưa"],
+        [126.8,"Ngọt ngào nên thơ"],
+        [128.6,"Mùa thu lá vàng rơi"],
+        [130.7,"Đông sang anh nhớ em"],
+        [132.6,"Tình yêu bé nhỏ xin"],
+        [134.8,"Dành tặng riêng em"],
         [139.2,"Oh-oh-oh-oh nhớ thương em"],
-        [143.5,"Oh-oh-oh-oh nhớ thương em lắm"],
-        [145.5,"Ah phía sau chân trời"],
-        [148.9,"Có ai băng qua lối về"],
-        [150.5,"Cùng em đi trên đoạn đường dài"],
+        [142.2,"Oh-oh-oh-oh nhớ thương em lắm"],
+        [145.2,"Ah phía sau chân trời"],
+        [148.7,"Có ai băng qua lối về"],
+        [150.2,"Cùng em đi trên đoạn đường dài"],
         [153,  "Cầm tay anh dựa vai anh"],
-        [154.7,"Kề bên anh nơi này có anh"],
-        [156.9,"Gió mang câu tình ca"],
-        [158.1,"Ngàn ánh sao vụt qua nhẹ ôm lấy em"],
-        [158.3,"Cầm tay anh dựa vai anh"],
-        [162.6,"Kề bên anh nơi này có anh"],
-        [165.1,"Khép đôi mi thật lâu"],
-        [166.1,"Nguyện mãi bên cạnh nhau yêu say đắm như ngày đầu"],
-        [169.8,"Mùa xuân đến bình yên"],
-        [171.8,"Cho anh những giấc mơ"],
-        [174,  "Hạ lưu giữ ngày mưa"],
-        [175.4,"Ngọt ngào nên thơ"],
-        [177.2,"Mùa thu lá vàng rơi"],
-        [179,  "Đông sang anh nhớ em"],
-        [182.2,"Tình yêu bé nhỏ xin"],
-        [183.6,"Dành tặng riêng em"],
+        [154.8,"Kề bên anh nơi này có anh"],
+        [156.6,"Gió mang câu tình ca"],
+        [158,  "Ngàn ánh sao vụt qua nhẹ ôm lấy em"],
+        [160.8,"Cầm tay anh dựa vai anh"],
+        [162.5,"Kề bên anh nơi này có anh"],
+        [164.9,"Khép đôi mi thật lâu"],
+        [166,  "Nguyện mãi bên cạnh nhau yêu say đắm như ngày đầu"],
+        [168.9,"Mùa xuân đến bình yên"],
+        [171.1,"Cho anh những giấc mơ"],
+        [173,  "Hạ lưu giữ ngày mưa"],
+        [175,  "Ngọt ngào nên thơ"],
+        [177.1,"Mùa thu lá vàng rơi"],
+        [179.1,"Đông sang anh nhớ em"],
+        [181.1,"Tình yêu bé nhỏ xin"],
+        [183.2,"Dành tặng riêng em"],
     ],
-    // Không Buông
+    
     [
         [2.2,  "Anh nhớ từng phút yên bình tay nắm tay"],
         [3.7,  "Nhớ khoảnh khắc đôi mình còn đắm say"],
@@ -492,7 +498,7 @@ const LYRICS_RAW = [
         [135.3,"Đến đây thôi em à"],
         [136.8,"Đến lúc ta phải chia xa"],
     ],
-    //  Điểm Đến Cuối Cùng
+    
     [
         [16.6, "Trông rất quen mà anh không nhớ đến đây bao giờ"],
         [24.7, "Không nhớ tên của ai dòng chữ trên tay đã mờ"],
@@ -590,7 +596,7 @@ function adjustOffset(delta) {
     LYRICS[currentSong] = LYRICS_RAW[currentSong].map(([t, l]) => [t + OFFSETS[currentSong], l]);
     document.getElementById('offset-display').textContent =
         (OFFSETS[currentSong] >= 0 ? '+' : '') + OFFSETS[currentSong].toFixed(1) + 's';
-    activeLyricIdx = -1;
+    activeLyricIdx = -1; // force re-highlight
 }
 
 const tag = document.createElement('script');
@@ -671,6 +677,7 @@ function startTimer() {
         const dur = activePlayer.getDuration();
         const cur = activePlayer.getCurrentTime();
         if (!dur || dur <= 0) return;
+        
         if (!isDragging) {
             document.getElementById('progress-fill').style.width = Math.min((cur/dur)*100,100) + '%';
         }

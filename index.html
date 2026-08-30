@@ -117,6 +117,7 @@
         .status-title { font-family: 'VT323',monospace; font-size: 16px; margin-bottom: 3px; }
         .status-sub { font-family: 'VT323',monospace; font-size: 13px; opacity: 0.6; line-height: 1.5; }
 
+        /* MUSIC PLAYER */
         .music-section {
             margin: 0 14px 14px;
             border: 1px solid rgba(255,255,255,0.18);
@@ -125,15 +126,11 @@
         }
         .music-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
         .music-vol-icon { font-size: 14px; opacity: 0.7; }
-.song-name {
-             flex: 1; font-family: 'VT323',monospace; font-size: 20px;
-             text-align: center; letter-spacing: 0.4px;
-             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-         }
-         .offset-indicator {
-             font-family: 'VT323',monospace; font-size: 12px;
-             opacity: 0.5; color: #ff6eb4; min-width: 50px; text-align: right;
-         }
+        .song-name {
+            flex: 1; font-family: 'VT323',monospace; font-size: 20px;
+            text-align: center; letter-spacing: 0.4px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
         .lyric-toggle {
             font-size: 12px; opacity: 0.65; background: none; border: none;
             color: #fff; padding: 2px 6px; border-radius: 8px;
@@ -172,6 +169,7 @@
         }
         .play-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.06); }
 
+        /* LYRIC BOX */
         .lyric-box {
             margin-top: 12px;
             max-height: 0;
@@ -207,15 +205,26 @@
             left: 50%;
             transform: translateX(-50%);
             top: -16px;
-            font-size: 14px;
+            font-size: 9px;
             color: #ff6eb4;
-            text-shadow: 0 0 8px rgba(255,110,180,0.8);
-            animation: bounce 0.45s infinite alternate ease-in-out;
+            animation: bounce 0.5s infinite alternate;
         }
         @keyframes bounce {
             from { transform: translateX(-50%) translateY(0px); }
-            to   { transform: translateX(-50%) translateY(-8px); }
+            to   { transform: translateX(-50%) translateY(-5px); }
         }
+
+        .offset-row {
+            display: flex; align-items: center; justify-content: center;
+            gap: 8px; padding: 6px 0 4px;
+        }
+        .offset-btn {
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3);
+            color: #fff; border-radius: 6px; width: 26px; height: 22px;
+            font-size: 14px; display: flex; align-items: center; justify-content: center;
+            transition: background 0.15s;
+        }
+        .offset-btn:hover { background: rgba(255,255,255,0.22); }
 
         .yt-container {
             position: fixed; bottom: 0; left: -9999px;
@@ -234,7 +243,7 @@
 
     <div class="profile-area">
         <div class="avatar-wrap">
-            <img class="avatar" src="https://cdn.discordapp.com/attachments/1524246966777675828/1543326141971177613/1788024223506_1270636166193830298_1270636166193830298_54cd274eb289c64e09ea3cc9eb61817a.jpg?ex=6a9475f9&is=6a932479&hm=ae4dc9c999f27137cd7149e1435df6abafca7e2af6b83f5f07878efacbb19e85&" alt="Avatar">
+            <img class="avatar" src="https://i.postimg.cc/W1fMSC61/1788024223506-1270636166193830298-1270636166193830298-54cd274eb289c64e09ea3cc9eb61817a.jpg" alt="Avatar">
             <div class="online-dot"></div>
         </div>
         <div class="name-row">
@@ -283,11 +292,7 @@
         <div class="music-top">
             <span class="music-vol-icon"><i class="fa-solid fa-volume-high"></i></span>
             <span class="song-name" id="song-display">Nơi Này Có Anh</span>
-            <span class="offset-indicator" id="offset-indicator">+0.0s</span>
             <button class="lyric-toggle" onclick="toggleLyric()">🎵 lyric</button>
-        </div>
-        <div style="text-align:center;font-size:10px;opacity:0.35;margin-top:-6px;margin-bottom:4px;">
-            ← → điều chỉnh sync &nbsp;|&nbsp; <kbd style="background:rgba(255,255,255,0.1);padding:0 4px;border-radius:3px;">0</kbd> reset offset
         </div>
         <div class="progress-row">
             <span class="time-label" id="time-current">00:00</span>
@@ -306,6 +311,13 @@
 
         <!-- LYRIC BOX -->
         <div class="lyric-box" id="lyric-box">
+            <!-- Offset adjuster -->
+            <div class="offset-row">
+                <span style="font-size:11px;opacity:0.55;">sync:</span>
+                <button class="offset-btn" onclick="adjustOffset(-0.5)">－</button>
+                <span id="offset-display" style="font-family:'VT323',monospace;font-size:14px;min-width:36px;text-align:center;">0.0s</span>
+                <button class="offset-btn" onclick="adjustOffset(+0.5)">＋</button>
+            </div>
             <div class="lyric-inner" id="lyric-inner"></div>
         </div>
     </div>
@@ -319,7 +331,6 @@
 </div>
 
 <script>
-
 function copyDiscord(e) {
     e && e.preventDefault();
     navigator.clipboard.writeText('tirumclone3314').catch(() => {
@@ -333,175 +344,180 @@ function copyDiscord(e) {
     setTimeout(() => n.style.display = 'none', 2500);
 }
 
-const LYRICS = [
-
+const LYRICS_RAW = [
     [
-        [0,   "Em là ai từ đâu bước đến nơi đây dịu dàng chân phương"],
-        [5,   "Em là ai tựa như ánh nắng ban mai ngọt ngào trong sương"],
-        [10,  "Ngắm em thật lâu"],
-        [13,  "Con tim anh yếu mềm"],
-        [16,  "Đắm say từ phút đó"],
-        [19,  "Từng giây trôi yêu thêm"],
-        [22,  "Bao ngày qua bình minh đánh thức xua tan bộn bề nơi anh"],
-        [28,  "Bao ngày qua niềm thương nỗi nhớ bay theo bầu trời trong xanh"],
-        [34,  "Liếc đôi hàng mi"],
-        [37,  "Mong manh anh thẫn thờ"],
-        [40,  "Muốn hôn nhẹ mái tóc"],
-        [43,  "Bờ môi em anh mơ"],
-        [46,  "Cầm tay anh dựa vai anh"],
-        [49,  "Kề bên anh nơi này có anh"],
-        [53,  "Gió mang câu tình ca"],
-        [56,  "Ngàn ánh sao vụt qua nhẹ ôm lấy em"],
-        [61,  "Cầm tay anh dựa vai anh"],
-        [64,  "Kề bên anh nơi này có anh"],
-        [68,  "Khép đôi mi thật lâu"],
-        [71,  "Nguyện mãi bên cạnh nhau yêu say đắm như ngày đầu"],
-        [77,  "Mùa xuân đến bình yên"],
-        [80,  "Cho anh những giấc mơ"],
-        [83,  "Hạ lưu giữ ngày mưa"],
-        [86,  "Ngọt ngào nên thơ"],
-        [89,  "Mùa thu lá vàng rơi"],
-        [92,  "Đông sang anh nhớ em"],
-        [95,  "Tình yêu bé nhỏ xin"],
-        [98,  "Dành tặng riêng em"],
-        [101, "Còn đó tiếng nói ấy bên tai vấn vương bao ngày qua"],
-        [107, "Ánh mắt bối rối nhớ thương bao ngày qua"],
-        [112, "Yêu em anh thẫn thờ"],
-        [115, "Con tim bâng khuâng đâu có ngờ"],
-        [119, "Chẳng bao giờ phải mong chờ"],
-        [122, "Đợi ai trong chiều hoàng hôn mờ"],
-        [126, "Đắm chìm hòa vào vần thơ"],
-        [129, "Ngắm nhìn khờ dại mộng mơ"],
-        [132, "Đừng bước vội vàng rồi làm ngơ"],
-        [135, "Lạnh lùng đó làm bộ dạng thờ ơ"],
-        [139, "Nhìn anh đi em nha"],
-        [142, "Hướng nụ cười cho riêng anh nha"],
-        [145, "Đơn giản là yêu"],
-        [148, "Con tim anh lên tiếng thôi"],
-        [151, "Cầm tay anh dựa vai anh"],
-        [154, "Kề bên anh nơi này có anh"],
-        [158, "Gió mang câu tình ca"],
-        [161, "Ngàn ánh sao vụt qua nhẹ ôm lấy em"],
-        [166, "Cầm tay anh dựa vai anh"],
-        [169, "Kề bên anh nơi này có anh"],
-        [173, "Khép đôi mi thật lâu"],
-        [176, "Nguyện mãi bên cạnh nhau yêu say đắm như ngày đầu"],
-        [182, "Mùa xuân đến bình yên"],
-        [185, "Cho anh những giấc mơ"],
-        [188, "Hạ lưu giữ ngày mưa"],
-        [191, "Ngọt ngào nên thơ"],
-        [194, "Mùa thu lá vàng rơi"],
-        [197, "Đông sang anh nhớ em"],
-        [200, "Tình yêu bé nhỏ xin"],
-        [203, "Dành tặng riêng em"],
-        [206, "Oh-oh-oh-oh nhớ thương em"],
-        [210, "Oh-oh-oh-oh nhớ thương em lắm"],
-        [215, "Ah phía sau chân trời"],
-        [218, "Có ai băng qua lối về"],
-        [221, "Cùng em đi trên đoạn đường dài"],
-        [225, "Cầm tay anh dựa vai anh"],
-        [228, "Kề bên anh nơi này có anh"],
-        [232, "Gió mang câu tình ca"],
-        [235, "Ngàn ánh sao vụt qua nhẹ ôm lấy em"],
-        [240, "Cầm tay anh dựa vai anh"],
-        [243, "Kề bên anh nơi này có anh"],
-        [247, "Khép đôi mi thật lâu"],
-        [250, "Nguyện mãi bên cạnh nhau yêu say đắm như ngày đầu"],
-        [256, "Mùa xuân đến bình yên"],
-        [259, "Cho anh những giấc mơ"],
-        [262, "Hạ lưu giữ ngày mưa"],
-        [265, "Ngọt ngào nên thơ"],
-        [268, "Mùa thu lá vàng rơi"],
-        [271, "Đông sang anh nhớ em"],
-        [274, "Tình yêu bé nhỏ xin"],
-        [277, "Dành tặng riêng em"],
+        [16,  "Em là ai từ đâu bước đến nơi đây dịu dàng chân phương"],
+        [21,  "Em là ai tựa như ánh nắng ban mai ngọt ngào trong sương"],
+        [27,  "Ngắm em thật lâu"],
+        [30,  "Con tim anh yếu mềm"],
+        [33,  "Đắm say từ phút đó"],
+        [36,  "Từng giây trôi yêu thêm"],
+        [39,  "Bao ngày qua bình minh đánh thức xua tan bộn bề nơi anh"],
+        [45,  "Bao ngày qua niềm thương nỗi nhớ bay theo bầu trời trong xanh"],
+        [51,  "Liếc đôi hàng mi"],
+        [54,  "Mong manh anh thẫn thờ"],
+        [57,  "Muốn hôn nhẹ mái tóc"],
+        [60,  "Bờ môi em anh mơ"],
+        [63,  "Cầm tay anh dựa vai anh"],
+        [67,  "Kề bên anh nơi này có anh"],
+        [71,  "Gió mang câu tình ca"],
+        [74,  "Ngàn ánh sao vụt qua nhẹ ôm lấy em"],
+        [79,  "Cầm tay anh dựa vai anh"],
+        [83,  "Kề bên anh nơi này có anh"],
+        [87,  "Khép đôi mi thật lâu"],
+        [90,  "Nguyện mãi bên cạnh nhau yêu say đắm như ngày đầu"],
+        [96,  "Mùa xuân đến bình yên"],
+        [99,  "Cho anh những giấc mơ"],
+        [102, "Hạ lưu giữ ngày mưa"],
+        [105, "Ngọt ngào nên thơ"],
+        [108, "Mùa thu lá vàng rơi"],
+        [111, "Đông sang anh nhớ em"],
+        [114, "Tình yêu bé nhỏ xin"],
+        [117, "Dành tặng riêng em"],
+        [121, "Còn đó tiếng nói ấy bên tai vấn vương bao ngày qua"],
+        [127, "Ánh mắt bối rối nhớ thương bao ngày qua"],
+        [132, "Yêu em anh thẫn thờ"],
+        [135, "Con tim bâng khuâng đâu có ngờ"],
+        [138, "Chẳng bao giờ phải mong chờ"],
+        [141, "Đợi ai trong chiều hoàng hôn mờ"],
+        [144, "Đắm chìm hòa vào vần thơ"],
+        [147, "Ngắm nhìn khờ dại mộng mơ"],
+        [150, "Đừng bước vội vàng rồi làm ngơ"],
+        [153, "Lạnh lùng đó làm bộ dạng thờ ơ"],
+        [157, "Nhìn anh đi em nha"],
+        [160, "Hướng nụ cười cho riêng anh nha"],
+        [163, "Đơn giản là yêu"],
+        [166, "Con tim anh lên tiếng thôi"],
+        [169, "Cầm tay anh dựa vai anh"],
+        [173, "Kề bên anh nơi này có anh"],
+        [177, "Gió mang câu tình ca"],
+        [180, "Ngàn ánh sao vụt qua nhẹ ôm lấy em"],
+        [185, "Cầm tay anh dựa vai anh"],
+        [189, "Kề bên anh nơi này có anh"],
+        [193, "Khép đôi mi thật lâu"],
+        [196, "Nguyện mãi bên cạnh nhau yêu say đắm như ngày đầu"],
+        [202, "Mùa xuân đến bình yên"],
+        [205, "Cho anh những giấc mơ"],
+        [208, "Hạ lưu giữ ngày mưa"],
+        [211, "Ngọt ngào nên thơ"],
+        [214, "Mùa thu lá vàng rơi"],
+        [217, "Đông sang anh nhớ em"],
+        [220, "Tình yêu bé nhỏ xin"],
+        [223, "Dành tặng riêng em"],
+        [227, "Oh-oh-oh-oh nhớ thương em"],
+        [231, "Oh-oh-oh-oh nhớ thương em lắm"],
+        [236, "Ah phía sau chân trời"],
+        [239, "Có ai băng qua lối về"],
+        [242, "Cùng em đi trên đoạn đường dài"],
+        [246, "Cầm tay anh dựa vai anh"],
+        [250, "Kề bên anh nơi này có anh"],
+        [254, "Gió mang câu tình ca"],
+        [257, "Ngàn ánh sao vụt qua nhẹ ôm lấy em"],
+        [262, "Cầm tay anh dựa vai anh"],
+        [266, "Kề bên anh nơi này có anh"],
+        [270, "Khép đôi mi thật lâu"],
+        [273, "Nguyện mãi bên cạnh nhau yêu say đắm như ngày đầu"],
+        [279, "Mùa xuân đến bình yên"],
+        [282, "Cho anh những giấc mơ"],
+        [285, "Hạ lưu giữ ngày mưa"],
+        [288, "Ngọt ngào nên thơ"],
+        [291, "Mùa thu lá vàng rơi"],
+        [294, "Đông sang anh nhớ em"],
+        [297, "Tình yêu bé nhỏ xin"],
+        [300, "Dành tặng riêng em"],
     ],
 
     [
-        [0,  "Anh nhớ từng phút yên bình tay nắm tay"],
-        [5,  "Nhớ khoảnh khắc đôi mình còn đắm say"],
-        [10, "Chỉ vừa như mới hôm nào"],
-        [13, "Mà sao giờ lại xa quá?"],
-        [17, "Anh vẫn nhớ khi trời vừa nhá nhem"],
-        [22, "Qua đón em dạo cùng phố đêm"],
-        [27, "Giờ thì không còn nữa"],
-        [30, "Cô đơn thân với anh thêm"],
-        [34, "Anh cố để chi vậy rồi cũng ra như này"],
-        [39, "Cứ vun mối tình mặc tấm thân hao gầy"],
-        [44, "Liệu có phút giây nào người xót anh không vậy?"],
-        [49, "Mọi thứ chỉ để anh gánh lấy"],
-        [53, "Chẳng phút giây nào anh hết yêu em"],
-        [58, "Mỗi lần ướt mi hoen là do anh nhớ em thêm"],
-        [63, "Tại sao lại nói yêu anh mà lại để mi anh ướt nhèm?"],
-        [69, "Em cũng có nỗi niềm của riêng mình"],
-        [74, "Em xin lỗi đã bỏ anh một mình"],
-        [79, "Sau bao tháng năm ta cùng chung đường"],
-        [84, "Giờ hai đứa hai nơi"],
-        [87, "Đoạn cảm xúc tưởng như là lâu dài"],
-        [92, "Nhưng lại kết thúc bất ngờ vì hiểu lầm"],
-        [97, "Em trách sao lúc đó mình không vì nhau mà cố"],
-        [103,"Em vẫn còn nhớ những lần mình đã hứa hẹn"],
-        [108,"Cùng nhau mãi mãi chẳng rời xa"],
-        [112,"Và môi hôn vẫn để lại đó bao ngọt ngào xưa"],
-        [117,"Giờ thì đã quá trễ rồi"],
-        [120,"Vì phút bốc đồng mà đôi ta chẳng thể nào cạnh bên"],
-        [126,"Hỏi em còn yêu không, em trả lời là không còn"],
-        [131,"Nhưng đó chỉ là dối lòng"],
-        [135,"Anh cố để chi vậy rồi cũng ra như này"],
-        [140,"Cứ vun mối tình mặc tấm thân hao gầy"],
-        [145,"Liệu có phút giây nào người xót anh không vậy?"],
-        [150,"Mọi thứ chỉ để anh gánh lấy"],
-        [154,"Chẳng phút giây nào anh hết yêu em"],
-        [159,"Mỗi lần ướt mi hoen là do anh nhớ em thêm"],
-        [164,"Tại sao lại nói yêu anh mà lại để mi anh ướt nhèm?"],
-        [170,"Thật ra anh biết từ đầu rồi, bae"],
-        [174,"Rằng lời yêu đó chỉ là gió bay"],
-        [178,"Giờ tim vỡ nát như này"],
-        [181,"Do anh cố chấp nên vậy"],
-        [185,"Mong em hạnh phúc đi bên người ta"],
-        [190,"Phần anh sẽ cố gắng để vượt qua"],
-        [195,"Đến đây thôi em à"],
-        [198,"Đến lúc ta phải chia xa"],
+        [18,  "Anh nhớ từng phút yên bình tay nắm tay"],
+        [23,  "Nhớ khoảnh khắc đôi mình còn đắm say"],
+        [28,  "Chỉ vừa như mới hôm nào"],
+        [31,  "Mà sao giờ lại xa quá?"],
+        [35,  "Anh vẫn nhớ khi trời vừa nhá nhem"],
+        [40,  "Qua đón em dạo cùng phố đêm"],
+        [45,  "Giờ thì không còn nữa"],
+        [48,  "Cô đơn thân với anh thêm"],
+        [52,  "Anh cố để chi vậy rồi cũng ra như này"],
+        [57,  "Cứ vun mối tình mặc tấm thân hao gầy"],
+        [62,  "Liệu có phút giây nào người xót anh không vậy?"],
+        [67,  "Mọi thứ chỉ để anh gánh lấy"],
+        [71,  "Chẳng phút giây nào anh hết yêu em"],
+        [76,  "Mỗi lần ướt mi hoen là do anh nhớ em thêm"],
+        [81,  "Tại sao lại nói yêu anh mà lại để mi anh ướt nhèm?"],
+        [88,  "Em cũng có nỗi niềm của riêng mình"],
+        [93,  "Em xin lỗi đã bỏ anh một mình"],
+        [98,  "Sau bao tháng năm ta cùng chung đường"],
+        [103, "Giờ hai đứa hai nơi"],
+        [106, "Đoạn cảm xúc tưởng như là lâu dài"],
+        [111, "Nhưng lại kết thúc bất ngờ vì hiểu lầm"],
+        [116, "Em trách sao lúc đó mình không vì nhau mà cố"],
+        [122, "Em vẫn còn nhớ những lần mình đã hứa hẹn"],
+        [127, "Cùng nhau mãi mãi chẳng rời xa"],
+        [131, "Và môi hôn vẫn để lại đó bao ngọt ngào xưa"],
+        [136, "Giờ thì đã quá trễ rồi"],
+        [139, "Vì phút bốc đồng mà đôi ta chẳng thể nào cạnh bên"],
+        [145, "Hỏi em còn yêu không, em trả lời là không còn"],
+        [150, "Nhưng đó chỉ là dối lòng"],
+        [154, "Anh cố để chi vậy rồi cũng ra như này"],
+        [159, "Cứ vun mối tình mặc tấm thân hao gầy"],
+        [164, "Liệu có phút giây nào người xót anh không vậy?"],
+        [169, "Mọi thứ chỉ để anh gánh lấy"],
+        [173, "Chẳng phút giây nào anh hết yêu em"],
+        [178, "Mỗi lần ướt mi hoen là do anh nhớ em thêm"],
+        [183, "Tại sao lại nói yêu anh mà lại để mi anh ướt nhèm?"],
+        [190, "Thật ra anh biết từ đầu rồi, bae"],
+        [194, "Rằng lời yêu đó chỉ là gió bay"],
+        [198, "Giờ tim vỡ nát như này"],
+        [201, "Do anh cố chấp nên vậy"],
+        [205, "Mong em hạnh phúc đi bên người ta"],
+        [210, "Phần anh sẽ cố gắng để vượt qua"],
+        [215, "Đến đây thôi em à"],
+        [218, "Đến lúc ta phải chia xa"],
     ],
 
     [
-        [0,  "Trông rất quen mà anh không nhớ đến đây bao giờ"],
-        [6,  "Không nhớ tên của ai dòng chữ trên tay đã mờ"],
-        [12, "Có dáng ai vừa đi đến đây"],
-        [16, "Người ta cúi chào mời anh đứng dậy"],
-        [21, "Ai cũng đã bỏ đi khi mỗi anh ngủ quên"],
-        [26, "Người ta báo điểm đến cuối cùng"],
-        [30, "Anh thấy trong mình cứ mông lung"],
-        [34, "Khi lái xe dừng giữa không trung"],
-        [38, "Mời anh xuống đây"],
-        [41, "Vòng qua đám mây có cái gì"],
-        [45, "Anh thấy như mình cứ phai đi"],
-        [49, "Vào lãng du từng bước anh đi"],
-        [53, "Làm anh trắng hơn"],
-        [56, "Trắng hơn"],
-        [58, "Trắng"],
-        [61, "Không muốn đi mà anh không muốn nán chân ở lại"],
-        [67, "Nghe phía sau người ta đang tiễn anh đi thở dài"],
-        [73, "Anh cũng thương người ta đứng lâu"],
-        [77, "Anh cúi nhìn bàn tay mất màu"],
-        [81, "Trong cách anh rời đi anh có thể nhìn thấu"],
-        [86, "Người ta báo điểm đến cuối cùng"],
-        [90, "Anh thấy trong mình cứ mông lung"],
-        [94, "Khi lái xe dừng giữa không trung"],
-        [98, "Mời anh xuống đây"],
-        [101,"Vòng qua đám mây có cái gì"],
-        [105,"Anh thấy như mình cứ phai đi"],
-        [109,"Vào lãng du từng bước anh đi"],
-        [113,"Làm anh trắng hơn"],
-        [116,"Người ta nói điểm đến cuối cùng"],
-        [120,"Luôn có cái gì rất mông lung"],
-        [124,"Khi lái xe dừng giữa không trung"],
-        [128,"Mời anh xuống đây"],
-        [131,"Xuống đây"],
-        [134,"Trắng hơn"],
-        [137,"Trắng hơn"],
+        [10,  "Trông rất quen mà anh không nhớ đến đây bao giờ"],
+        [16,  "Không nhớ tên của ai dòng chữ trên tay đã mờ"],
+        [22,  "Có dáng ai vừa đi đến đây"],
+        [26,  "Người ta cúi chào mời anh đứng dậy"],
+        [31,  "Ai cũng đã bỏ đi khi mỗi anh ngủ quên"],
+        [37,  "Người ta báo điểm đến cuối cùng"],
+        [41,  "Anh thấy trong mình cứ mông lung"],
+        [45,  "Khi lái xe dừng giữa không trung"],
+        [49,  "Mời anh xuống đây"],
+        [52,  "Vòng qua đám mây có cái gì"],
+        [56,  "Anh thấy như mình cứ phai đi"],
+        [60,  "Vào lãng du từng bước anh đi"],
+        [64,  "Làm anh trắng hơn"],
+        [67,  "Trắng hơn"],
+        [70,  "Trắng"],
+        [74,  "Không muốn đi mà anh không muốn nán chân ở lại"],
+        [80,  "Nghe phía sau người ta đang tiễn anh đi thở dài"],
+        [86,  "Anh cũng thương người ta đứng lâu"],
+        [90,  "Anh cúi nhìn bàn tay mất màu"],
+        [94,  "Trong cách anh rời đi anh có thể nhìn thấu"],
+        [99,  "Người ta báo điểm đến cuối cùng"],
+        [103, "Anh thấy trong mình cứ mông lung"],
+        [107, "Khi lái xe dừng giữa không trung"],
+        [111, "Mời anh xuống đây"],
+        [114, "Vòng qua đám mây có cái gì"],
+        [118, "Anh thấy như mình cứ phai đi"],
+        [122, "Vào lãng du từng bước anh đi"],
+        [126, "Làm anh trắng hơn"],
+        [130, "Người ta nói điểm đến cuối cùng"],
+        [134, "Luôn có cái gì rất mông lung"],
+        [138, "Khi lái xe dừng giữa không trung"],
+        [142, "Mời anh xuống đây"],
+        [145, "Xuống đây"],
+        [149, "Trắng hơn"],
+        [153, "Trắng hơn"],
     ],
 ];
+
+const OFFSETS = [0, 0, 0];
+
+let LYRICS = LYRICS_RAW.map((song, si) =>
+    song.map(([t, l]) => [t + OFFSETS[si], l])
+);
 
 const SONGS = [
     { title: 'Nơi Này Có Anh', ytId: 'v9GlvPzvprg' },
@@ -516,7 +532,6 @@ let playing = false;
 let progressTimer = null;
 let lyricOpen = false;
 let activeLyricIdx = -1;
-let lyricOffset = 0;
 
 function toggleLyric() {
     lyricOpen = !lyricOpen;
@@ -536,22 +551,27 @@ function renderLyrics() {
 function updateLyric(currentTime) {
     const lines = LYRICS[currentSong] || [];
     if (!lines.length) return;
-    let idx = 0;
+    let idx = -1;
     for (let i = 0; i < lines.length; i++) {
         if (currentTime >= lines[i][0]) idx = i;
-        else break;
     }
     if (idx === activeLyricIdx) return;
     activeLyricIdx = idx;
-    const inner = document.getElementById('lyric-inner');
-    inner.querySelectorAll('.lyric-line').forEach((el, i) => {
+    document.querySelectorAll('.lyric-line').forEach((el, i) => {
         el.classList.toggle('active', i === idx);
     });
-
-    const activeEl = document.getElementById('ll' + idx);
-    if (activeEl) {
-        activeEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    if (idx >= 0) {
+        const activeEl = document.getElementById('ll' + idx);
+        if (activeEl) activeEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
     }
+}
+
+function adjustOffset(delta) {
+    OFFSETS[currentSong] = (OFFSETS[currentSong] || 0) + delta;
+    LYRICS[currentSong] = LYRICS_RAW[currentSong].map(([t, l]) => [t + OFFSETS[currentSong], l]);
+    document.getElementById('offset-display').textContent =
+        (OFFSETS[currentSong] >= 0 ? '+' : '') + OFFSETS[currentSong].toFixed(1) + 's';
+    activeLyricIdx = -1;
 }
 
 const tag = document.createElement('script');
@@ -618,35 +638,28 @@ function stopCurrent() {
 }
 
 function updateDisplay() {
-     document.getElementById('song-display').textContent = SONGS[currentSong].title;
-     document.getElementById('progress-fill').style.width = '0%';
-     document.getElementById('time-current').textContent = '00:00';
-     document.getElementById('time-total').textContent = '00:00';
-     document.getElementById('offset-indicator').textContent = fmtOffset();
-     if (lyricOpen) renderLyrics();
- }
+    document.getElementById('song-display').textContent = SONGS[currentSong].title;
+    document.getElementById('progress-fill').style.width = '0%';
+    document.getElementById('time-current').textContent = '00:00';
+    document.getElementById('time-total').textContent = '00:00';
+    if (lyricOpen) renderLyrics();
+}
 
 function startTimer() {
-     clearInterval(progressTimer);
-     progressTimer = setInterval(() => {
-         if (!activePlayer || typeof activePlayer.getDuration !== 'function') return;
-         const dur = activePlayer.getDuration();
-         const cur = activePlayer.getCurrentTime();
-         if (!dur || dur <= 0) return;
-         document.getElementById('progress-fill').style.width = Math.min((cur/dur)*100,100) + '%';
-         document.getElementById('time-current').textContent = fmtTime(cur);
-         document.getElementById('time-total').textContent = fmtTime(dur);
-         if (lyricOpen) updateLyric(cur + lyricOffset);
-         document.getElementById('offset-indicator').textContent = fmtOffset();
-     }, 100);
- }
+    clearInterval(progressTimer);
+    progressTimer = setInterval(() => {
+        if (!activePlayer || typeof activePlayer.getDuration !== 'function') return;
+        const dur = activePlayer.getDuration();
+        const cur = activePlayer.getCurrentTime();
+        if (!dur || dur <= 0) return;
+        document.getElementById('progress-fill').style.width = Math.min((cur/dur)*100,100) + '%';
+        document.getElementById('time-current').textContent = fmtTime(cur);
+        document.getElementById('time-total').textContent = fmtTime(dur);
+        if (lyricOpen) updateLyric(cur);
+    }, 300);
+}
 
-function fmtOffset() {
-     const s = lyricOffset;
-     return (s >= 0 ? '+' : '') + s.toFixed(1) + 's';
- }
-
- function fmtTime(s) {
+function fmtTime(s) {
     s = Math.floor(s||0);
     return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
 }
@@ -657,13 +670,6 @@ document.getElementById('progress-track').addEventListener('click', function(e) 
     const dur = activePlayer.getDuration();
     if (dur > 0) activePlayer.seekTo(dur * (e.clientX - rect.left) / rect.width, true);
 });
-
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'ArrowLeft') { lyricOffset = Math.max(-5, lyricOffset - 0.1); e.preventDefault(); }
-    else if (e.key === 'ArrowRight') { lyricOffset = Math.min(5, lyricOffset + 0.1); e.preventDefault(); }
-    else if (e.key === '0') { lyricOffset = 0; }
-});
-
 
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('copy', e => e.preventDefault());

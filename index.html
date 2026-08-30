@@ -287,23 +287,33 @@
 
     <div class="section">
         <div class="discord-header">
-            <div class="discord-avatar">
-                <i class="fa-brands fa-discord"></i>
-                <div class="discord-status-dot"></div>
+            <div class="discord-avatar" id="dc-avatar-wrap">
+                <i class="fa-brands fa-discord" id="dc-avatar-icon"></i>
+                <div class="discord-status-dot" id="dc-dot"></div>
             </div>
             <div class="discord-info">
                 <div class="discord-name">@tirumclone3314 <i class="fa-brands fa-discord" style="font-size:12px;opacity:0.55;"></i></div>
-                <div class="discord-activity">Ngủ 💤</div>
+                <div class="discord-activity" id="dc-activity">Đang tải...</div>
             </div>
             <button class="discord-add-btn" onclick="copyDiscord(event)">Copy Discord →</button>
         </div>
         <div id="copy-notif" class="copy-notif">✓ Đã copy: tirumclone3314</div>
         <hr class="discord-divider">
         <div class="status-box-inner">
-            <div class="status-thumb">💤</div>
+            <div class="status-thumb" id="status-emoji">💤</div>
             <div class="status-details">
-                <div class="status-title">Trạng thái hiện tại</div>
-                <div class="status-sub">Khá Bận<br>no reply = i go poop poop</div>
+                <div class="status-title" id="status-title">Trạng thái hiện tại</div>
+                <div class="status-sub" id="status-sub">Đang tải...<br>no reply = offline</div>
+            </div>
+        </div>
+        <div id="dc-activity-box" style="display:none; margin-top:10px; border-top:1px solid rgba(255,255,255,0.12); padding-top:10px;">
+            <div style="display:flex; gap:10px; align-items:center;">
+                <img id="dc-act-img" src="" style="width:48px;height:48px;border-radius:8px;object-fit:cover;display:none;">
+                <div>
+                    <div id="dc-act-name" style="font-family:'VT323',monospace;font-size:16px;"></div>
+                    <div id="dc-act-detail" style="font-size:12px;opacity:0.6;font-family:'VT323',monospace;"></div>
+                    <div id="dc-act-state" style="font-size:12px;opacity:0.5;font-family:'VT323',monospace;"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -354,6 +364,77 @@
 </div>
 
 <script>
+
+const DISCORD_ID = '1453967154901811341';
+const GITHUB_RAW = 'https://raw.githubusercontent.com/tirumdz-d/TirumBio.github.io/main/status.json';
+
+const STATUS_COLOR = { online:'#43b581', idle:'#faa61a', dnd:'#f04747', offline:'#747f8d' };
+const STATUS_TEXT  = { online:'Online', idle:'Idle', dnd:'Bận', offline:'Offline' };
+
+async function loadLanyard() {
+    try {
+        const r = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
+        const d = (await r.json()).data;
+
+        const dot = document.getElementById('dc-dot');
+        const status = d.discord_status || 'offline';
+        dot.style.background = STATUS_COLOR[status];
+
+        const actEl   = document.getElementById('dc-activity');
+        const actBox  = document.getElementById('dc-activity-box');
+        const actImg  = document.getElementById('dc-act-img');
+        const actName = document.getElementById('dc-act-name');
+        const actDet  = document.getElementById('dc-act-detail');
+        const actStat = document.getElementById('dc-act-state');
+
+        const acts = (d.activities || []).filter(a => a.type !== 4);
+        const spotify = d.spotify;
+
+        if (spotify) {
+            actBox.style.display = 'block';
+            actImg.src = spotify.album_art_url;
+            actImg.style.display = 'block';
+            actName.textContent = '🎵 ' + spotify.song;
+            actDet.textContent  = 'by ' + spotify.artist;
+            actStat.textContent = 'on ' + spotify.album;
+            actEl.textContent   = 'Nghe Spotify 🎵';
+        } else if (acts.length > 0) {
+            const a = acts[0];
+            actBox.style.display = 'block';
+            if (a.assets?.large_image) {
+                actImg.src = `https://cdn.discordapp.com/app-assets/${a.application_id}/${a.assets.large_image}.png`;
+                actImg.style.display = 'block';
+            } else {
+                actImg.style.display = 'none';
+            }
+            actName.textContent = a.name || '';
+            actDet.textContent  = a.details || '';
+            actStat.textContent = a.state || '';
+            actEl.textContent   = 'Đang chơi ' + (a.name || '') + ' 🎮';
+        } else {
+            actBox.style.display = 'none';
+            actEl.textContent = STATUS_TEXT[status];
+        }
+
+        const customAct = (d.activities || []).find(a => a.type === 4);
+        if (customAct?.state) actEl.textContent = customAct.state;
+
+    } catch(e) { console.log('Lanyard error', e); }
+}
+
+async function loadStatus() {
+    try {
+        const r = await fetch(GITHUB_RAW + '?t=' + Date.now());
+        const d = await r.json();
+        document.getElementById('status-emoji').textContent = d.emoji || '💤';
+        document.getElementById('status-sub').innerHTML = (d.status || 'Đang ngủ') + '<br>' + (d.note || 'no reply = offline');
+    } catch(e) { console.log('Status error', e); }
+}
+
+loadLanyard();
+loadStatus();
+setInterval(loadLanyard, 30000);
+setInterval(loadStatus, 60000);
 
 function copyDiscord(e) {
     e && e.preventDefault();

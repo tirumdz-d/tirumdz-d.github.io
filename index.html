@@ -38,11 +38,11 @@
 
         .card {
             width: 100%; max-width: 480px;
-            background: rgba(28,55,35,0.75);
-            backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-            border: 1.5px solid rgba(255,255,255,0.22);
+            background: rgba(10,25,50,0.78);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1.5px solid rgba(0,220,255,0.25);
             border-radius: 22px; overflow: hidden;
-            color: #fff; box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+            color: #fff; box-shadow: 0 12px 40px rgba(0,180,255,0.15);
         }
         .banner { width: 100%; height: 120px; object-fit: cover; display: block; }
         .profile-area { padding: 0 22px 8px; position: relative; }
@@ -52,13 +52,14 @@
         }
         .avatar {
             width: 86px; height: 86px; border-radius: 50%;
-            border: 3px solid rgba(255,255,255,0.55);
-            object-fit: cover; display: block; background: #2a5535;
+            border: 3px solid rgba(0,220,255,0.6);
+            object-fit: cover; display: block; background: #0a1932;
+            box-shadow: 0 0 14px rgba(0,220,255,0.35);
         }
         .online-dot {
             position: absolute; bottom: 5px; right: 5px;
             width: 14px; height: 14px; background: #43b581;
-            border-radius: 50%; border: 2.5px solid rgba(28,55,35,1);
+            border-radius: 50%; border: 2.5px solid rgba(10,25,50,1);
         }
         .name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
         .name { font-family: 'VT323', monospace; font-size: 34px; letter-spacing: 1px; }
@@ -67,43 +68,44 @@
         .social-row {
             display: flex; justify-content: center; gap: 14px;
             padding: 10px 22px 14px;
-            border-bottom: 1px solid rgba(255,255,255,0.15);
+            border-bottom: 1px solid rgba(0,220,255,0.15);
         }
         .social-btn {
             width: 42px; height: 42px; border-radius: 50%;
-            border: 1.5px solid rgba(255,255,255,0.45);
+            border: 1.5px solid rgba(0,220,255,0.4);
             display: flex; align-items: center; justify-content: center;
             color: #fff; text-decoration: none; font-size: 17px;
-            transition: all 0.2s; background: rgba(255,255,255,0.07);
+            transition: all 0.2s; background: rgba(0,180,255,0.08);
         }
-        .social-btn:hover { background: rgba(255,255,255,0.2); transform: scale(1.1); }
+        .social-btn:hover { background: rgba(0,220,255,0.2); transform: scale(1.1); box-shadow: 0 0 12px rgba(0,220,255,0.3); }
 
         .section {
-            margin: 12px 14px; border: 1px solid rgba(255,255,255,0.18);
-            border-radius: 14px; padding: 13px; background: rgba(0,0,0,0.18);
+            margin: 12px 14px; border: 1px solid rgba(0,220,255,0.18);
+            border-radius: 14px; padding: 13px; background: rgba(0,10,30,0.3);
         }
         .discord-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
         .discord-avatar {
             width: 44px; height: 44px; border-radius: 50%;
-            background: linear-gradient(135deg,#5b6ee1,#2c3e99);
+            background: linear-gradient(135deg,#0099cc,#0044aa);
             display: flex; align-items: center; justify-content: center;
             font-size: 20px; position: relative; flex-shrink: 0;
+            box-shadow: 0 0 10px rgba(0,180,255,0.3);
         }
         .discord-status-dot {
             position: absolute; bottom: 1px; right: 1px;
             width: 11px; height: 11px; background: #43b581;
-            border-radius: 50%; border: 2px solid rgba(28,55,35,1);
+            border-radius: 50%; border: 2px solid rgba(10,25,50,1);
         }
         .discord-info { flex: 1; min-width: 0; }
         .discord-name { font-family: 'VT323',monospace; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .discord-activity { font-family: 'VT323',monospace; font-size: 13px; opacity: 0.6; }
         .discord-add-btn {
-            border: 1.5px solid rgba(255,255,255,0.45); border-radius: 20px;
-            padding: 5px 13px; font-size: 12px; color: #fff; cursor: pointer;
+            border: 1.5px solid rgba(0,220,255,0.5); border-radius: 20px;
+            padding: 5px 13px; font-size: 12px; color: #00dcff; cursor: pointer;
             background: transparent; font-family: 'Inter',sans-serif;
             white-space: nowrap; transition: background 0.2s;
         }
-        .discord-add-btn:hover { background: rgba(255,255,255,0.12); }
+        .discord-add-btn:hover { background: rgba(0,220,255,0.12); }
         .copy-notif { display: none; font-size: 12px; color: #43b581; text-align: center; margin-top: 5px; }
         .discord-divider { border: none; border-top: 1px solid rgba(255,255,255,0.12); margin: 10px 0; }
         .status-box-inner { display: flex; align-items: flex-start; gap: 10px; }
@@ -148,19 +150,20 @@
         }
         .progress-track-inner {
             position: absolute; left: 0; right: 0; height: 4px;
-            background: rgba(255,255,255,0.25); border-radius: 2px;
+            background: rgba(0,220,255,0.2); border-radius: 2px;
         }
         .progress-fill {
-            height: 4px; background: #fff; border-radius: 2px;
-            width: 0%; position: relative; pointer-events: none;
+            height: 4px; background: linear-gradient(90deg,#00aaff,#00ffee);
+            border-radius: 2px; width: 0%; position: relative; pointer-events: none;
             transition: width 0.15s linear;
+            box-shadow: 0 0 6px rgba(0,220,255,0.5);
         }
         .progress-thumb {
             position: absolute; top: 50%; right: -7px;
             transform: translateY(-50%);
-            width: 14px; height: 14px; background: #fff;
+            width: 14px; height: 14px; background: #00dcff;
             border-radius: 50%; pointer-events: none;
-            box-shadow: 0 0 5px rgba(0,0,0,0.4);
+            box-shadow: 0 0 8px rgba(0,220,255,0.7);
             transition: transform 0.12s, background 0.12s;
         }
         .progress-track:hover .progress-thumb {
@@ -168,10 +171,10 @@
         }
         .progress-track.dragging .progress-thumb {
             transform: translateY(-50%) scale(1.6);
-            background: #ff6eb4;
+            background: #00ffee;
         }
         .progress-track.dragging .progress-fill {
-            background: #ff6eb4;
+            background: linear-gradient(90deg,#00ffee,#00aaff);
         }
         .controls-row { display: flex; justify-content: center; align-items: center; gap: 24px; }
         .ctrl-btn {
@@ -188,49 +191,39 @@
         }
         .play-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.06); }
 
-        /* LYRIC BOX */
-        .lyric-box {
-            margin-top: 12px;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease;
-        }
-        .lyric-box.open { max-height: 220px; }
-        .lyric-inner {
-            height: 200px; overflow-y: auto;
-            padding: 8px 4px;
-            scrollbar-width: none;
-        }
-        .lyric-inner::-webkit-scrollbar { display: none; }
-
-        /* Bouncing ball trên lyric đang hát */
-        .lyric-line {
-            font-family: 'VT323', monospace;
-            font-size: 15px;
-            line-height: 1.8;
-            opacity: 0.45;
-            transition: opacity 0.3s, color 0.3s;
-            text-align: center;
-            padding: 1px 0;
-            position: relative;
-        }
-        .lyric-line.active {
-            opacity: 1;
-            color: #ff6eb4;
-        }
-        .lyric-line.active::before {
-            content: '●';
-            position: absolute;
+        /* SUBTITLE LYRIC - ngoài card */
+        #subtitle-wrap {
+            position: fixed;
+            bottom: 38px;
             left: 50%;
             transform: translateX(-50%);
-            top: -16px;
-            font-size: 9px;
-            color: #ff6eb4;
-            animation: bounce 0.5s infinite alternate;
+            width: 100%;
+            max-width: 560px;
+            text-align: center;
+            pointer-events: none;
+            z-index: 999;
+            padding: 0 20px;
         }
-        @keyframes bounce {
-            from { transform: translateX(-50%) translateY(0px); }
-            to   { transform: translateX(-50%) translateY(-5px); }
+        #subtitle-text {
+            display: inline-block;
+            font-family: 'VT323', monospace;
+            font-size: 22px;
+            color: #fff;
+            text-shadow: 0 0 12px rgba(0,220,255,0.9), 0 2px 8px rgba(0,0,0,0.9);
+            background: rgba(5,15,35,0.55);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(0,220,255,0.25);
+            border-radius: 12px;
+            padding: 6px 18px;
+            letter-spacing: 0.5px;
+            opacity: 0;
+            transform: scale(0.85) translateY(10px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            max-width: 100%;
+        }
+        #subtitle-text.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
         }
 
         /* OFFSET ADJUSTER */
@@ -239,12 +232,12 @@
             gap: 8px; padding: 6px 0 4px;
         }
         .offset-btn {
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(0,180,255,0.1); border: 1px solid rgba(0,220,255,0.3);
             color: #fff; border-radius: 6px; width: 26px; height: 22px;
             font-size: 14px; display: flex; align-items: center; justify-content: center;
             transition: background 0.15s;
         }
-        .offset-btn:hover { background: rgba(255,255,255,0.22); }
+        .offset-btn:hover { background: rgba(0,220,255,0.22); }
 
         .yt-container {
             position: fixed; bottom: 0; left: -9999px;
@@ -342,19 +335,20 @@
             <button class="ctrl-btn" onclick="nextSong()"><i class="fa-solid fa-forward-step"></i></button>
         </div>
 
-        <!-- LYRIC BOX -->
-        <div class="lyric-box" id="lyric-box">
-            <!-- Offset adjuster -->
-            <div class="offset-row">
-                <span style="font-size:11px;opacity:0.55;">sync:</span>
-                <button class="offset-btn" onclick="adjustOffset(-0.5)">－</button>
-                <span id="offset-display" style="font-family:'VT323',monospace;font-size:14px;min-width:36px;text-align:center;">0.0s</span>
-                <button class="offset-btn" onclick="adjustOffset(+0.5)">＋</button>
-            </div>
-            <div class="lyric-inner" id="lyric-inner"></div>
+        <!-- OFFSET ADJUSTER (ẩn trong lyric toggle) -->
+        <div class="offset-row" id="offset-row" style="display:none;">
+            <span style="font-size:11px;opacity:0.55;">sync:</span>
+            <button class="offset-btn" onclick="adjustOffset(-0.5)">－</button>
+            <span id="offset-display" style="font-family:'VT323',monospace;font-size:14px;min-width:36px;text-align:center;">0.0s</span>
+            <button class="offset-btn" onclick="adjustOffset(+0.5)">＋</button>
         </div>
     </div>
 
+</div>
+
+<!-- SUBTITLE ngoài card -->
+<div id="subtitle-wrap">
+    <span id="subtitle-text"></span>
 </div>
 
 <div class="yt-container">
@@ -639,22 +633,36 @@ let progressTimer = null;
 let lyricOpen = false;
 let activeLyricIdx = -1;
 
+const subtitleEl = document.getElementById('subtitle-text');
+let subtitleHideTimer = null;
+
 function toggleLyric() {
     lyricOpen = !lyricOpen;
-    document.getElementById('lyric-box').classList.toggle('open', lyricOpen);
-    if (lyricOpen) renderLyrics();
+    const row = document.getElementById('offset-row');
+    if (row) row.style.display = lyricOpen ? 'flex' : 'none';
+    if (!lyricOpen) {
+        subtitleEl.classList.remove('show');
+        activeLyricIdx = -1;
+    }
 }
 
-function renderLyrics() {
-    const inner = document.getElementById('lyric-inner');
-    const lines = LYRICS[currentSong] || [];
-    inner.innerHTML = lines.map((l, i) =>
-        `<div class="lyric-line" id="ll${i}">${l[1]}</div>`
-    ).join('');
-    activeLyricIdx = -1;
+function showSubtitle(text) {
+    clearTimeout(subtitleHideTimer);
+    subtitleEl.classList.remove('show');
+    subtitleEl.textContent = text;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        subtitleEl.classList.add('show');
+    }));
+}
+
+function hideSubtitle() {
+    subtitleHideTimer = setTimeout(() => {
+        subtitleEl.classList.remove('show');
+    }, 1800);
 }
 
 function updateLyric(currentTime) {
+    if (!lyricOpen) return;
     const lines = LYRICS[currentSong] || [];
     if (!lines.length) return;
     let idx = -1;
@@ -663,12 +671,15 @@ function updateLyric(currentTime) {
     }
     if (idx === activeLyricIdx) return;
     activeLyricIdx = idx;
-    document.querySelectorAll('.lyric-line').forEach((el, i) => {
-        el.classList.toggle('active', i === idx);
-    });
     if (idx >= 0) {
-        const activeEl = document.getElementById('ll' + idx);
-        if (activeEl) activeEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        const nextT = lines[idx + 1] ? lines[idx + 1][0] : null;
+        showSubtitle(lines[idx][1]);
+        if (nextT) {
+            const gap = nextT - lines[idx][0];
+            if (gap > 3) hideSubtitle();
+        }
+    } else {
+        subtitleEl.classList.remove('show');
     }
 }
 
@@ -748,7 +759,8 @@ function updateDisplay() {
     document.getElementById('progress-fill').style.width = '0%';
     document.getElementById('time-current').textContent = '00:00';
     document.getElementById('time-total').textContent = '00:00';
-    if (lyricOpen) renderLyrics();
+    activeLyricIdx = -1;
+    subtitleEl.classList.remove('show');
 }
 
 function startTimer() {

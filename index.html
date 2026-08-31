@@ -14,7 +14,7 @@
             -ms-user-select: none; user-select: none;
         }
         body {
-            background: url('https://cdn.discordapp.com/attachments/1524246966777675828/1543313588624560249/tiktok_7521722474061466888-ezgif.com-video-to-gif-converter.gif?ex=6a946a48&is=6a9318c8&hm=67515bf942a1acc2c9091465d053fbfe5baaf2d91c4f42bfe3bb887abc0bd0a4&') no-repeat center center fixed;
+            background: url('bg.gif') no-repeat center center fixed;
             background-size: cover;
             font-family: 'Inter', sans-serif;
             display: flex; justify-content: center; align-items: center;
@@ -226,6 +226,7 @@
             transform: scale(1) translateY(0);
         }
 
+        /* OFFSET ADJUSTER */
         .offset-row {
             display: flex; align-items: center; justify-content: center;
             gap: 8px; padding: 6px 0 4px;
@@ -255,7 +256,7 @@
 
     <div class="profile-area">
         <div class="avatar-wrap">
-            <img class="avatar" src="https://i.postimg.cc/W1fMSC61/1788024223506-1270636166193830298-1270636166193830298-54cd274eb289c64e09ea3cc9eb61817a.jpg" alt="Avatar">
+            <img class="avatar" src="avatar.png" alt="Avatar">
             <div class="online-dot"></div>
         </div>
         <div class="name-row">
@@ -776,7 +777,7 @@ function adjustOffset(delta) {
     LYRICS[currentSong] = LYRICS_RAW[currentSong].map(([t, l]) => [t + OFFSETS[currentSong], l]);
     document.getElementById('offset-display').textContent =
         (OFFSETS[currentSong] >= 0 ? '+' : '') + OFFSETS[currentSong].toFixed(1) + 's';
-    activeLyricIdx = -1;
+    activeLyricIdx = -1; // force re-highlight
 }
 
 const tag = document.createElement('script');

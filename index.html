@@ -226,7 +226,6 @@
             transform: scale(1) translateY(0);
         }
 
-        /* OFFSET ADJUSTER */
         .offset-row {
             display: flex; align-items: center; justify-content: center;
             gap: 8px; padding: 6px 0 4px;
@@ -355,6 +354,8 @@
     <div id="player0"></div>
     <div id="player1"></div>
     <div id="player2"></div>
+    <div id="player3"></div>
+    <div id="player4"></div>
 </div>
 
 <script>
@@ -611,21 +612,108 @@ const LYRICS_RAW = [
         [192.8,"Trắng hơn"],
         [197.7,"Trắng hơn"],
     ],
+    [
+        [15.5, "Thương lắm con sông với hàng dừa mộng xanh"],
+        [19.2, "Câu hứa năm xưa trong một chiều chơi mưa"],
+        [24.3, "Em nói em thương anh nhiều, thương em, anh tin rất nhiều"],
+        [27,   "Nhưng đời không như giấc mơ đẹp, em rời xa chốn đây"],
+        [30.5, "Một, hai, em muốn bước lên đô thành vì em đã nghe câu chuyện"],
+        [34.4, "Vài người trong xóm nói em sao xinh đẹp, sao ở quê làm gì?"],
+        [38.5, "Làm em cứ thêm những mơ mộng, em muốn cách xa nơi này"],
+        [42.6, "Bỏ lại anh với tiếng yêu thương nồng say"],
+        [45.3, "Anh đã chạy theo đến tàn kiệt ngày em hành trang bước đi"],
+        [49,   "Mặt hồ vẫn trĩu bóng người nhưng cũng muốn em ơi ở lại"],
+        [52.7, "Sẽ không còn những cánh diều, những buổi chiều tung tăng với mây"],
+        [56.8, "Gió kêu gào, em ơi, xin hãy quay về"],
+        [60.5, "Ai cũng phải có khát vọng trong cuộc sống này phải không em?"],
+        [64.2, "Để lại tất cả nỗi buồn ở đằng sau em lạnh lùng quên"],
+        [68,   "Quên đi những ký ức đẹp, quên cả luôn nơi em lớn lên"],
+        [71.9, "Nơi đây không thuộc về em nữa, phải không em?"],
+        [94.3, "Thấm thoát đã ba năm, đi đâu mà xa xăm"],
+        [97.9, "Tin em về thăm quê, ra mắt ai với mẹ, cha em"],
+        [101.7,"Trông ngóng chờ đợi, nhung nhớ một thời"],
+        [105.6,"Giờ trên tay anh tấm thiệp cưới"],
+        [108.7,"Ngày xưa em muốn bước lên đô thành vì em đã nghe câu chuyện"],
+        [112.5,"Vài người trong xóm nói em sao xinh đẹp, sao ở quê làm gì?"],
+        [116.8,"Làm em cứ thêm những mơ mộng, em muốn cách xa nơi này"],
+        [120.6,"Bỏ lại anh với tiếng yêu thương nồng say"],
+        [123.7,"Anh đã chạy theo đến tàn kiệt ngày em hành trang bước đi"],
+        [127.5,"Mặt hồ vẫn trĩu bóng người nhưng cũng muốn em ơi ở lại"],
+        [130.9,"Sẽ không còn những cánh diều, những buổi chiều tung tăng với mây"],
+        [134.9,"Gió kêu gào, em ơi, xin hãy quay về"],
+        [138.6,"Ai cũng phải có khát vọng trong cuộc sống này phải không em?"],
+        [142.4,"Để lại tất cả nỗi buồn ở đằng sau em lạnh lùng quên"],
+        [146.3,"Quên đi những ký ức đẹp, quên cả luôn nơi em lớn lên"],
+        [150.1,"Nơi đây không thuộc về em nữa, phải không em?"],
+        [156,  "Anh đã chạy theo đến tàn kiệt ngày em hành trang bước đi"],
+        [159.6,"Mặt hồ vẫn trĩu bóng người nhưng cũng muốn em ơi ở lại"],
+        [163.5,"Sẽ không còn những cánh diều, những buổi chiều tung tăng với mây"],
+        [167.2,"Gió kêu gào, em ơi, xin hãy quay về"],
+        [171.3,"Ai cũng phải có khát vọng trong cuộc sống này phải không em?"],
+        [174.7,"Để lại tất cả nỗi buồn ở đằng sau em lạnh lùng quên"],
+        [178.5,"Quên đi những ký ức đẹp, quên cả luôn nơi em lớn lên"],
+        [182.4,"Nơi đây không thuộc về em nữa, phải không em?"],
+    ],
+    [
+        [21.6, "Mùa xuân có em như chưa bắt đầu"],
+        [27.2, "Và cơn gió như khẽ mơn man lay từng nhành hoa rơi"],
+        [32.7, "Em đã bước tới như em đã từng"],
+        [38.3, "Chạy trốn với anh trên cánh đồng xanh"],
+        [42.6, "Khúc nhạc hoà cùng nắng chiều dịu dàng để mình gần lại mãi"],
+        [48.1, "Nói lời thì thầm những điều thật thà đã giữ trong tim mình"],
+        [53.6, "Những chặng đường dài ngỡ mình mệt nhoài đã một lần gục ngã"],
+        [59.1, "Tháng tư có em ở đây nhìn tôi mỉm cười"],
+        [64.3, "Những cánh hoa phai tàn thật nhanh"],
+        [66.7, "Em có bay xa em có đi xa mãi"],
+        [69.8, "Tháng tư đôi khi thật mong manh"],
+        [72.1, "Để mình nói ra những câu chân thật"],
+        [75.2, "Giá như tôi một lần tin em"],
+        [77.8, "Cô gái tôi thương nay hoá theo mây gió"],
+        [81.2, "Để lại tháng tư ở đó"],
+        [101.7,"Mùa xuân mất em như đã bắt đầu"],
+        [107.2,"Và cơn gió như khẽ vô tình lay từng nhành hoa rơi"],
+        [112.7,"Em vội xa khuất theo tia nắng chiều"],
+        [118.2,"Để lại dấu chân giữa cánh đồng xanh"],
+        [122.8,"Khúc nhạc thầm lặng giữa chiều muộn màng để mình gần lại mãi"],
+        [128,  "Nói lời thì thầm những điều thật thà đã giữ trong tim mình"],
+        [133.8,"Những chặng đường dài ngỡ mình mệt nhoài đã một lần gục ngã"],
+        [139.2,"Tháng tư ánh sao phía xa bỗng nhiên dần tàn"],
+        [144.7,"Những cánh hoa phai tàn thật nhanh"],
+        [146.7,"Em có bay xa em có đi xa mãi"],
+        [149.8,"Tháng tư đôi khi thật mong manh"],
+        [152.2,"Để mình nói ra những câu chân thật"],
+        [155.2,"Giá như tôi một lần tin em"],
+        [157.4,"Cô gái tôi thương nay hoá theo mây gió"],
+        [161.1,"Để lại tháng tư ở đó"],
+        [196.9,"Và tôi sẽ sống như những gì em thầm mơ"],
+        [201.3,"Và tôi sẽ bước tiếp trên con đường mình đã chọn"],
+        [207.7,"Và khi tôi chết sẽ mỉm cười khi gặp em"],
+        [212.3,"Khẽ chào cô gái tháng tư của tôi"],
+        [217.5,"Những kỉ niệm phai tàn thật nhanh"],
+        [219.6,"Em đã bay xa em đã đi xa mãi"],
+        [222.7,"Tháng tư đôi khi thật mong manh"],
+        [228.4,"Giá như tôi một lần tin em"],
+        [230.6,"Cô gái tôi thương nay hoá theo mây gió"],
+        [234.1,"Để lại tháng tư xa mãi"],
+        [240.4,"Để lại tháng tư mình anh"],
+    ],
 ];
 
-const OFFSETS = [0, 0, 0];
+const OFFSETS = [0, 0, 0, 0, 0];
 
 let LYRICS = LYRICS_RAW.map((song, si) =>
     song.map(([t, l]) => [t + OFFSETS[si], l])
 );
 
 const SONGS = [
-    { title: 'Nơi Này Có Anh', ytId: 'v9GlvPzvprg' },
-    { title: 'Không Buông',    ytId: '59YbarIOuY0' },
-    { title: 'Điểm Đến Cuối Cùng', ytId: 'b-kllJ9c3l4' },
+    { title: 'Nơi Này Có Anh',               ytId: 'v9GlvPzvprg' },
+    { title: 'Không Buông',                   ytId: '59YbarIOuY0' },
+    { title: 'Điểm Đến Cuối Cùng',            ytId: 'b-kllJ9c3l4' },
+    { title: 'Em Ơi Lên Phố',                 ytId: 'FeylI_WT-gg' },
+    { title: 'Tháng Tư Là Lời Nói Dối Của Em', ytId: 'Tf1gJogknlg' },
 ];
 
-let currentSong = 0;
+let currentSong = 1;
 let players = [];
 let activePlayer = null;
 let playing = false;
@@ -688,7 +776,7 @@ function adjustOffset(delta) {
     LYRICS[currentSong] = LYRICS_RAW[currentSong].map(([t, l]) => [t + OFFSETS[currentSong], l]);
     document.getElementById('offset-display').textContent =
         (OFFSETS[currentSong] >= 0 ? '+' : '') + OFFSETS[currentSong].toFixed(1) + 's';
-    activeLyricIdx = -1; // force re-highlight
+    activeLyricIdx = -1;
 }
 
 const tag = document.createElement('script');

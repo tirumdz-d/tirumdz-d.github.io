@@ -32,17 +32,17 @@
             pointer-events: none; z-index: 99998; transform: translate(-50%,-50%);
             transition: width 0.2s, height 0.2s, border-color 0.2s;
         }
-        body.hovering #cursor-ring { width: 44px; height: 44px; border-color: rgba(255,255,255,0.9); }
-        body.hovering #cursor-dot { background: #ff6eb4; box-shadow: 0 0 10px rgba(255,110,180,0.9); }
+        body.hovering #cursor-ring { width: 44px; height: 44px; border-color: rgba(255,180,50,0.9); }
+        body.hovering #cursor-dot { background: #ffb830; box-shadow: 0 0 10px rgba(255,180,30,0.9); }
         a, button, .play-btn, .ctrl-btn, .progress-track, .social-btn, .lyric-toggle { cursor: none !important; }
 
         .card {
             width: 100%; max-width: 480px;
-            background: rgba(10,25,50,0.78);
+            background: rgba(25,14,3,0.82);
             backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-            border: 1.5px solid rgba(0,220,255,0.25);
+            border: 1.5px solid rgba(255,160,30,0.3);
             border-radius: 22px; overflow: hidden;
-            color: #fff; box-shadow: 0 12px 40px rgba(0,180,255,0.15);
+            color: #fff; box-shadow: 0 12px 40px rgba(180,80,0,0.25);
         }
         .banner { width: 100%; height: 120px; object-fit: cover; display: block; }
         .profile-area { padding: 0 22px 8px; position: relative; }
@@ -52,14 +52,14 @@
         }
         .avatar {
             width: 86px; height: 86px; border-radius: 50%;
-            border: 3px solid rgba(0,220,255,0.6);
-            object-fit: cover; display: block; background: #0a1932;
-            box-shadow: 0 0 14px rgba(0,220,255,0.35);
+            border: 3px solid rgba(255,160,30,0.7);
+            object-fit: cover; display: block; background: #1a0a00;
+            box-shadow: 0 0 14px rgba(255,150,20,0.4);
         }
         .online-dot {
             position: absolute; bottom: 5px; right: 5px;
             width: 14px; height: 14px; background: #43b581;
-            border-radius: 50%; border: 2.5px solid rgba(10,25,50,1);
+            border-radius: 50%; border: 2.5px solid rgba(25,14,3,1);
         }
         .name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
         .name { font-family: 'VT323', monospace; font-size: 34px; letter-spacing: 1px; }
@@ -68,44 +68,44 @@
         .social-row {
             display: flex; justify-content: center; gap: 14px;
             padding: 10px 22px 14px;
-            border-bottom: 1px solid rgba(0,220,255,0.15);
+            border-bottom: 1px solid rgba(255,150,20,0.15);
         }
         .social-btn {
             width: 42px; height: 42px; border-radius: 50%;
-            border: 1.5px solid rgba(0,220,255,0.4);
+            border: 1.5px solid rgba(255,150,20,0.45);
             display: flex; align-items: center; justify-content: center;
             color: #fff; text-decoration: none; font-size: 17px;
-            transition: all 0.2s; background: rgba(0,180,255,0.08);
+            transition: all 0.2s; background: rgba(200,100,0,0.1);
         }
-        .social-btn:hover { background: rgba(0,220,255,0.2); transform: scale(1.1); box-shadow: 0 0 12px rgba(0,220,255,0.3); }
+        .social-btn:hover { background: rgba(255,150,20,0.25); transform: scale(1.1); box-shadow: 0 0 12px rgba(255,150,20,0.35); }
 
         .section {
-            margin: 12px 14px; border: 1px solid rgba(0,220,255,0.18);
-            border-radius: 14px; padding: 13px; background: rgba(0,10,30,0.3);
+            margin: 12px 14px; border: 1px solid rgba(255,150,20,0.2);
+            border-radius: 14px; padding: 13px; background: rgba(20,8,0,0.35);
         }
         .discord-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
         .discord-avatar {
             width: 44px; height: 44px; border-radius: 50%;
-            background: linear-gradient(135deg,#0099cc,#0044aa);
+            background: linear-gradient(135deg,#c87800,#8b4500);
             display: flex; align-items: center; justify-content: center;
             font-size: 20px; position: relative; flex-shrink: 0;
-            box-shadow: 0 0 10px rgba(0,180,255,0.3);
+            box-shadow: 0 0 10px rgba(200,120,0,0.3);
         }
         .discord-status-dot {
             position: absolute; bottom: 1px; right: 1px;
             width: 11px; height: 11px; background: #43b581;
-            border-radius: 50%; border: 2px solid rgba(10,25,50,1);
+            border-radius: 50%; border: 2px solid rgba(25,14,3,1);
         }
         .discord-info { flex: 1; min-width: 0; }
         .discord-name { font-family: 'VT323',monospace; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .discord-activity { font-family: 'VT323',monospace; font-size: 13px; opacity: 0.6; }
         .discord-add-btn {
-            border: 1.5px solid rgba(0,220,255,0.5); border-radius: 20px;
-            padding: 5px 13px; font-size: 12px; color: #00dcff; cursor: pointer;
+            border: 1.5px solid rgba(255,160,30,0.55); border-radius: 20px;
+            padding: 5px 13px; font-size: 12px; color: #ffb830; cursor: pointer;
             background: transparent; font-family: 'Inter',sans-serif;
             white-space: nowrap; transition: background 0.2s;
         }
-        .discord-add-btn:hover { background: rgba(0,220,255,0.12); }
+        .discord-add-btn:hover { background: rgba(255,150,20,0.15); }
         .copy-notif { display: none; font-size: 12px; color: #43b581; text-align: center; margin-top: 5px; }
         .discord-divider { border: none; border-top: 1px solid rgba(255,255,255,0.12); margin: 10px 0; }
         .status-box-inner { display: flex; align-items: flex-start; gap: 10px; }
@@ -150,20 +150,20 @@
         }
         .progress-track-inner {
             position: absolute; left: 0; right: 0; height: 4px;
-            background: rgba(0,220,255,0.2); border-radius: 2px;
+            background: rgba(255,150,20,0.25); border-radius: 2px;
         }
         .progress-fill {
-            height: 4px; background: linear-gradient(90deg,#00aaff,#00ffee);
+            height: 4px; background: linear-gradient(90deg,#f0a500,#ff6a00);
             border-radius: 2px; width: 0%; position: relative; pointer-events: none;
             transition: width 0.15s linear;
-            box-shadow: 0 0 6px rgba(0,220,255,0.5);
+            box-shadow: 0 0 6px rgba(255,160,30,0.55);
         }
         .progress-thumb {
             position: absolute; top: 50%; right: -7px;
             transform: translateY(-50%);
-            width: 14px; height: 14px; background: #00dcff;
+            width: 14px; height: 14px; background: #ffb830;
             border-radius: 50%; pointer-events: none;
-            box-shadow: 0 0 8px rgba(0,220,255,0.7);
+            box-shadow: 0 0 8px rgba(255,150,20,0.75);
             transition: transform 0.12s, background 0.12s;
         }
         .progress-track:hover .progress-thumb {
@@ -171,10 +171,10 @@
         }
         .progress-track.dragging .progress-thumb {
             transform: translateY(-50%) scale(1.6);
-            background: #00ffee;
+            background: #ffcc40;
         }
         .progress-track.dragging .progress-fill {
-            background: linear-gradient(90deg,#00ffee,#00aaff);
+            background: linear-gradient(90deg,#ff8c00,#f0a500);
         }
         .controls-row { display: flex; justify-content: center; align-items: center; gap: 24px; }
         .ctrl-btn {
@@ -209,10 +209,10 @@
             font-family: 'VT323', monospace;
             font-size: 22px;
             color: #fff;
-            text-shadow: 0 0 12px rgba(0,220,255,0.9), 0 2px 8px rgba(0,0,0,0.9);
-            background: rgba(5,15,35,0.55);
+            text-shadow: 0 0 12px rgba(255,160,30,0.95), 0 2px 8px rgba(0,0,0,0.9);
+            background: rgba(20,10,0,0.6);
             backdrop-filter: blur(6px);
-            border: 1px solid rgba(0,220,255,0.25);
+            border: 1px solid rgba(255,160,30,0.3);
             border-radius: 12px;
             padding: 6px 18px;
             letter-spacing: 0.5px;
@@ -232,7 +232,7 @@
             gap: 8px; padding: 6px 0 4px;
         }
         .offset-btn {
-            background: rgba(0,180,255,0.1); border: 1px solid rgba(0,220,255,0.3);
+            background: rgba(200,100,0,0.12); border: 1px solid rgba(255,150,20,0.35);
             color: #fff; border-radius: 6px; width: 26px; height: 22px;
             font-size: 14px; display: flex; align-items: center; justify-content: center;
             transition: background 0.15s;
@@ -760,15 +760,23 @@ function updateLyric(currentTime) {
     }
     if (idx === activeLyricIdx) return;
     activeLyricIdx = idx;
-    if (idx >= 0) {
-        const nextT = lines[idx + 1] ? lines[idx + 1][0] : null;
-        showSubtitle(lines[idx][1]);
-        if (nextT) {
-            const gap = nextT - lines[idx][0];
-            if (gap > 3) hideSubtitle();
-        }
-    } else {
+    clearTimeout(subtitleHideTimer);
+
+    if (idx < 0) {
         subtitleEl.classList.remove('show');
+        return;
+    }
+
+    const nextT = lines[idx + 1] ? lines[idx + 1][0] : null;
+    const curT  = lines[idx][0];
+    const gap   = nextT ? nextT - curT : 999;
+
+    showSubtitle(lines[idx][1]);
+
+    if (gap > 2.5) {
+        subtitleHideTimer = setTimeout(() => {
+            subtitleEl.classList.remove('show');
+        }, Math.min(gap * 800, 3000));
     }
 }
 

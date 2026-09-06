@@ -479,7 +479,6 @@
 
 </div>
 
-<!-- SUBTITLE ngoài card -->
 <div id="subtitle-wrap">
     <span id="subtitle-text"></span>
 </div>
@@ -526,7 +525,7 @@ async function loadLanyard() {
             actName.textContent = '🎵 ' + spotify.song;
             actDet.textContent  = 'by ' + spotify.artist;
             actStat.textContent = 'on ' + spotify.album;
-            actEl.textContent   = 'Nghe Spotify 🎵';
+            actEl.textContent   = ' Music🎵';
         } else if (acts.length > 0) {
             const a = acts[0];
             actBox.style.display = 'block';
@@ -1112,7 +1111,6 @@ document.querySelectorAll('a,button,.play-btn,.ctrl-btn,.progress-track,.social-
 document.addEventListener('mouseleave', () => { dot.style.opacity='0'; ring.style.opacity='0'; });
 document.addEventListener('mouseenter', () => { dot.style.opacity='1'; ring.style.opacity='1'; });
 
-// ===== TYPING EFFECT =====
 (function typeText() {
     const el = document.getElementById('bio-text');
     const text = '- .... .. ... / .. ... / -- -.-- / ... .- ..-. . / ... .--. .- -.-. . / .-- . .-.. -.-. --- -- . / - --- / .. - ❤️';
@@ -1125,14 +1123,25 @@ document.addEventListener('mouseenter', () => { dot.style.opacity='1'; ring.styl
 })();
 
 (async function loadViews() {
+    const visited = localStorage.getItem('bio_visited');
     try {
-        const r = await fetch('https://api.countapi.xyz/hit/tirumdz-d.github.io/visits');
-        const d = await r.json();
-        document.getElementById('view-count').textContent = d.value.toLocaleString();
+        if (!visited) {
+            const r = await fetch('https://api.countapi.xyz/hit/tirumdz-d.github.io/visits');
+            const d = await r.json();
+            document.getElementById('view-count').textContent = d.value.toLocaleString();
+            localStorage.setItem('bio_visited', '1');
+        } else {
+            const r = await fetch('https://api.countapi.xyz/get/tirumdz-d.github.io/visits');
+            const d = await r.json();
+            document.getElementById('view-count').textContent = d.value.toLocaleString();
+        }
     } catch {
-        const v = (parseInt(localStorage.getItem('v') || '0') + 1);
-        localStorage.setItem('v', v);
-        document.getElementById('view-count').textContent = v.toLocaleString();
+        const v = parseInt(localStorage.getItem('v') || '0');
+        if (!visited) {
+            localStorage.setItem('v', v + 1);
+            localStorage.setItem('bio_visited', '1');
+        }
+        document.getElementById('view-count').textContent = (v + (visited ? 0 : 1)).toLocaleString();
     }
 })();
 
@@ -1145,7 +1154,6 @@ function updateClock() {
 updateClock();
 setInterval(updateClock, 10000);
 
-// ===== TOAST =====
 function showToast(msg) {
     const t = document.getElementById('toast');
     document.getElementById('toast-text').textContent = msg;
@@ -1153,7 +1161,6 @@ function showToast(msg) {
     setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-// ===== RIPPLE EFFECT =====
 function addRipple(el, e) {
     el.classList.add('ripple-host');
     const wave = document.createElement('div');

@@ -270,74 +270,94 @@
         .vol-track:hover .vol-thumb { transform: translateY(-50%) scale(1.3); }
         .vol-pct { font-family: 'VT323',monospace; font-size: 13px; opacity: 0.55; min-width: 30px; text-align: right; }
 
-        /* SUBTITLE nâng cấp */
-        #subtitle-text {
-            display: inline-block;
-            font-family: 'VT323', monospace;
-            font-size: 24px;
-            color: #fff;
-            text-shadow: 0 0 16px rgba(255,160,30,0.95), 0 2px 10px rgba(0,0,0,0.95);
-            background: rgba(20,10,0,0.65);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,160,30,0.35);
-            border-radius: 14px;
-            padding: 7px 20px;
-            letter-spacing: 0.5px;
-            opacity: 0;
-            pointer-events: none;
-        }
-        #subtitle-text.show {
-            animation: subtitleIn 0.4s cubic-bezier(0.34,1.4,0.64,1) forwards;
-        }
-        #subtitle-text.hide {
-            animation: subtitleOut 0.35s ease forwards;
-        }
-        #subtitle-wrap {
-            position: fixed;
-            bottom: 38px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 560px;
-            text-align: center;
-            pointer-events: none;
-            z-index: 999;
-            padding: 0 20px;
-        }
-        #subtitle-text {
-            display: inline-block;
-            font-family: 'VT323', monospace;
-            font-size: 22px;
-            color: #fff;
-            text-shadow: 0 0 12px rgba(255,160,30,0.95), 0 2px 8px rgba(0,0,0,0.9);
-            background: rgba(20,10,0,0.6);
-            backdrop-filter: blur(6px);
-            border: 1px solid rgba(255,160,30,0.3);
-            border-radius: 12px;
-            padding: 6px 18px;
-            letter-spacing: 0.5px;
-            opacity: 0;
-            transform: scale(0.85) translateY(10px);
-            transition: opacity 0.25s ease, transform 0.25s ease;
-            max-width: 100%;
-        }
-        #subtitle-text.show {
-            opacity: 1;
-            transform: scale(1) translateY(0);
+        /* VIEWS BADGE */
+        .views-badge {
+            margin-top: 18px;
+            font-size: 12px; opacity: 0.55;
+            display: flex; align-items: center; gap: 5px;
+            font-family: 'VT323',monospace; font-size: 15px;
+            animation: fadeInScale 0.5s 0.3s both;
         }
 
-        /* OFFSET ADJUSTER */
-        .offset-row {
-            display: flex; align-items: center; justify-content: center;
-            gap: 8px; padding: 6px 0 4px;
+        /* RIPPLE */
+        .ripple-host { position: relative; overflow: hidden; }
+        @keyframes ripple {
+            to { transform: scale(4); opacity: 0; }
         }
-        .offset-btn {
-            background: rgba(200,100,0,0.12); border: 1px solid rgba(255,150,20,0.35);
-            color: #fff; border-radius: 6px; width: 26px; height: 22px;
-            font-size: 14px; display: flex; align-items: center; justify-content: center;
-            transition: background 0.15s;
+        .ripple-wave {
+            position: absolute; border-radius: 50%;
+            background: rgba(255,180,30,0.35);
+            width: 40px; height: 40px;
+            margin-left: -20px; margin-top: -20px;
+            animation: ripple 0.6s linear forwards;
+            pointer-events: none;
         }
-        .offset-btn:hover { background: rgba(0,220,255,0.22); }
+
+        /* PARTICLES */
+        #particles {
+            position: fixed; inset: 0;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,180,30,0.9) 0%, rgba(255,120,0,0.4) 60%, transparent 100%);
+            animation: floatUp linear infinite;
+            pointer-events: none;
+        }
+        @keyframes floatUp {
+            0%   { transform: translateY(0) scale(1); opacity: 0; }
+            10%  { opacity: 1; }
+            90%  { opacity: 0.6; }
+            100% { transform: translateY(-100vh) scale(0.3); opacity: 0; }
+        }
+
+        /* TOAST */
+        #toast {
+            position: fixed; top: 24px; left: 50%;
+            transform: translateX(-50%) translateY(-80px);
+            background: rgba(25,14,3,0.92);
+            border: 1px solid rgba(255,160,30,0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 12px; padding: 8px 20px;
+            font-family: 'VT323',monospace; font-size: 18px;
+            color: #ffb830; pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
+            opacity: 0;
+            white-space: nowrap;
+        }
+        #toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* CLOCK */
+        #clock-badge {
+            position: absolute; top: 14px; right: 0;
+            font-family: 'VT323',monospace; font-size: 14px;
+            opacity: 0.45; letter-spacing: 1px;
+        }
+
+        /* SUBTITLE (clean single definition) */
+        #subtitle-wrap {
+            position: fixed; bottom: 38px; left: 50%;
+            transform: translateX(-50%);
+            width: 100%; max-width: 580px;
+            text-align: center; pointer-events: none;
+            z-index: 999; padding: 0 20px;
+        }
+        #subtitle-text {
+            display: inline-block;
+            font-family: 'VT323', monospace; font-size: 24px; color: #fff;
+            text-shadow: 0 0 16px rgba(255,160,30,0.95), 0 2px 10px rgba(0,0,0,0.95);
+            background: rgba(20,10,0,0.65); backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,160,30,0.35);
+            border-radius: 14px; padding: 7px 20px;
+            letter-spacing: 0.5px; opacity: 0; pointer-events: none;
+        }
+        #subtitle-text.show { animation: subtitleIn 0.4s cubic-bezier(0.34,1.4,0.64,1) forwards; }
+        #subtitle-text.hide { animation: subtitleOut 0.35s ease forwards; }
 
         .yt-container {
             position: fixed; bottom: 0; left: -9999px;
@@ -349,21 +369,31 @@
 
 <div id="cursor-dot"></div>
 <div id="cursor-ring"></div>
+<div id="particles"></div>
+<div id="toast">🎵 <span id="toast-text"></span></div>
 
 <div class="card">
 
     <img class="banner" src="https://media1.tenor.com/m/2ZCW0X3e_UgAAAAd/hoshino-think-classes.gif" alt="Banner">
 
     <div class="profile-area">
-        <div class="avatar-wrap">
-            <img class="avatar" src="avatar.png" alt="Avatar">
-            <div class="online-dot"></div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;position:relative;">
+            <div class="avatar-wrap">
+                <img class="avatar" src="avatar.png" alt="Avatar">
+                <div class="online-dot"></div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;margin-top:18px;">
+                <div class="views-badge" id="views-badge">
+                    <i class="fa-regular fa-eye"></i> <span id="view-count">...</span>
+                </div>
+                <div id="clock-badge">🕐 <span id="clock-time">--:--</span></div>
+            </div>
         </div>
         <div class="name-row">
             <span class="name">Tirum</span>
             <i class="fa-regular fa-gem" style="font-size:15px;opacity:0.85;"></i>
         </div>
-        <p class="bio-text">Welcome to my space ✨</p>
+        <p class="bio-text" id="bio-text"></p>
     </div>
 
     <div class="social-row">
@@ -929,7 +959,7 @@ function nextSong() {
     currentSong = (currentSong + 1) % SONGS.length;
     activePlayer = players[currentSong];
     updateDisplay();
-    setTimeout(() => activePlayer && activePlayer.playVideo(), 300);
+    setTimeout(() => { activePlayer && activePlayer.playVideo(); showToast && showToast(SONGS[currentSong].title); }, 350);
 }
 
 function prevSong() {
@@ -937,7 +967,7 @@ function prevSong() {
     currentSong = (currentSong - 1 + SONGS.length) % SONGS.length;
     activePlayer = players[currentSong];
     updateDisplay();
-    setTimeout(() => activePlayer && activePlayer.playVideo(), 300);
+    setTimeout(() => { activePlayer && activePlayer.playVideo(); showToast && showToast(SONGS[currentSong].title); }, 350);
 }
 
 function stopCurrent() {
@@ -1081,6 +1111,89 @@ document.querySelectorAll('a,button,.play-btn,.ctrl-btn,.progress-track,.social-
 });
 document.addEventListener('mouseleave', () => { dot.style.opacity='0'; ring.style.opacity='0'; });
 document.addEventListener('mouseenter', () => { dot.style.opacity='1'; ring.style.opacity='1'; });
+
+// ===== TYPING EFFECT =====
+(function typeText() {
+    const el = document.getElementById('bio-text');
+    const text = '- .... .. ... / .. ... / -- -.-- / ... .- ..-. . / ... .--. .- -.-. . / .-- . .-.. -.-. --- -- . / - --- / .. - ❤️';
+    let i = 0;
+    el.textContent = '';
+    const t = setInterval(() => {
+        el.textContent += text[i++];
+        if (i >= text.length) clearInterval(t);
+    }, 60);
+})();
+
+(async function loadViews() {
+    try {
+        const r = await fetch('https://api.countapi.xyz/hit/tirumdz-d.github.io/visits');
+        const d = await r.json();
+        document.getElementById('view-count').textContent = d.value.toLocaleString();
+    } catch {
+        const v = (parseInt(localStorage.getItem('v') || '0') + 1);
+        localStorage.setItem('v', v);
+        document.getElementById('view-count').textContent = v.toLocaleString();
+    }
+})();
+
+function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    document.getElementById('clock-time').textContent = h + ':' + m;
+}
+updateClock();
+setInterval(updateClock, 10000);
+
+// ===== TOAST =====
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toast-text').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ===== RIPPLE EFFECT =====
+function addRipple(el, e) {
+    el.classList.add('ripple-host');
+    const wave = document.createElement('div');
+    wave.className = 'ripple-wave';
+    const rect = el.getBoundingClientRect();
+    wave.style.left = (e.clientX - rect.left) + 'px';
+    wave.style.top  = (e.clientY - rect.top) + 'px';
+    el.appendChild(wave);
+    setTimeout(() => wave.remove(), 650);
+}
+document.querySelectorAll('.social-btn, .play-btn, .ctrl-btn, .discord-add-btn').forEach(el => {
+    el.addEventListener('click', e => addRipple(el, e));
+});
+
+document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT') return;
+    if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+    if (e.code === 'ArrowRight' && !e.ctrlKey) nextSong();
+    if (e.code === 'ArrowLeft'  && !e.ctrlKey) prevSong();
+    if (e.code === 'ArrowUp')   { e.preventDefault(); setVolume(currentVolume + 5); }
+    if (e.code === 'ArrowDown') { e.preventDefault(); setVolume(currentVolume - 5); }
+    if (e.code === 'KeyL') toggleLyric();
+});
+
+(function spawnParticles() {
+    const container = document.getElementById('particles');
+    function spawn() {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = Math.random() * 5 + 2;
+        const x = Math.random() * 100;
+        const dur = Math.random() * 12 + 8;
+        const delay = Math.random() * 6;
+        p.style.cssText = `width:${size}px;height:${size}px;left:${x}%;bottom:-10px;animation-duration:${dur}s;animation-delay:${delay}s;opacity:0`;
+        container.appendChild(p);
+        setTimeout(() => p.remove(), (dur + delay) * 1000);
+    }
+    for (let i = 0; i < 18; i++) setTimeout(spawn, i * 400);
+    setInterval(spawn, 1200);
+})();
 </script>
 
 </body>

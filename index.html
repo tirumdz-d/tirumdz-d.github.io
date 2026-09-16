@@ -294,6 +294,172 @@
         }
 
         /* PARTICLES */
+        /* CURSOR TRAIL */
+        .trail-dot {
+            position: fixed;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,200,60,0.95) 0%, rgba(255,140,0,0.5) 60%, transparent 100%);
+            pointer-events: none;
+            z-index: 99990;
+            transform: translate(-50%,-50%);
+            animation: trailFade 0.7s ease-out forwards;
+        }
+        @keyframes trailFade {
+            0%   { opacity: 0.9; transform: translate(-50%,-50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%,-50%) scale(0.2) translateY(12px); }
+        }
+
+        /* CARD TILT 3D */
+        #card-wrap {
+            perspective: 1200px;
+            display: flex; justify-content: center; align-items: center;
+            width: 100%;
+        }
+        .card {
+            transform-style: preserve-3d;
+            transition: transform 0.15s ease-out;
+            will-change: transform;
+        }
+
+        /* RAIN OVERLAY */
+        #rain {
+            position: fixed; inset: 0;
+            pointer-events: none; z-index: 1; overflow: hidden;
+        }
+        .raindrop {
+            position: absolute;
+            width: 1.5px;
+            background: linear-gradient(to bottom, transparent, rgba(255,200,120,0.5), transparent);
+            animation: fall linear infinite;
+            pointer-events: none;
+        }
+        @keyframes fall {
+            0%   { transform: translateY(-120px); opacity: 0; }
+            10%  { opacity: 0.7; }
+            90%  { opacity: 0.5; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+
+        /* ===== INTRO OVERLAY ===== */
+        #intro {
+            position: fixed; inset: 0;
+            z-index: 100000;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(12,6,0,0.35);
+            backdrop-filter: blur(16px) saturate(1.2);
+            -webkit-backdrop-filter: blur(16px) saturate(1.2);
+            cursor: none;
+            transition: opacity 0.7s ease, backdrop-filter 0.7s ease, background 0.7s ease;
+        }
+        #intro.hiding {
+            opacity: 0;
+            backdrop-filter: blur(0) saturate(1);
+            -webkit-backdrop-filter: blur(0) saturate(1);
+            background: rgba(12,6,0,0);
+            pointer-events: none;
+        }
+        #intro-text {
+            font-family: 'Quicksand', 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: clamp(26px, 6vw, 46px);
+            letter-spacing: 2px;
+            color: #ffd88a;
+            text-align: center;
+            padding: 0 24px;
+            text-shadow:
+                0 0 8px rgba(255,190,70,0.9),
+                0 0 22px rgba(255,160,30,0.75),
+                0 0 48px rgba(255,130,0,0.5),
+                0 4px 18px rgba(0,0,0,0.7);
+            animation: introPulse 2.4s ease-in-out infinite, introIn 0.9s cubic-bezier(0.34,1.4,0.64,1) both;
+            user-select: none;
+        }
+        #intro-sub {
+            position: absolute;
+            bottom: 12%;
+            left: 0; right: 0;
+            text-align: center;
+            font-family: 'Quicksand', 'Inter', sans-serif;
+            font-size: 13px;
+            letter-spacing: 3px;
+            color: rgba(255,200,120,0.55);
+            text-shadow: 0 0 12px rgba(255,160,30,0.5);
+            animation: introIn 0.9s 0.35s both;
+        }
+        @keyframes introPulse {
+            0%,100% {
+                text-shadow:
+                    0 0 8px rgba(255,190,70,0.9),
+                    0 0 22px rgba(255,160,30,0.75),
+                    0 0 48px rgba(255,130,0,0.5),
+                    0 4px 18px rgba(0,0,0,0.7);
+                transform: scale(1);
+            }
+            50% {
+                text-shadow:
+                    0 0 14px rgba(255,210,110,1),
+                    0 0 38px rgba(255,175,45,0.95),
+                    0 0 78px rgba(255,140,0,0.7),
+                    0 4px 18px rgba(0,0,0,0.7);
+                transform: scale(1.035);
+            }
+        }
+        @keyframes introIn {
+            from { opacity: 0; transform: scale(0.8) translateY(14px); filter: blur(8px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+        }
+
+        /* Bio ẩn trước khi vào */
+        body.locked #card-wrap,
+        body.locked #subtitle-wrap { opacity: 0; pointer-events: none; }
+        #card-wrap, #subtitle-wrap { transition: opacity 0.6s ease; }
+
+        /* ===== BORDER CHẠY SÁNG ===== */
+        #card-wrap { position: relative; }
+        .card { position: relative; z-index: 1; }
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 24px;
+            padding: 2px;
+            background: conic-gradient(
+                from var(--beam-angle, 0deg),
+                transparent 0deg,
+                transparent 300deg,
+                rgba(255,180,50,0.15) 320deg,
+                rgba(255,200,90,0.75) 345deg,
+                #ffe4a8 356deg,
+                rgba(255,200,90,0.75) 366deg,
+                rgba(255,180,50,0.15) 388deg,
+                transparent 408deg,
+                transparent 360deg
+            );
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask-composite: exclude;
+            animation: beamSpin 4.5s linear infinite;
+            pointer-events: none;
+            z-index: 2;
+        }
+        @property --beam-angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+        @keyframes beamSpin {
+            to { --beam-angle: 360deg; }
+        }
+        /* fallback cho trình duyệt không hỗ trợ @property */
+        @supports not (background: conic-gradient(from var(--a,0deg), red, blue)) {
+            .card::before { animation: beamSpinFallback 4.5s linear infinite; }
+            @keyframes beamSpinFallback {
+                to { transform: rotate(360deg); }
+            }
+        }
+
         #particles {
             position: fixed; inset: 0;
             pointer-events: none; z-index: 0; overflow: hidden;
@@ -367,12 +533,18 @@
 </head>
 <body>
 
+<div id="intro">
+    <div id="intro-text">click anywhere</div>
+    <div id="intro-sub">to enter my space</div>
+</div>
+
 <div id="cursor-dot"></div>
 <div id="cursor-ring"></div>
 <div id="particles"></div>
+<div id="rain"></div>
 <div id="toast">🎵 <span id="toast-text"></span></div>
 
-<div class="card">
+<div id="card-wrap"><div class="card">
 
     <img class="banner" src="https://media1.tenor.com/m/2ZCW0X3e_UgAAAAd/hoshino-think-classes.gif" alt="Banner">
 
@@ -405,6 +577,9 @@
         </a>
         <a class="social-btn" href="#" title="Discord" onclick="copyDiscord(event)">
             <i class="fa-brands fa-discord"></i>
+        </a>
+        <a class="social-btn" href="#" title="Minigame" onclick="openGame(event)">
+            <i class="fa-solid fa-gamepad"></i>
         </a>
     </div>
 
@@ -479,6 +654,8 @@
 
 </div>
 
+</div>
+
 <div id="subtitle-wrap">
     <span id="subtitle-text"></span>
 </div>
@@ -492,6 +669,9 @@
 </div>
 
 <script>
+
+var entered = false;
+var playerReady = false;
 
 const DISCORD_ID = '1453967154901811341';
 const GITHUB_RAW = 'https://raw.githubusercontent.com/tirumdz-d/TirumBio.github.io/main/status.json';
@@ -525,7 +705,7 @@ async function loadLanyard() {
             actName.textContent = '🎵 ' + spotify.song;
             actDet.textContent  = 'by ' + spotify.artist;
             actStat.textContent = 'on ' + spotify.album;
-            actEl.textContent   = ' Music🎵';
+            actEl.textContent   = 'Nghe Spotify 🎵';
         } else if (acts.length > 0) {
             const a = acts[0];
             actBox.style.display = 'block';
@@ -924,7 +1104,8 @@ window.onYouTubeIframeAPIReady = function () {
                     if (i === currentSong) {
                         activePlayer = players[i];
                         updateDisplay();
-                        setTimeout(() => activePlayer.playVideo(), 800);
+                        playerReady = true;
+                        if (entered) activePlayer.playVideo();
                     }
                 },
                 onError: (e) => console.log('YT error', e.data),
@@ -1123,25 +1304,14 @@ document.addEventListener('mouseenter', () => { dot.style.opacity='1'; ring.styl
 })();
 
 (async function loadViews() {
-    const visited = localStorage.getItem('bio_visited');
     try {
-        if (!visited) {
-            const r = await fetch('https://api.countapi.xyz/hit/tirumdz-d.github.io/visits');
-            const d = await r.json();
-            document.getElementById('view-count').textContent = d.value.toLocaleString();
-            localStorage.setItem('bio_visited', '1');
-        } else {
-            const r = await fetch('https://api.countapi.xyz/get/tirumdz-d.github.io/visits');
-            const d = await r.json();
-            document.getElementById('view-count').textContent = d.value.toLocaleString();
-        }
+        const r = await fetch('https://api.countapi.xyz/hit/tirumdz-d.github.io/visits');
+        const d = await r.json();
+        document.getElementById('view-count').textContent = d.value.toLocaleString();
     } catch {
-        const v = parseInt(localStorage.getItem('v') || '0');
-        if (!visited) {
-            localStorage.setItem('v', v + 1);
-            localStorage.setItem('bio_visited', '1');
-        }
-        document.getElementById('view-count').textContent = (v + (visited ? 0 : 1)).toLocaleString();
+        const v = (parseInt(localStorage.getItem('v') || '0') + 1);
+        localStorage.setItem('v', v);
+        document.getElementById('view-count').textContent = v.toLocaleString();
     }
 })();
 
@@ -1161,6 +1331,7 @@ function showToast(msg) {
     setTimeout(() => t.classList.remove('show'), 2800);
 }
 
+// ===== RIPPLE EFFECT =====
 function addRipple(el, e) {
     el.classList.add('ripple-host');
     const wave = document.createElement('div');
@@ -1201,6 +1372,100 @@ document.addEventListener('keydown', e => {
     for (let i = 0; i < 18; i++) setTimeout(spawn, i * 400);
     setInterval(spawn, 1200);
 })();
+
+(function cursorTrail() {
+    let lastX = 0, lastY = 0, lastTime = 0;
+    document.addEventListener('mousemove', e => {
+        const now = Date.now();
+        if (now - lastTime < 28) return;
+        const dx = e.clientX - lastX, dy = e.clientY - lastY;
+        if (Math.sqrt(dx*dx + dy*dy) < 8) return;
+        lastX = e.clientX; lastY = e.clientY; lastTime = now;
+
+        const d = document.createElement('div');
+        d.className = 'trail-dot';
+        const size = Math.random() * 4 + 4;
+        d.style.width = size + 'px';
+        d.style.height = size + 'px';
+        d.style.left = e.clientX + (Math.random()*6 - 3) + 'px';
+        d.style.top  = e.clientY + (Math.random()*6 - 3) + 'px';
+        document.body.appendChild(d);
+        setTimeout(() => d.remove(), 720);
+    });
+})();
+
+(function cardTilt() {
+    const wrap = document.getElementById('card-wrap');
+    const card = document.querySelector('.card');
+    if (!wrap || !card) return;
+    let raf = null;
+
+    wrap.addEventListener('mousemove', e => {
+        if (raf) cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+            const r = card.getBoundingClientRect();
+            const px = (e.clientX - r.left) / r.width  - 0.5;
+            const py = (e.clientY - r.top)  / r.height - 0.5;
+            const rotY = px * 9;
+            const rotX = -py * 9;
+            card.style.transform =
+                `rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(6px)`;
+        });
+    });
+
+    wrap.addEventListener('mouseleave', () => {
+        if (raf) cancelAnimationFrame(raf);
+        card.style.transition = 'transform 0.5s cubic-bezier(0.34,1.4,0.64,1)';
+        card.style.transform = 'rotateX(0) rotateY(0) translateZ(0)';
+        setTimeout(() => card.style.transition = 'transform 0.15s ease-out', 500);
+    });
+})();
+
+(function makeRain() {
+    const rain = document.getElementById('rain');
+    if (!rain) return;
+    function drop() {
+        const d = document.createElement('div');
+        d.className = 'raindrop';
+        const h = Math.random() * 40 + 30;
+        const dur = Math.random() * 1.2 + 0.9;
+        d.style.height = h + 'px';
+        d.style.left = Math.random() * 100 + '%';
+        d.style.top = '-120px';
+        d.style.animationDuration = dur + 's';
+        d.style.animationDelay = (Math.random() * 0.5) + 's';
+        rain.appendChild(d);
+        setTimeout(() => d.remove(), (dur + 0.6) * 1000);
+    }
+    for (let i = 0; i < 24; i++) setTimeout(drop, i * 90);
+    setInterval(drop, 140);
+})();
+
+document.body.classList.add('locked');
+
+function enterBio() {
+    if (entered) return;
+    entered = true;
+
+    const intro = document.getElementById('intro');
+    intro.classList.add('hiding');
+    document.body.classList.remove('locked');
+    setTimeout(() => intro.remove(), 750);
+
+    if (playerReady && activePlayer) {
+        activePlayer.playVideo();
+    }
+}
+
+document.getElementById('intro').addEventListener('click', enterBio);
+document.getElementById('intro').addEventListener('touchstart', e => {
+    e.preventDefault(); enterBio();
+}, { passive: false });
+document.addEventListener('keydown', e => {
+    if (!entered && (e.code === 'Space' || e.code === 'Enter')) {
+        e.preventDefault(); enterBio();
+    }
+}, true);
 </script>
 
 </body>

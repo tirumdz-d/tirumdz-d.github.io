@@ -19,6 +19,14 @@
             font-family: 'Inter', sans-serif;
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh; padding: 20px; cursor: none;
+            position: relative;
+        }
+        #tint-overlay {
+            position: fixed; inset: 0;
+            pointer-events: none; z-index: 0;
+            background: rgba(255,140,0,0);
+            transition: background-color 1.4s ease;
+            mix-blend-mode: multiply;
         }
         #cursor-dot {
             position: fixed; width: 8px; height: 8px; background: #fff;
@@ -144,37 +152,37 @@
         .time-label { font-family: 'VT323',monospace; font-size: 15px; opacity: 0.7; min-width: 36px; }
         .time-label.right { text-align: right; }
         .progress-track {
-            flex: 1; height: 18px; background: transparent;
-            border-radius: 9px; cursor: pointer; position: relative;
-            display: flex; align-items: center;
+            flex: 1; height: 28px; background: transparent;
+            cursor: pointer; position: relative;
+            display: flex; align-items: center; gap: 2px;
+            overflow: hidden;
         }
-        .progress-track-inner {
-            position: absolute; left: 0; right: 0; height: 4px;
-            background: rgba(255,150,20,0.25); border-radius: 2px;
+        .wave-bar {
+            flex: 1; min-width: 2px;
+            background: rgba(255,150,20,0.22);
+            border-radius: 2px;
+            transition: background 0.25s ease, box-shadow 0.25s ease;
+            pointer-events: none;
         }
-        .progress-fill {
-            height: 4px; background: linear-gradient(90deg,#f0a500,#ff6a00);
-            border-radius: 2px; width: 0%; position: relative; pointer-events: none;
-            transition: width 0.15s linear;
-            box-shadow: 0 0 6px rgba(255,160,30,0.55);
+        .wave-bar.played {
+            background: linear-gradient(180deg,#ffcc55,#ff8c00);
+            box-shadow: 0 0 5px rgba(255,160,30,0.6);
         }
         .progress-thumb {
-            position: absolute; top: 50%; right: -7px;
-            transform: translateY(-50%);
-            width: 14px; height: 14px; background: #ffb830;
+            position: absolute; top: 50%;
+            transform: translate(-50%,-50%);
+            width: 12px; height: 12px; background: #ffcc40;
             border-radius: 50%; pointer-events: none;
-            box-shadow: 0 0 8px rgba(255,150,20,0.75);
-            transition: transform 0.12s, background 0.12s;
+            box-shadow: 0 0 10px rgba(255,170,30,0.85);
+            transition: left 0.15s linear, transform 0.12s;
+            z-index: 2;
         }
         .progress-track:hover .progress-thumb {
-            transform: translateY(-50%) scale(1.35);
+            transform: translate(-50%,-50%) scale(1.3);
         }
         .progress-track.dragging .progress-thumb {
-            transform: translateY(-50%) scale(1.6);
-            background: #ffcc40;
-        }
-        .progress-track.dragging .progress-fill {
-            background: linear-gradient(90deg,#ff8c00,#f0a500);
+            transform: translate(-50%,-50%) scale(1.55);
+            background: #ffe08a;
         }
         .controls-row { display: flex; justify-content: center; align-items: center; gap: 24px; }
         .ctrl-btn {
@@ -538,6 +546,7 @@
     <div id="intro-sub">to enter my space</div>
 </div>
 
+<div id="tint-overlay"></div>
 <div id="cursor-dot"></div>
 <div id="cursor-ring"></div>
 <div id="particles"></div>
@@ -625,10 +634,7 @@
         <div class="progress-row">
             <span class="time-label" id="time-current">00:00</span>
             <div class="progress-track" id="progress-track">
-                <div class="progress-track-inner"></div>
-                <div class="progress-fill" id="progress-fill">
-                    <div class="progress-thumb"></div>
-                </div>
+                <div class="progress-thumb" id="progress-thumb"></div>
             </div>
             <span class="time-label right" id="time-total">00:00</span>
         </div>
@@ -656,6 +662,7 @@
 
 </div>
 
+<!-- SUBTITLE ngoài card -->
 <div id="subtitle-wrap">
     <span id="subtitle-text"></span>
 </div>
@@ -666,6 +673,7 @@
     <div id="player2"></div>
     <div id="player3"></div>
     <div id="player4"></div>
+    <div id="player5"></div>
 </div>
 
 <script>
@@ -758,8 +766,93 @@ function copyDiscord(e) {
 }
 
 const LYRICS_RAW = [
-    
-    [
+[
+        [2.2,  "Anh nhớ từng phút yên bình tay nắm tay"],
+        [3.7,  "Nhớ khoảnh khắc đôi mình còn đắm say"],
+        [6.4,  "Chỉ vừa như mới hôm nào"],
+        [7.7,  "Mà sao giờ lại xa quá?"],
+        [11.6, "Anh vẫn nhớ khi trời vừa nhá nhem"],
+        [14.5, "Qua đón em dạo cùng phố đêm"],
+        [17.4, "Giờ thì không còn nữa"],
+        [19,   "Cô đơn thân với anh thêm"],
+        [22.7, "Anh cố để chi vậy rồi cũng ra như này"],
+        [25.6, "Cứ vun mối tình mặc tấm thân hao gầy"],
+        [28.5, "Liệu có phút giây nào người xót anh không vậy?"],
+        [31.5, "Mọi thứ chỉ để anh gánh lấy"],
+        [34.3, "Chẳng phút giây nào anh hết yêu em"],
+        [37.3, "Mỗi lần ướt mi hoen là do anh nhớ em thêm"],
+        [39.9, "Tại sao lại nói yêu anh mà lại để mi anh ướt nhèm?"],
+        [46.8, "Em cũng có nỗi niềm của riêng mình"],
+        [49.5, "Em xin lỗi đã bỏ anh một mình"],
+        [52.7, "Sau bao tháng năm ta cùng chung đường"],
+        [54.8, "Giờ hai đứa hai nơi"],
+        [58,   "Đoạn cảm xúc tưởng như là lâu dài"],
+        [60.8, "Nhưng lại kết thúc bất ngờ vì hiểu lầm"],
+        [63.4, "Em trách sao lúc đó mình không vì nhau mà cố"],
+        [69.4, "Em vẫn còn nhớ những lần mình đã hứa hẹn"],
+        [71.6, "Cùng nhau mãi mãi chẳng rời xa"],
+        [74.8, "Và môi hôn vẫn để lại đó bao ngọt ngào xưa"],
+        [80.1, "Giờ thì đã quá trễ rồi"],
+        [82.1, "Vì phút bốc đồng mà đôi ta chẳng thể nào cạnh bên"],
+        [85.7, "Hỏi em còn yêu không, em trả lời là không còn"],
+        [87.9, "Nhưng đó chỉ là dối lòng"],
+        [94.7, "Anh cố để chi vậy rồi cũng ra như này"],
+        [97.4, "Cứ vun mối tình mặc tấm thân hao gầy"],
+        [100.1,"Liệu có phút giây nào người xót anh không vậy?"],
+        [102.5,"Mọi thứ chỉ để anh gánh lấy"],
+        [105.4,"Chẳng phút giây nào anh hết yêu em"],
+        [108.2,"Mỗi lần ướt mi hoen là do anh nhớ em thêm"],
+        [112.4,"Tại sao lại nói yêu anh mà lại để mi anh ướt nhèm?"],
+        [117.2,"Thật ra anh biết từ đầu rồi, bae"],
+        [120.3,"Rằng lời yêu đó chỉ là gió bay"],
+        [123.4,"Giờ tim vỡ nát như này"],
+        [125.2,"Do anh cố chấp nên vậy"],
+        [128.5,"Mong em hạnh phúc đi bên người ta"],
+        [132.1,"Phần anh sẽ cố gắng để vượt qua"],
+        [135.3,"Đến đây thôi em à"],
+        [136.8,"Đến lúc ta phải chia xa"],
+    ],
+[ 
+         [12.1, "Biết đâu duyên trời em ơi"],
+         [14.3, "Cách nhau mấy giậu mồng tơi"],
+         [16.5, "Để ai ngỏ lời sang chơi"],
+         [18.9, "Có em bên đời"],
+         [21.1, "Pháo hoa rực rỡ trên trời, người yêu ơi anh đang tới"],
+         [26, "Có chăng hơi ấm bên đời là do mây mang em với?"],
+         [30.2, "Câu chúc hàn huyên, đâu đó tình duyên rơi vào nơi bước chân em di"],
+         [34.9, "Người đi mất, đành thôi cất, cớ sao? Mà cớ sao?"],
+         [40, "Thư trắng từng trao, đêm ước ngày ao, anh chỉ mong thấy em an vui"],
+         [44.4, "Người đi có nhớ tôi? Có không, một lời?"],
+         [48.6, "À ơi, duyên tình, tình duyên nào chẳng chơi vơi"],
+         [53.5, "Anh cố đợi nhưng sao lòng em dường như chẳng đưa đến nơi"],
+         [58, "Người giấu câu chào, tôi hỏi thăm cỏ cây biết không"],
+         [62.7, "Hoa đã về với mây gió biển khơi, sẽ có ai nói yêu thật lòng"],
+         [87.4, "Mây bay khắp phương trời, khắp phương trời, nào ai đâu hay"],
+         [91.5, "Trăng treo ở trên đầu, ở trên đầu, mà sao chẳng thấy?"],
+         [96.3, "Người ở lại đừng hỏi trăng đâu, em đi rồi trời hoá mưa ngâu"],
+         [100.9, "Thu lá vàng rơi mong nhớ đầy vơi, thì bây giờ cũng mấy đêm thâu"],
+         [105.9, "Câu chúc hàn huyên, lỡ mất tình duyên rơi vào nơi bước chân em di"],
+         [110.2, "Người đi mất, đành thôi cất, cớ sao? Mà cớ sao?"],
+         [114.8, "Thư trắng từng trao, đêm ước, ngày mau, em chỉ mong thấy anh buông xuôi"],
+         [119.6, "Người đi, vẫn nhớ anh, nhớ anh một đời"],
+         [124.9, "À ơi, duyên tình, tình duyên nào chẳng chơi vơi"],
+         [129, "Anh cố đợi nhưng sao lòng em dường như chẳng đưa đến nơi"],
+         [133.4, "Người giấu câu chào, tôi hỏi thăm cỏ cây biết không"],
+         [138.2, "Hoa đã về với mây gió biển khơi, sẽ có ai nói yêu thật lòng"],
+         [143.6, "Đâu ai hiểu mấy năm ròng, chuyện một khi người đã tương tư"],
+         [148.3, "Tuy đâu mà vẫn hy vọng, mong rằng sau này ta giống như"],
+         [153.2, "Nên duyên gọi tiếng vợ chồng, luôn kề bên dù nắng hay mưa"],
+         [157.5, "Bao lâu anh cũng sẽ đợi, trăm ngàn năm dù rất xa xưa"],
+         [162.5, "Câu chúc hàn huyên, đâu đó tình duyên rơi vào nơi bước chân em di"],
+         [166.7, "Người đi mất, đành thôi cất, cớ sao? Mà cớ sao?"],
+         [171.4, "Thư trắng từng trao, đêm ước ngày ao, anh chỉ mong thấy em an vui"],
+         [176.1, "Người đi có nhớ tôi? Có không, một lời?"],
+         [214.5, "Biết đâu duyên trời em ơi"],
+         [216.5, "Cách nhau mấy giậu mồng tơi"],
+         [218.9, "Để ai ngỏ lời sang chơi"],
+         [221.1, "Có em bên đời"],
+  ],
+[
         [16.6, "Em là ai từ đâu bước đến nơi đây dịu dàng chân phương"],
         [20.4, "Em là ai tựa như ánh nắng ban mai ngọt ngào trong sương"],
         [24.5, "Ngắm em thật lâu"],
@@ -840,55 +933,7 @@ const LYRICS_RAW = [
         [181.1,"Tình yêu bé nhỏ xin"],
         [183.2,"Dành tặng riêng em"],
     ],
-    
-    [
-        [2.2,  "Anh nhớ từng phút yên bình tay nắm tay"],
-        [3.7,  "Nhớ khoảnh khắc đôi mình còn đắm say"],
-        [6.4,  "Chỉ vừa như mới hôm nào"],
-        [7.7,  "Mà sao giờ lại xa quá?"],
-        [11.6, "Anh vẫn nhớ khi trời vừa nhá nhem"],
-        [14.5, "Qua đón em dạo cùng phố đêm"],
-        [17.4, "Giờ thì không còn nữa"],
-        [19,   "Cô đơn thân với anh thêm"],
-        [22.7, "Anh cố để chi vậy rồi cũng ra như này"],
-        [25.6, "Cứ vun mối tình mặc tấm thân hao gầy"],
-        [28.5, "Liệu có phút giây nào người xót anh không vậy?"],
-        [31.5, "Mọi thứ chỉ để anh gánh lấy"],
-        [34.3, "Chẳng phút giây nào anh hết yêu em"],
-        [37.3, "Mỗi lần ướt mi hoen là do anh nhớ em thêm"],
-        [39.9, "Tại sao lại nói yêu anh mà lại để mi anh ướt nhèm?"],
-        [46.8, "Em cũng có nỗi niềm của riêng mình"],
-        [49.5, "Em xin lỗi đã bỏ anh một mình"],
-        [52.7, "Sau bao tháng năm ta cùng chung đường"],
-        [54.8, "Giờ hai đứa hai nơi"],
-        [58,   "Đoạn cảm xúc tưởng như là lâu dài"],
-        [60.8, "Nhưng lại kết thúc bất ngờ vì hiểu lầm"],
-        [63.4, "Em trách sao lúc đó mình không vì nhau mà cố"],
-        [69.4, "Em vẫn còn nhớ những lần mình đã hứa hẹn"],
-        [71.6, "Cùng nhau mãi mãi chẳng rời xa"],
-        [74.8, "Và môi hôn vẫn để lại đó bao ngọt ngào xưa"],
-        [80.1, "Giờ thì đã quá trễ rồi"],
-        [82.1, "Vì phút bốc đồng mà đôi ta chẳng thể nào cạnh bên"],
-        [85.7, "Hỏi em còn yêu không, em trả lời là không còn"],
-        [87.9, "Nhưng đó chỉ là dối lòng"],
-        [94.7, "Anh cố để chi vậy rồi cũng ra như này"],
-        [97.4, "Cứ vun mối tình mặc tấm thân hao gầy"],
-        [100.1,"Liệu có phút giây nào người xót anh không vậy?"],
-        [102.5,"Mọi thứ chỉ để anh gánh lấy"],
-        [105.4,"Chẳng phút giây nào anh hết yêu em"],
-        [108.2,"Mỗi lần ướt mi hoen là do anh nhớ em thêm"],
-        [112.4,"Tại sao lại nói yêu anh mà lại để mi anh ướt nhèm?"],
-        [117.2,"Thật ra anh biết từ đầu rồi, bae"],
-        [120.3,"Rằng lời yêu đó chỉ là gió bay"],
-        [123.4,"Giờ tim vỡ nát như này"],
-        [125.2,"Do anh cố chấp nên vậy"],
-        [128.5,"Mong em hạnh phúc đi bên người ta"],
-        [132.1,"Phần anh sẽ cố gắng để vượt qua"],
-        [135.3,"Đến đây thôi em à"],
-        [136.8,"Đến lúc ta phải chia xa"],
-    ],
-    
-    [
+[
         [16.6, "Trông rất quen mà anh không nhớ đến đây bao giờ"],
         [24.7, "Không nhớ tên của ai dòng chữ trên tay đã mờ"],
         [32.8, "Có dáng ai vừa đi đến đây"],
@@ -925,7 +970,7 @@ const LYRICS_RAW = [
         [192.8,"Trắng hơn"],
         [197.7,"Trắng hơn"],
     ],
-    [
+[
         [15.5, "Thương lắm con sông với hàng dừa mộng xanh"],
         [19.2, "Câu hứa năm xưa trong một chiều chơi mưa"],
         [24.3, "Em nói em thương anh nhiều, thương em, anh tin rất nhiều"],
@@ -967,7 +1012,7 @@ const LYRICS_RAW = [
         [178.5,"Quên đi những ký ức đẹp, quên cả luôn nơi em lớn lên"],
         [182.4,"Nơi đây không thuộc về em nữa, phải không em?"],
     ],
-    [
+[
         [21.6, "Mùa xuân có em như chưa bắt đầu"],
         [27.2, "Và cơn gió như khẽ mơn man lay từng nhành hoa rơi"],
         [32.7, "Em đã bước tới như em đã từng"],
@@ -1010,23 +1055,24 @@ const LYRICS_RAW = [
         [234.1,"Để lại tháng tư xa mãi"],
         [240.4,"Để lại tháng tư mình anh"],
     ],
-];
+;
 
-const OFFSETS = [0, 0, 0, 0, 0];
+const OFFSETS = [0, 0, 0, 0, 0, 0];
 
 let LYRICS = LYRICS_RAW.map((song, si) =>
     song.map(([t, l]) => [t + OFFSETS[si], l])
 );
 
 const SONGS = [
-    { title: 'Nơi Này Có Anh',               ytId: 'v9GlvPzvprg' },
     { title: 'Không Buông',                   ytId: '59YbarIOuY0' },
+    { title: 'Hẹn Em Dưới Pháo Hoa',           ytId: 'Smc6V5xNa0I' },
+    { title: 'Nơi Này Có Anh',               ytId: 'v9GlvPzvprg' },
     { title: 'Điểm Đến Cuối Cùng',            ytId: 'b-kllJ9c3l4' },
     { title: 'Em Ơi Lên Phố',                 ytId: 'FeylI_WT-gg' },
     { title: 'Tháng Tư Là Lời Nói Dối Của Em', ytId: 'Tf1gJogknlg' },
 ];
 
-let currentSong = 1;
+let currentSong = 0;
 let players = [];
 let activePlayer = null;
 let playing = false;
@@ -1154,7 +1200,7 @@ function stopCurrent() {
     clearInterval(progressTimer); playing = false;
     document.getElementById('play-icon').className = 'fa-solid fa-play';
     if (activePlayer && typeof activePlayer.stopVideo === 'function') activePlayer.stopVideo();
-    document.getElementById('progress-fill').style.width = '0%';
+    setWavePct(0);
     document.getElementById('time-current').textContent = '00:00';
 }
 
@@ -1164,11 +1210,12 @@ function updateDisplay() {
     void nameEl.offsetWidth;
     nameEl.classList.add('changing');
     nameEl.textContent = SONGS[currentSong].title;
-    document.getElementById('progress-fill').style.width = '0%';
+    setWavePct(0);
     document.getElementById('time-current').textContent = '00:00';
     document.getElementById('time-total').textContent = '00:00';
     activeLyricIdx = -1;
     hideSubtitleNow();
+    applySongTint(currentSong);
 }
 
 function setVolume(pct) {
@@ -1198,9 +1245,9 @@ function startTimer() {
         const dur = activePlayer.getDuration();
         const cur = activePlayer.getCurrentTime();
         if (!dur || dur <= 0) return;
-        
+
         if (!isDragging) {
-            document.getElementById('progress-fill').style.width = Math.min((cur/dur)*100,100) + '%';
+            setWavePct(Math.min((cur/dur)*100,100));
         }
         document.getElementById('time-current').textContent = fmtTime(cur);
         document.getElementById('time-total').textContent = fmtTime(dur);
@@ -1214,7 +1261,45 @@ function fmtTime(s) {
 }
 
 const track = document.getElementById('progress-track');
-const fill  = document.getElementById('progress-fill');
+const thumb = document.getElementById('progress-thumb');
+
+const WAVE_BAR_COUNT = 48;
+let waveHeights = [];
+function buildWaveform() {
+    track.innerHTML = '';
+    waveHeights = [];
+    for (let i = 0; i < WAVE_BAR_COUNT; i++) {
+        const h = 5 + Math.abs(Math.sin(i * 0.7 + currentSong)) * 12 + Math.random() * 4;
+        waveHeights.push(h);
+        const bar = document.createElement('div');
+        bar.className = 'wave-bar';
+        bar.style.height = h + 'px';
+        track.appendChild(bar);
+    }
+    track.appendChild(thumb);
+}
+buildWaveform();
+
+function setWavePct(pct) {
+    const bars = track.querySelectorAll('.wave-bar');
+    const activeCount = Math.round((pct / 100) * bars.length);
+    bars.forEach((b, i) => b.classList.toggle('played', i < activeCount));
+    const rect = track.getBoundingClientRect();
+    thumb.style.left = (pct / 100 * rect.width) + 'px';
+}
+
+const SONG_TINTS = [
+    'rgba(255,140,0,0.10)',
+    'rgba(180,60,20,0.16)',
+    'rgba(80,60,120,0.14)',
+    'rgba(20,120,90,0.12)',
+    'rgba(200,30,70,0.14)',
+    'rgba(255,190,60,0.12)',
+];
+function applySongTint(idx) {
+    const overlay = document.getElementById('tint-overlay');
+    if (overlay) overlay.style.backgroundColor = SONG_TINTS[idx % SONG_TINTS.length];
+}
 let isDragging = false;
 
 function getPct(clientX) {
@@ -1225,7 +1310,7 @@ function seekToPct(pct) {
     if (!activePlayer || typeof activePlayer.getDuration !== 'function') return;
     const dur = activePlayer.getDuration();
     if (dur > 0) {
-        fill.style.width = (pct * 100) + '%';
+        setWavePct(pct * 100);
         activePlayer.seekTo(dur * pct, true);
     }
 }
@@ -1238,7 +1323,7 @@ track.addEventListener('mousedown', e => {
 });
 document.addEventListener('mousemove', e => {
     if (!isDragging) return;
-    fill.style.width = (getPct(e.clientX) * 100) + '%';
+    setWavePct(getPct(e.clientX) * 100);
 });
 document.addEventListener('mouseup', e => {
     if (!isDragging) return;
@@ -1255,7 +1340,7 @@ track.addEventListener('touchstart', e => {
 }, { passive: false });
 document.addEventListener('touchmove', e => {
     if (!isDragging) return;
-    fill.style.width = (getPct(e.touches[0].clientX) * 100) + '%';
+    setWavePct(getPct(e.touches[0].clientX) * 100);
 }, { passive: false });
 document.addEventListener('touchend', e => {
     if (!isDragging) return;
@@ -1331,7 +1416,6 @@ function showToast(msg) {
     setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-// ===== RIPPLE EFFECT =====
 function addRipple(el, e) {
     el.classList.add('ripple-host');
     const wave = document.createElement('div');
@@ -1410,13 +1494,19 @@ document.addEventListener('keydown', e => {
             const rotX = -py * 9;
             card.style.transform =
                 `rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(6px)`;
+
+            const shadowX = -px * 34;
+            const shadowY = 18 - py * 24;
+            card.style.boxShadow =
+                `${shadowX}px ${shadowY}px 42px rgba(150,60,0,0.35), 0 0 0 1px rgba(255,160,30,0.08)`;
         });
     });
 
     wrap.addEventListener('mouseleave', () => {
         if (raf) cancelAnimationFrame(raf);
-        card.style.transition = 'transform 0.5s cubic-bezier(0.34,1.4,0.64,1)';
+        card.style.transition = 'transform 0.5s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.5s ease';
         card.style.transform = 'rotateX(0) rotateY(0) translateZ(0)';
+        card.style.boxShadow = '0 12px 40px rgba(180,80,0,0.25)';
         setTimeout(() => card.style.transition = 'transform 0.15s ease-out', 500);
     });
 })();

@@ -318,7 +318,7 @@
             100% { opacity: 0; transform: translate(-50%,-50%) scale(0.2) translateY(12px); }
         }
 
-        /* CARD TILT 3D */
+        /* CARD TILT 3D not gud */
         #card-wrap {
             perspective: 1200px;
             display: flex; justify-content: center; align-items: center;
@@ -422,12 +422,10 @@
             to   { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
         }
 
-        /* Bio ẩn trước khi vào */
         body.locked #card-wrap,
         body.locked #subtitle-wrap { opacity: 0; pointer-events: none; }
         #card-wrap, #subtitle-wrap { transition: opacity 0.6s ease; }
 
-        /* ===== BORDER CHẠY SÁNG ===== */
         #card-wrap { position: relative; }
         .card { position: relative; z-index: 1; }
         .card-frame::before {
@@ -484,7 +482,6 @@
         @keyframes beamSpin {
             to { --beam-angle: 360deg; }
         }
-        /* fallback cho trình duyệt không hỗ trợ @property */
         @supports not (background: conic-gradient(from var(--a,0deg), red, blue)) {
             .card-frame::before { animation: beamSpinFallback 4.5s linear infinite; }
             @keyframes beamSpinFallback {
@@ -492,7 +489,6 @@
             }
         }
 
-        /* CONFETTI EASTER EGG */
         .confetti-piece {
             position: fixed;
             width: 7px; height: 11px;
@@ -578,7 +574,6 @@
         }
         .game-restart:hover { background: rgba(255,160,30,0.3); }
 
-        /* SOUND RING - vòng sóng nhạc quanh khung */
         #sound-ring {
             position: absolute;
             inset: -16px;
@@ -643,7 +638,7 @@
             opacity: 0.45; letter-spacing: 1px;
         }
 
-        /* SUBTITLE (clean single definition) */
+        /* SUBTITLE */
         #subtitle-wrap {
             position: fixed; bottom: 38px; left: 50%;
             transform: translateX(-50%);
@@ -796,7 +791,7 @@
 
 </div>
 
-<!-- SUBTITLE ngoài card -->
+<!-- SUBTITLE-->
 <div id="subtitle-wrap">
     <span id="subtitle-text"></span>
 </div>

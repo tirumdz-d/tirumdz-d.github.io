@@ -813,6 +813,10 @@
         <div class="game-status" id="game-status">—</div>
 
         <canvas id="snake-canvas" width="300" height="300" style="display:none;"></canvas>
+        <div id="mine-controls" style="display:none; justify-content:center; gap:8px; margin-bottom:8px;">
+            <button class="game-tab active" id="mode-open" onclick="setMineMode('open')">⛏ Mở ô</button>
+            <button class="game-tab" id="mode-flag" onclick="setMineMode('flag')">🚩 Cắm cờ</button>
+        </div>
         <div id="mine-wrap" style="display:none; overflow:auto; max-width:100%;"></div>
 
         <button class="game-restart" onclick="restartCurrentGame()">↻ Chơi lại</button>
@@ -1624,6 +1628,8 @@ document.querySelectorAll('.social-btn, .play-btn, .ctrl-btn, .discord-add-btn')
 
 document.addEventListener('keydown', e => {
     if (e.target.tagName === 'INPUT') return;
+    const gameOpen = document.getElementById('game-modal').classList.contains('open');
+    if (gameOpen) return;
     if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
     if (e.code === 'ArrowRight' && !e.ctrlKey) nextSong();
     if (e.code === 'ArrowLeft'  && !e.ctrlKey) prevSong();
@@ -1771,7 +1777,7 @@ document.addEventListener('keydown', e => {
             const p2 = pointAt((dist + 1) % len);
             const dx = p2.x - p1.x, dy = p2.y - p1.y;
             const mag = Math.hypot(dx, dy) || 1;
-            const nx = -dy / mag, ny = dx / mag;
+            const nx = dy / mag, ny = -dx / mag;
 
             const line = document.createElementNS(ns, 'line');
             line.setAttribute('class', 'sound-bar');
@@ -1871,15 +1877,22 @@ function closeGame() {
     document.getElementById('game-modal').classList.remove('open');
     stopSnake();
 }
+let mineMode = 'open';
+function setMineMode(mode) {
+    mineMode = mode;
+    document.getElementById('mode-open').classList.toggle('active', mode === 'open');
+    document.getElementById('mode-flag').classList.toggle('active', mode === 'flag');
+}
 function switchGame(game) {
     currentGame = game;
     document.getElementById('tab-snake').classList.toggle('active', game === 'snake');
     document.getElementById('tab-mine').classList.toggle('active', game === 'mine');
     document.getElementById('snake-canvas').style.display = game === 'snake' ? 'block' : 'none';
+    document.getElementById('mine-controls').style.display = game === 'mine' ? 'flex' : 'none';
     document.getElementById('mine-wrap').style.display = game === 'mine' ? 'block' : 'none';
     document.getElementById('game-hint').textContent =
-        game === 'snake' ? 'Dùng phím mũi tên / WASD để điều khiển' : 'Click trái: mở ô — Click phải: cắm cờ';
-    if (game === 'snake') startSnake(); else startMinesweeper();
+        game === 'snake' ? 'Dùng phím mũi tên / WASD để điều khiển' : 'Chọn chế độ rồi bấm vào ô — hoặc Click phải để cắm cờ nhanh';
+    if (game === 'snake') startSnake(); else { setMineMode('open'); startMinesweeper(); }
 }
 function restartCurrentGame() {
     if (currentGame === 'snake') startSnake();
@@ -1891,12 +1904,13 @@ function startSnake() {
     const canvas = document.getElementById('snake-canvas');
     const ctx = canvas.getContext('2d');
     const cell = 15, cols = 20, rows = 20;
+    const highScore = parseInt(localStorage.getItem('snake_high') || '0');
 
     snakeState = {
         snake: [{x:10,y:10},{x:9,y:10},{x:8,y:10}],
         dir: {x:1,y:0}, nextDir: {x:1,y:0},
         food: randFood(),
-        alive: true, score: 0
+        alive: true, paused: false, score: 0, high: highScore
     };
 
     function randFood() {
@@ -1907,6 +1921,11 @@ function startSnake() {
         return p;
     }
     snakeState.food = randFood();
+
+    function statusText() {
+        const base = `Điểm: ${snakeState.score}  ·  Kỷ lục: ${snakeState.high}`;
+        return snakeState.paused ? base + '  ⏸ Tạm dừng' : base;
+    }
 
     function draw() {
         ctx.fillStyle = 'rgba(0,0,0,0.35)';
@@ -1919,17 +1938,31 @@ function startSnake() {
             ctx.fillStyle = i===0 ? '#ffe066' : '#ffb830';
             ctx.fillRect(s.x*cell, s.y*cell, cell-1, cell-1);
         });
+
+        if (snakeState.paused) {
+            ctx.fillStyle = 'rgba(0,0,0,0.5)';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#ffd88a';
+            ctx.font = '20px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('⏸ Tạm dừng — bấm Space', canvas.width/2, canvas.height/2);
+        }
     }
 
     function step() {
-        if (!snakeState.alive) return;
+        if (!snakeState.alive || snakeState.paused) return;
         snakeState.dir = snakeState.nextDir;
         const head = { x: snakeState.snake[0].x + snakeState.dir.x, y: snakeState.snake[0].y + snakeState.dir.y };
 
         if (head.x < 0 || head.x >= cols || head.y < 0 || head.y >= rows ||
             snakeState.snake.some(s => s.x===head.x && s.y===head.y)) {
             snakeState.alive = false;
-            document.getElementById('game-status').textContent = `💀 Thua rồi! Điểm: ${snakeState.score}`;
+            if (snakeState.score > snakeState.high) {
+                localStorage.setItem('snake_high', snakeState.score);
+                document.getElementById('game-status').textContent = `💀 Thua rồi! Điểm: ${snakeState.score}  ·  🏆 Kỷ lục mới!`;
+            } else {
+                document.getElementById('game-status').textContent = `💀 Thua rồi! Điểm: ${snakeState.score}  ·  Kỷ lục: ${snakeState.high}`;
+            }
             clearInterval(snakeTimer);
             return;
         }
@@ -1938,16 +1971,23 @@ function startSnake() {
         if (head.x === snakeState.food.x && head.y === snakeState.food.y) {
             snakeState.score++;
             snakeState.food = randFood();
-            document.getElementById('game-status').textContent = `Điểm: ${snakeState.score}`;
+            document.getElementById('game-status').textContent = statusText();
         } else {
             snakeState.snake.pop();
         }
         draw();
     }
 
-    document.getElementById('game-status').textContent = 'Điểm: 0';
+    document.getElementById('game-status').textContent = statusText();
     draw();
     snakeTimer = setInterval(step, 110);
+
+    window.snakeTogglePause = function() {
+        if (!snakeState || !snakeState.alive) return;
+        snakeState.paused = !snakeState.paused;
+        document.getElementById('game-status').textContent = statusText();
+        draw();
+    };
 }
 
 function stopSnake() {
@@ -1957,7 +1997,14 @@ function stopSnake() {
 
 document.addEventListener('keydown', e => {
     if (!document.getElementById('game-modal').classList.contains('open')) return;
+
+    if (e.code === 'Escape') { e.preventDefault(); closeGame(); return; }
+
     if (currentGame !== 'snake' || !snakeState || !snakeState.alive) return;
+
+    if (e.code === 'Space') { e.preventDefault(); window.snakeTogglePause && window.snakeTogglePause(); return; }
+    if (snakeState.paused) return;
+
     const d = snakeState.dir;
     const key = e.key.toLowerCase();
     if ((key === 'arrowup' || key === 'w') && d.y === 0) { snakeState.nextDir = {x:0,y:-1}; e.preventDefault(); }
@@ -2003,7 +2050,10 @@ function startMinesweeper() {
         for (let x = 0; x < cols; x++) {
             const td = document.createElement('td');
             td.className = 'mine-cell';
-            td.addEventListener('click', () => revealCell(x,y));
+            td.addEventListener('click', () => {
+                if (mineMode === 'flag') toggleFlag(x,y);
+                else revealCell(x,y);
+            });
             td.addEventListener('contextmenu', e => { e.preventDefault(); toggleFlag(x,y); });
             tr.appendChild(td);
             rowEls.push(td);
@@ -2014,13 +2064,24 @@ function startMinesweeper() {
     wrap.appendChild(table);
     mineState.cellEls = cellEls;
 
-    document.getElementById('game-status').textContent = `💣 ${mineCount} mìn — cẩn thận!`;
+    function flagCount() {
+        let n = 0;
+        for (let y=0;y<rows;y++) for (let x=0;x<cols;x++) if (grid[y][x].flag) n++;
+        return n;
+    }
+    function updateCounter() {
+        if (mineState.over) return;
+        document.getElementById('game-status').textContent =
+            `🚩 ${flagCount()} / 💣 ${mineCount} mìn — cẩn thận!`;
+    }
+    updateCounter();
 
     function toggleFlag(x,y) {
         if (mineState.over) return;
         const c = grid[y][x];
         if (c.revealed) return;
         c.flag = !c.flag;
+        updateCounter();
         render();
     }
 

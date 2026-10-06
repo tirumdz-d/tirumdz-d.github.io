@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tirum's Bio</title>
+    <title>Tirum</title>
+    <link rel="icon" type="image/png" href="avatar.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=VT323&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -43,6 +44,20 @@
         body.hovering #cursor-ring { width: 44px; height: 44px; border-color: rgba(255,180,50,0.9); }
         body.hovering #cursor-dot { background: #ffb830; box-shadow: 0 0 10px rgba(255,180,30,0.9); }
         a, button, .play-btn, .ctrl-btn, .progress-track, .social-btn, .lyric-toggle { cursor: none !important; }
+
+        /* ===== MOBILE / TOUCH SUPPORT ===== */
+        @media (hover: none), (pointer: coarse) {
+            body { cursor: auto; }
+            a, button, .play-btn, .ctrl-btn, .progress-track, .social-btn, .lyric-toggle { cursor: pointer !important; }
+            #cursor-dot, #cursor-ring { display: none; }
+        }
+        @media (max-width: 480px) {
+            body { padding: 10px; align-items: flex-start; }
+            .card-frame { max-width: 100%; }
+            #sound-ring { inset: -10px; width: calc(100% + 20px); height: calc(100% + 20px); }
+            #subtitle-text { font-size: 18px; padding: 6px 14px; }
+            #intro-text { font-size: 28px; }
+        }
 
         .card {
             width: 100%;
@@ -318,7 +333,7 @@
             100% { opacity: 0; transform: translate(-50%,-50%) scale(0.2) translateY(12px); }
         }
 
-        /* CARD TILT 3D not gud */
+        /* CARD TILT 3D */
         #card-wrap {
             perspective: 1200px;
             display: flex; justify-content: center; align-items: center;
@@ -422,10 +437,12 @@
             to   { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
         }
 
+        /* Bio ẩn trước khi vào */
         body.locked #card-wrap,
         body.locked #subtitle-wrap { opacity: 0; pointer-events: none; }
         #card-wrap, #subtitle-wrap { transition: opacity 0.6s ease; }
 
+        /* ===== BORDER CHẠY SÁNG ===== */
         #card-wrap { position: relative; }
         .card { position: relative; z-index: 1; }
         .card-frame::before {
@@ -482,6 +499,7 @@
         @keyframes beamSpin {
             to { --beam-angle: 360deg; }
         }
+        /* fallback cho trình duyệt không hỗ trợ @property */
         @supports not (background: conic-gradient(from var(--a,0deg), red, blue)) {
             .card-frame::before { animation: beamSpinFallback 4.5s linear infinite; }
             @keyframes beamSpinFallback {
@@ -489,6 +507,7 @@
             }
         }
 
+        /* CONFETTI EASTER EGG */
         .confetti-piece {
             position: fixed;
             width: 7px; height: 11px;
@@ -562,6 +581,41 @@
         }
         .mine-cell.revealed { background: rgba(0,0,0,0.25); }
         .mine-cell.flag { color: #ff6a6a; }
+
+        /* D-PAD cho Snake trên di động */
+        #dpad {
+            display: none;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        #dpad.show { display: flex; }
+        .dpad-grid {
+            display: grid;
+            grid-template-columns: 48px 48px 48px;
+            grid-template-rows: 48px 48px 48px;
+            gap: 4px;
+        }
+        .dpad-btn {
+            background: rgba(255,150,20,0.14);
+            border: 1px solid rgba(255,160,30,0.4);
+            color: #ffb830;
+            border-radius: 10px;
+            font-size: 18px;
+            display: flex; align-items: center; justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .dpad-btn:active { background: rgba(255,160,30,0.4); }
+        .dpad-up    { grid-column: 2; grid-row: 1; }
+        .dpad-left  { grid-column: 1; grid-row: 2; }
+        .dpad-down  { grid-column: 2; grid-row: 3; }
+        .dpad-right { grid-column: 3; grid-row: 2; }
+        .dpad-pause { grid-column: 2; grid-row: 2; font-size: 15px; }
+
+        @media (max-width: 480px) {
+            .game-box { width: 96%; padding: 12px; }
+            #snake-canvas { width: 100%; max-width: 280px; height: auto; }
+            .mine-cell { width: 19px; height: 19px; font-size: 11px; }
+        }
         .mine-cell.bomb { background: rgba(255,60,40,0.45); }
         .game-hint { text-align: center; font-size: 12px; opacity: 0.5; margin-top: 8px; }
         .game-restart {
@@ -574,6 +628,7 @@
         }
         .game-restart:hover { background: rgba(255,160,30,0.3); }
 
+        /* SOUND RING - vòng sóng nhạc quanh khung */
         #sound-ring {
             position: absolute;
             inset: -16px;
@@ -638,7 +693,7 @@
             opacity: 0.45; letter-spacing: 1px;
         }
 
-        /* SUBTITLE */
+        /* SUBTITLE (clean single definition) */
         #subtitle-wrap {
             position: fixed; bottom: 38px; left: 50%;
             transform: translateX(-50%);
@@ -791,7 +846,7 @@
 
 </div>
 
-<!-- SUBTITLE-->
+<!-- SUBTITLE ngoài card -->
 <div id="subtitle-wrap">
     <span id="subtitle-text"></span>
 </div>
@@ -808,6 +863,15 @@
         <div class="game-status" id="game-status">—</div>
 
         <canvas id="snake-canvas" width="300" height="300" style="display:none;"></canvas>
+        <div id="dpad">
+            <div class="dpad-grid">
+                <button class="dpad-btn dpad-up" onclick="dpadMove(0,-1)">▲</button>
+                <button class="dpad-btn dpad-left" onclick="dpadMove(-1,0)">◀</button>
+                <button class="dpad-btn dpad-pause" onclick="window.snakeTogglePause && window.snakeTogglePause()">⏸</button>
+                <button class="dpad-btn dpad-right" onclick="dpadMove(1,0)">▶</button>
+                <button class="dpad-btn dpad-down" onclick="dpadMove(0,1)">▼</button>
+            </div>
+        </div>
         <div id="mine-controls" style="display:none; justify-content:center; gap:8px; margin-bottom:8px;">
             <button class="game-tab active" id="mode-open" onclick="setMineMode('open')">⛏ Mở ô</button>
             <button class="game-tab" id="mode-flag" onclick="setMineMode('flag')">🚩 Cắm cờ</button>
@@ -1331,10 +1395,12 @@ function onStateChange(event, idx) {
         playing = true;
         document.getElementById('play-icon').className = 'fa-solid fa-pause';
         startTimer();
+        if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
     } else if (event.data === YT.PlayerState.PAUSED) {
         playing = false;
         document.getElementById('play-icon').className = 'fa-solid fa-play';
         clearInterval(progressTimer);
+        if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
     } else if (event.data === YT.PlayerState.ENDED) {
         playing = false; clearInterval(progressTimer); nextSong();
     }
@@ -1384,6 +1450,23 @@ function updateDisplay() {
     hideSubtitleNow();
     subtitleEl.textContent = '';
     applySongTint(currentSong);
+    updateMediaSession();
+}
+
+function updateMediaSession() {
+    if (!('mediaSession' in navigator)) return;
+    navigator.mediaSession.metadata = new MediaMetadata({
+        title: SONGS[currentSong].title,
+        artist: 'Tirum',
+        album: "Tirum's Bio",
+        artwork: [
+            { src: 'avatar.png', sizes: '256x256', type: 'image/png' }
+        ]
+    });
+    navigator.mediaSession.setActionHandler('play', () => { if (activePlayer) activePlayer.playVideo(); });
+    navigator.mediaSession.setActionHandler('pause', () => { if (activePlayer) activePlayer.pauseVideo(); });
+    navigator.mediaSession.setActionHandler('previoustrack', prevSong);
+    navigator.mediaSession.setActionHandler('nexttrack', nextSong);
 }
 
 function setVolume(pct) {
@@ -1566,6 +1649,24 @@ document.addEventListener('mouseenter', () => { dot.style.opacity='1'; ring.styl
         el.textContent += text[i++];
         if (i >= text.length) clearInterval(t);
     }, 60);
+})();
+
+(function typeTitle() {
+    const full = 'Tirum';
+    let i = 0, typing = true;
+    function step() {
+        if (typing) {
+            i++;
+            document.title = full.slice(0, i);
+            if (i >= full.length) { typing = false; setTimeout(step, 1400); return; }
+        } else {
+            i--;
+            document.title = full.slice(0, i) || '_';
+            if (i <= 0) { typing = true; setTimeout(step, 500); return; }
+        }
+        setTimeout(step, typing ? 160 : 90);
+    }
+    step();
 })();
 
 (async function loadViews() {
@@ -1883,11 +1984,18 @@ function switchGame(game) {
     document.getElementById('tab-snake').classList.toggle('active', game === 'snake');
     document.getElementById('tab-mine').classList.toggle('active', game === 'mine');
     document.getElementById('snake-canvas').style.display = game === 'snake' ? 'block' : 'none';
+    document.getElementById('dpad').classList.toggle('show', game === 'snake');
     document.getElementById('mine-controls').style.display = game === 'mine' ? 'flex' : 'none';
     document.getElementById('mine-wrap').style.display = game === 'mine' ? 'block' : 'none';
     document.getElementById('game-hint').textContent =
-        game === 'snake' ? 'Dùng phím mũi tên / WASD để điều khiển' : 'Chọn chế độ rồi bấm vào ô — hoặc Click phải để cắm cờ nhanh';
+        game === 'snake' ? 'Mũi tên/WASD, hoặc vuốt/bấm nút trên điện thoại' : 'Chọn chế độ rồi bấm vào ô — hoặc Click phải để cắm cờ nhanh';
     if (game === 'snake') startSnake(); else { setMineMode('open'); startMinesweeper(); }
+}
+function dpadMove(dx, dy) {
+    if (!snakeState || !snakeState.alive || snakeState.paused) return;
+    const d = snakeState.dir;
+    if (dx !== 0 && d.x === 0) snakeState.nextDir = { x: dx, y: 0 };
+    else if (dy !== 0 && d.y === 0) snakeState.nextDir = { x: 0, y: dy };
 }
 function restartCurrentGame() {
     if (currentGame === 'snake') startSnake();
@@ -1983,6 +2091,22 @@ function startSnake() {
         document.getElementById('game-status').textContent = statusText();
         draw();
     };
+
+    if (!canvas.dataset.swipeBound) {
+        canvas.dataset.swipeBound = '1';
+        let touchStartX = 0, touchStartY = 0;
+        canvas.addEventListener('touchstart', e => {
+            const t = e.touches[0];
+            touchStartX = t.clientX; touchStartY = t.clientY;
+        }, { passive: true });
+        canvas.addEventListener('touchend', e => {
+            const t = e.changedTouches[0];
+            const dx = t.clientX - touchStartX, dy = t.clientY - touchStartY;
+            if (Math.abs(dx) < 20 && Math.abs(dy) < 20) return;
+            if (Math.abs(dx) > Math.abs(dy)) dpadMove(dx > 0 ? 1 : -1, 0);
+            else dpadMove(0, dy > 0 ? 1 : -1);
+        }, { passive: true });
+    }
 }
 
 function stopSnake() {

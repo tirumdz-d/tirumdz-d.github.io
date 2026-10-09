@@ -2286,19 +2286,23 @@ async function toggleLike(e) {
 loadLikes();
 
 const BA_DIR = 'frame/';
+const BA_PAD = 4;
 const BA_FPS = 30;
+const BA_AHEAD = 300;
+const BA_KEEP_BEHIND = 40;
 let baFrames = [];
 let baTimer = null;
 let baIdx = 0;
 let baEnded = false;
 let baRunToken = 0;
 let baFontSet = false;
+let baFirst = '';
 
 function baIsOpen() { return document.getElementById('ba-modal').classList.contains('open'); }
 
 async function baFetch(n) {
     try {
-        const r = await fetch(BA_DIR + 'out' + n + '.jpg.txt');
+        const r = await fetch(BA_DIR + 'out' + String(n).padStart(BA_PAD, '0') + '.jpg.txt');
         if (!r.ok) return null;
         return await r.text();
     } catch (e) { return null; }
@@ -2331,18 +2335,23 @@ async function openBadApple() {
     if (first === null) { first = await baFetch(0); start = 0; }
     if (token !== baRunToken) return;
     if (first === null) {
-        info.textContent = 'Không tìm thấy file frame/out1.jpg.txt — hãy kiểm tra thư mục frame trên GitHub.';
+        info.textContent = 'Không tìm thấy file frame/out0001.jpg.txt — hãy kiểm tra thư mục frame trên GitHub.';
         return;
     }
     baFrames.push(first);
+    baFirst = first;
     baFit(first);
     baFontSet = true;
     screen.textContent = first;
 
     (async function loadRest() {
         let n = start + 1;
-        const BATCH = 8;
+        const BATCH = 12;
         while (token === baRunToken && !baEnded) {
+            while (token === baRunToken && baFrames.length - baIdx > BA_AHEAD) {
+                await new Promise(r => setTimeout(r, 250));
+            }
+            if (token !== baRunToken) return;
             const jobs = [];
             for (let i = 0; i < BATCH; i++) jobs.push(baFetch(n + i));
             const res = await Promise.all(jobs);
@@ -2360,6 +2369,7 @@ async function openBadApple() {
         if (baIdx < baFrames.length) {
             screen.textContent = baFrames[baIdx];
             info.textContent = 'Bad Apple!! — frame ' + (baIdx + 1) + (baEnded ? ' / ' + baFrames.length : '');
+            if (baIdx > BA_KEEP_BEHIND) baFrames[baIdx - BA_KEEP_BEHIND] = null;
             baIdx++;
         } else if (baEnded) {
             clearInterval(baTimer);
@@ -2386,7 +2396,7 @@ function closeBadApple() {
 }
 
 window.addEventListener('resize', () => {
-    if (baIsOpen() && baFrames[0]) baFit(baFrames[0]);
+    if (baIsOpen() && baFirst) baFit(baFirst);
 });
 
 function stopSnake() {

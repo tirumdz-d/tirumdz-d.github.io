@@ -588,7 +588,7 @@
             justify-content: center;
             margin-top: 10px;
         }
-        #dpad.show { display: flex; }
+        @media (pointer: coarse), (hover: none) { #dpad.show { display: flex; } }
         .dpad-grid {
             display: grid;
             grid-template-columns: 48px 48px 48px;
@@ -627,6 +627,53 @@
             font-family: 'VT323', monospace;
         }
         .game-restart:hover { background: rgba(255,160,30,0.3); }
+
+        /* Nhắc bật Desktop site - chỉ hiện trên điện thoại */
+        #desktop-hint {
+            display: none;
+            position: absolute;
+            top: 9%; left: 0; right: 0;
+            text-align: center;
+            padding: 0 24px;
+            font-family: 'Quicksand', 'Inter', sans-serif;
+            animation: introIn 0.9s 0.5s both;
+        }
+        html.is-mobile #desktop-hint { display: block; }
+        #desktop-hint .hint-en {
+            font-size: 15px; font-weight: 600; color: #ffd88a;
+            text-shadow: 0 0 10px rgba(255,160,30,0.7);
+        }
+        #desktop-hint .hint-vi {
+            font-size: 11px; margin-top: 4px;
+            color: rgba(255,200,120,0.6);
+        }
+
+        /* BAD APPLE ASCII */
+        #ba-modal {
+            position: fixed; inset: 0; z-index: 100010;
+            display: none; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.92);
+            flex-direction: column;
+        }
+        #ba-modal.open { display: flex; }
+        #ba-screen {
+            font-family: 'Courier New', monospace;
+            color: #ffe9b8; background: #000;
+            line-height: 1; letter-spacing: 0;
+            white-space: pre; margin: 0;
+            overflow: hidden;
+            text-shadow: 0 0 4px rgba(255,170,40,0.6);
+        }
+        #ba-info {
+            margin-top: 10px; font-family: 'VT323', monospace;
+            font-size: 16px; color: #ffcc70; text-align: center;
+        }
+        #ba-close {
+            position: absolute; top: 14px; right: 18px;
+            background: none; border: 1px solid rgba(255,160,30,0.4);
+            color: #fff; border-radius: 8px; padding: 4px 12px;
+            font-size: 18px; cursor: pointer;
+        }
 
         /* SOUND RING - vòng sóng nhạc quanh khung */
         #sound-ring {
@@ -724,6 +771,10 @@
 <div id="intro">
     <div id="intro-text">click anywhere</div>
     <div id="intro-sub">to enter my space</div>
+    <div id="desktop-hint">
+        <div class="hint-en">Please Turn On Desktop site on your Browser</div>
+        <div class="hint-vi">Hãy bật trang cho máy tính trên trình duyệt</div>
+    </div>
 </div>
 
 <div id="tint-overlay"></div>
@@ -851,6 +902,12 @@
     <span id="subtitle-text"></span>
 </div>
 
+<div id="ba-modal">
+    <button id="ba-close" onclick="closeBadApple()">✕</button>
+    <pre id="ba-screen"></pre>
+    <div id="ba-info"></div>
+</div>
+
 <div id="game-modal">
     <div class="game-box">
         <div class="game-header">
@@ -895,6 +952,12 @@
 <script>
 
 var entered = false;
+(function detectMobile() {
+    const mobile = (navigator.userAgentData && typeof navigator.userAgentData.mobile === 'boolean')
+        ? navigator.userAgentData.mobile
+        : /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent);
+    if (mobile) document.documentElement.classList.add('is-mobile');
+})();
 var playerReady = false;
 
 const DISCORD_ID = '1453967154901811341';
@@ -2002,6 +2065,9 @@ function restartCurrentGame() {
     else startMinesweeper();
 }
 
+const SNAKE_SPEED_MS = 210;
+const BAD_APPLE_SCORE = 100;
+
 function startSnake() {
     stopSnake();
     const canvas = document.getElementById('snake-canvas');
@@ -2034,8 +2100,10 @@ function startSnake() {
         ctx.fillStyle = 'rgba(0,0,0,0.35)';
         ctx.fillRect(0,0,canvas.width,canvas.height);
 
-        ctx.fillStyle = '#ff6a6a';
-        ctx.fillRect(snakeState.food.x*cell, snakeState.food.y*cell, cell-1, cell-1);
+        ctx.font = '14px serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('🍎', snakeState.food.x*cell + cell/2, snakeState.food.y*cell + cell/2 + 1);
 
         snakeState.snake.forEach((s,i) => {
             ctx.fillStyle = i===0 ? '#ffe066' : '#ffb830';
@@ -2075,6 +2143,15 @@ function startSnake() {
             snakeState.score++;
             snakeState.food = randFood();
             document.getElementById('game-status').textContent = statusText();
+            if (snakeState.score >= BAD_APPLE_SCORE) {
+                snakeState.alive = false;
+                clearInterval(snakeTimer);
+                if (snakeState.score > snakeState.high) localStorage.setItem('snake_high', snakeState.score);
+                document.getElementById('game-status').textContent = '🍎 100 điểm! Bí mật mở khóa...';
+                draw();
+                setTimeout(openBadApple, 600);
+                return;
+            }
         } else {
             snakeState.snake.pop();
         }
@@ -2083,7 +2160,7 @@ function startSnake() {
 
     document.getElementById('game-status').textContent = statusText();
     draw();
-    snakeTimer = setInterval(step, 110);
+    snakeTimer = setInterval(step, SNAKE_SPEED_MS);
 
     window.snakeTogglePause = function() {
         if (!snakeState || !snakeState.alive) return;
@@ -2109,6 +2186,102 @@ function startSnake() {
     }
 }
 
+
+const BA_DIR = 'frame/';
+const BA_FPS = 30;
+let baFrames = [];
+let baTimer = null;
+let baIdx = 0;
+let baEnded = false;
+let baRunToken = 0;
+let baFontSet = false;
+
+function baIsOpen() { return document.getElementById('ba-modal').classList.contains('open'); }
+
+async function baFetch(n) {
+    try {
+        const r = await fetch(BA_DIR + 'out' + n + '.jpg.txt');
+        if (!r.ok) return null;
+        return await r.text();
+    } catch (e) { return null; }
+}
+
+function baFit(text) {
+    const lines = text.split('\n');
+    const rows = lines.length;
+    const cols = Math.max(...lines.map(l => l.length));
+    const maxW = window.innerWidth * 0.94;
+    const maxH = window.innerHeight * 0.80;
+    const size = Math.max(2, Math.min(maxW / (cols * 0.6), maxH / rows));
+    document.getElementById('ba-screen').style.fontSize = size + 'px';
+}
+
+async function openBadApple() {
+    const modal = document.getElementById('ba-modal');
+    const screen = document.getElementById('ba-screen');
+    const info = document.getElementById('ba-info');
+    modal.classList.add('open');
+    screen.textContent = '';
+    info.textContent = 'Đang tải frame...';
+
+    const token = ++baRunToken;
+    baFrames = []; baIdx = 0; baEnded = false; baFontSet = false;
+    clearInterval(baTimer);
+
+    let start = 1;
+    let first = await baFetch(1);
+    if (first === null) { first = await baFetch(0); start = 0; }
+    if (token !== baRunToken) return;
+    if (first === null) {
+        info.textContent = 'Không tìm thấy file frame/out1.jpg.txt — hãy kiểm tra thư mục frame trên GitHub.';
+        return;
+    }
+    baFrames.push(first);
+    baFit(first);
+    baFontSet = true;
+    screen.textContent = first;
+
+    (async function loadRest() {
+        let n = start + 1;
+        const BATCH = 8;
+        while (token === baRunToken && !baEnded) {
+            const jobs = [];
+            for (let i = 0; i < BATCH; i++) jobs.push(baFetch(n + i));
+            const res = await Promise.all(jobs);
+            for (const t of res) {
+                if (t === null) { baEnded = true; break; }
+                baFrames.push(t);
+            }
+            n += BATCH;
+        }
+    })();
+
+    baIdx = 0;
+    baTimer = setInterval(() => {
+        if (token !== baRunToken) return;
+        if (baIdx < baFrames.length) {
+            screen.textContent = baFrames[baIdx];
+            info.textContent = 'Bad Apple!! — frame ' + (baIdx + 1) + (baEnded ? ' / ' + baFrames.length : '');
+            baIdx++;
+        } else if (baEnded) {
+            clearInterval(baTimer);
+            info.textContent = 'Hết rồi! Bấm ✕ hoặc ESC để quay lại.';
+        } else {
+            info.textContent = 'Đang tải thêm frame...';
+        }
+    }, 1000 / BA_FPS);
+}
+
+function closeBadApple() {
+    baRunToken++;
+    clearInterval(baTimer);
+    document.getElementById('ba-modal').classList.remove('open');
+}
+
+window.addEventListener('resize', () => {
+    if (baIsOpen() && baFrames[0]) baFit(baFrames[0]);
+});
+
 function stopSnake() {
     clearInterval(snakeTimer);
     snakeTimer = null;
@@ -2117,7 +2290,7 @@ function stopSnake() {
 document.addEventListener('keydown', e => {
     if (!document.getElementById('game-modal').classList.contains('open')) return;
 
-    if (e.code === 'Escape') { e.preventDefault(); closeGame(); return; }
+    if (e.code === 'Escape') { e.preventDefault(); if (baIsOpen()) closeBadApple(); else closeGame(); return; }
 
     if (currentGame !== 'snake' || !snakeState || !snakeState.alive) return;
 

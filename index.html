@@ -45,7 +45,6 @@
         body.hovering #cursor-dot { background: #ffb830; box-shadow: 0 0 10px rgba(255,180,30,0.9); }
         a, button, .play-btn, .ctrl-btn, .progress-track, .social-btn, .lyric-toggle, .like-btn { cursor: none !important; }
 
-        /* ===== MOBILE / TOUCH SUPPORT ===== */
         @media (hover: none), (pointer: coarse) {
             body { cursor: auto; }
             a, button, .play-btn, .ctrl-btn, .progress-track, .social-btn, .lyric-toggle, .like-btn { cursor: pointer !important; }
@@ -142,7 +141,6 @@
         .status-title { font-family: 'VT323',monospace; font-size: 16px; margin-bottom: 3px; }
         .status-sub { font-family: 'VT323',monospace; font-size: 13px; opacity: 0.6; line-height: 1.5; }
 
-        /* MUSIC PLAYER */
         .music-section {
             margin: 0 14px 14px;
             border: 1px solid rgba(255,255,255,0.18);
@@ -214,7 +212,6 @@
         }
         .play-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.06); }
 
-        /* ===== ENTRANCE ANIMATIONS ===== */
         @keyframes fadeInDown {
             from { opacity: 0; transform: translateY(-20px); }
             to   { opacity: 1; transform: translateY(0); }
@@ -262,7 +259,6 @@
 
         .song-name.changing { animation: songChange 0.35s ease both; }
 
-        /* VOLUME SLIDER */
         .volume-row {
             display: flex; align-items: center; gap: 8px;
             margin-top: 10px; padding-top: 8px;
@@ -293,7 +289,6 @@
         .vol-track:hover .vol-thumb { transform: translateY(-50%) scale(1.3); }
         .vol-pct { font-family: 'VT323',monospace; font-size: 13px; opacity: 0.55; min-width: 30px; text-align: right; }
 
-        /* VIEWS BADGE */
         .views-badge {
             margin-top: 18px;
             font-size: 12px; opacity: 0.55;
@@ -302,7 +297,6 @@
             animation: fadeInScale 0.5s 0.3s both;
         }
 
-        /* RIPPLE */
         .ripple-host { position: relative; overflow: hidden; }
         @keyframes ripple {
             to { transform: scale(4); opacity: 0; }
@@ -316,8 +310,6 @@
             pointer-events: none;
         }
 
-        /* PARTICLES */
-        /* CURSOR TRAIL */
         .trail-dot {
             position: fixed;
             width: 6px; height: 6px;
@@ -333,7 +325,6 @@
             100% { opacity: 0; transform: translate(-50%,-50%) scale(0.2) translateY(12px); }
         }
 
-        /* CARD TILT 3D */
         #card-wrap {
             perspective: 1200px;
             display: flex; justify-content: center; align-items: center;
@@ -349,7 +340,6 @@
             will-change: transform;
         }
 
-        /* RAIN OVERLAY */
         #rain {
             position: fixed; inset: 0;
             pointer-events: none; z-index: 1; overflow: hidden;
@@ -368,7 +358,6 @@
             100% { transform: translateY(100vh); opacity: 0; }
         }
 
-        /* ===== INTRO OVERLAY ===== */
         #intro {
             position: fixed; inset: 0;
             z-index: 100000;
@@ -437,12 +426,10 @@
             to   { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
         }
 
-        /* Bio ẩn trước khi vào */
         body.locked #card-wrap,
         body.locked #subtitle-wrap { opacity: 0; pointer-events: none; }
         #card-wrap, #subtitle-wrap { transition: opacity 0.6s ease; }
 
-        /* ===== BORDER CHẠY SÁNG ===== */
         #card-wrap { position: relative; }
         .card { position: relative; z-index: 1; }
         .card-frame::before {
@@ -472,7 +459,6 @@
             filter: drop-shadow(0 0 6px rgba(255,180,60,0.55));
             z-index: 3;
         }
-        /* Viền neon tĩnh, sáng liên tục quanh khung */
         .card-frame::after {
             content: '';
             position: absolute;
@@ -499,7 +485,6 @@
         @keyframes beamSpin {
             to { --beam-angle: 360deg; }
         }
-        /* fallback cho trình duyệt không hỗ trợ @property */
         @supports not (background: conic-gradient(from var(--a,0deg), red, blue)) {
             .card-frame::before { animation: beamSpinFallback 4.5s linear infinite; }
             @keyframes beamSpinFallback {
@@ -507,7 +492,6 @@
             }
         }
 
-        /* CONFETTI EASTER EGG */
         .confetti-piece {
             position: fixed;
             width: 7px; height: 11px;
@@ -520,7 +504,6 @@
             100% { transform: translateY(110vh) rotate(540deg); opacity: 0; }
         }
 
-        /* MINIGAME MODAL */
         #game-modal {
             position: fixed; inset: 0; z-index: 100005;
             display: none;
@@ -582,7 +565,6 @@
         .mine-cell.revealed { background: rgba(0,0,0,0.25); }
         .mine-cell.flag { color: #ff6a6a; }
 
-        /* D-PAD cho Snake trên di động */
         #dpad {
             display: none;
             justify-content: center;
@@ -628,7 +610,6 @@
         }
         .game-restart:hover { background: rgba(255,160,30,0.3); }
 
-        /* Nhắc bật Desktop site - chỉ hiện trên điện thoại */
         #desktop-hint {
             display: none;
             position: absolute;
@@ -648,7 +629,6 @@
             color: rgba(255,200,120,0.6);
         }
 
-        /* LIKE BUTTON */
         .like-btn {
             display: flex; align-items: center; gap: 6px;
             background: rgba(255,120,60,0.1);
@@ -679,7 +659,6 @@
             100% { opacity: 0; transform: translate(var(--dx), -70px) scale(1.3); }
         }
 
-        /* BAD APPLE ASCII */
         #ba-modal, #ba-modal * { cursor: default !important; }
         #ba-modal #ba-close { cursor: pointer !important; }
         #ba-modal {
@@ -708,7 +687,6 @@
             font-size: 18px; cursor: pointer;
         }
 
-        /* SOUND RING - vòng sóng nhạc quanh khung */
         #sound-ring {
             position: absolute;
             inset: -16px;
@@ -746,7 +724,6 @@
             100% { transform: translateY(-100vh) scale(0.3); opacity: 0; }
         }
 
-        /* TOAST */
         #toast {
             position: fixed; top: 24px; left: 50%;
             transform: translateX(-50%) translateY(-80px);
@@ -766,14 +743,12 @@
             opacity: 1;
         }
 
-        /* CLOCK */
         #clock-badge {
             position: absolute; top: 14px; right: 0;
             font-family: 'VT323',monospace; font-size: 14px;
             opacity: 0.45; letter-spacing: 1px;
         }
 
-        /* SUBTITLE (clean single definition) */
         #subtitle-wrap {
             position: fixed; bottom: 38px; left: 50%;
             transform: translateX(-50%);
@@ -2308,7 +2283,7 @@ loadLikes();
 
 const BA_DIR = 'frame/';
 const BA_PAD = 4;
-const BA_FPS = 45;
+const BA_FPS = 32;
 const BA_AHEAD = 450;
 const BA_KEEP_BEHIND = 40;
 const BA_VIDEO_ID = 'FtutLA63Cp8';

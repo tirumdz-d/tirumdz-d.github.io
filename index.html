@@ -680,6 +680,8 @@
         }
 
         /* BAD APPLE ASCII */
+        #ba-modal, #ba-modal * { cursor: default !important; }
+        #ba-modal #ba-close { cursor: pointer !important; }
         #ba-modal {
             position: fixed; inset: 0; z-index: 100010;
             display: none; align-items: center; justify-content: center;
@@ -976,6 +978,7 @@
 </div>
 
 <div class="yt-container">
+    <div id="player-ba"></div>
     <div id="player0"></div>
     <div id="player1"></div>
     <div id="player2"></div>
@@ -1485,6 +1488,15 @@ window.onYouTubeIframeAPIReady = function () {
             }
         });
     });
+
+    baPlayer = new YT.Player('player-ba', {
+        videoId: BA_VIDEO_ID,
+        playerVars: { autoplay:0, controls:0, disablekb:1, fs:0, modestbranding:1, rel:0, playsinline:1 },
+        events: {
+            onReady: (e) => { e.target.setVolume(currentVolume); baPlayerReady = true; },
+            onError: (e) => console.log('YT BA error', e.data),
+        }
+    });
 };
 
 function onStateChange(event, idx) {
@@ -1572,6 +1584,7 @@ function setVolume(pct) {
     document.getElementById('vol-fill').style.width = currentVolume + '%';
     document.getElementById('vol-pct').textContent = Math.round(currentVolume) + '%';
     players.forEach(p => { if (p && typeof p.setVolume === 'function') p.setVolume(currentVolume); });
+    if (baPlayer && baPlayerReady && typeof baPlayer.setVolume === 'function') baPlayer.setVolume(currentVolume);
     const ring = document.getElementById('sound-ring');
     if (ring) ring.classList.toggle('muted', currentVolume <= 0);
 }
@@ -1805,7 +1818,7 @@ function showToast(msg) {
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2800);
 }
-
+    
 function addRipple(el, e) {
     el.classList.add('ripple-host');
     const wave = document.createElement('div');
@@ -2126,6 +2139,22 @@ function startSnake() {
     }
     snakeState.food = randFood();
 
+    function reachBadApple() {
+        if (!snakeState || snakeState.bapending || baIsOpen()) return;
+        snakeState.bapending = true;
+        snakeState.score = Math.max(snakeState.score, BAD_APPLE_SCORE);
+        snakeState.alive = false;
+        clearInterval(snakeTimer);
+        if (snakeState.score > snakeState.high) {
+            snakeState.high = snakeState.score;
+            localStorage.setItem('snake_high', snakeState.score);
+        }
+        document.getElementById('game-status').textContent = '🍎 100 điểm! Bí mật mở khóa...';
+        draw();
+        setTimeout(openBadApple, 600);
+    }
+    window.snakeReachBadApple = reachBadApple;
+
     function statusText() {
         const base = `Điểm: ${snakeState.score}  ·  Kỷ lục: ${snakeState.high}`;
         return snakeState.paused ? base + '  ⏸ Tạm dừng' : base;
@@ -2178,15 +2207,7 @@ function startSnake() {
             snakeState.score++;
             snakeState.food = randFood();
             document.getElementById('game-status').textContent = statusText();
-            if (snakeState.score >= BAD_APPLE_SCORE) {
-                snakeState.alive = false;
-                clearInterval(snakeTimer);
-                if (snakeState.score > snakeState.high) localStorage.setItem('snake_high', snakeState.score);
-                document.getElementById('game-status').textContent = '🍎 100 điểm! Bí mật mở khóa...';
-                draw();
-                setTimeout(openBadApple, 600);
-                return;
-            }
+            if (snakeState.score >= BAD_APPLE_SCORE) { reachBadApple(); return; }
         } else {
             snakeState.snake.pop();
         }
@@ -2287,9 +2308,16 @@ loadLikes();
 
 const BA_DIR = 'frame/';
 const BA_PAD = 4;
-const BA_FPS = 30;
-const BA_AHEAD = 300;
+const BA_FPS = 45;
+const BA_AHEAD = 450;
 const BA_KEEP_BEHIND = 40;
+const BA_VIDEO_ID = 'FtutLA63Cp8';
+const BA_AUDIO_OFFSET = 0;
+const BA_PREBUFFER = 60;
+let baPlayer = null;
+let baPlayerReady = false;
+let baStalled = false;
+let baMainWasPlaying = false;
 let baFrames = [];
 let baTimer = null;
 let baIdx = 0;
@@ -2346,7 +2374,7 @@ async function openBadApple() {
 
     (async function loadRest() {
         let n = start + 1;
-        const BATCH = 12;
+        const BATCH = 16;
         while (token === baRunToken && !baEnded) {
             while (token === baRunToken && baFrames.length - baIdx > BA_AHEAD) {
                 await new Promise(r => setTimeout(r, 250));
@@ -2363,36 +2391,77 @@ async function openBadApple() {
         }
     })();
 
+    baMainWasPlaying = playing;
+    if (playing && activePlayer) { try { activePlayer.pauseVideo(); } catch (e) {} }
+
+    while (token === baRunToken && !baEnded && baFrames.length < BA_PREBUFFER) {
+        info.textContent = 'Đang tải frame... ' + baFrames.length + '/' + BA_PREBUFFER;
+        await new Promise(r => setTimeout(r, 100));
+    }
+    if (token !== baRunToken) return;
+
     baIdx = 0;
+    baStalled = false;
+    baAudioStart();
     baTimer = setInterval(() => {
         if (token !== baRunToken) return;
         if (baIdx < baFrames.length) {
+            if (baStalled) { baStalled = false; baAudioResume(); }
             screen.textContent = baFrames[baIdx];
             info.textContent = 'Bad Apple!! — frame ' + (baIdx + 1) + (baEnded ? ' / ' + baFrames.length : '');
             if (baIdx > BA_KEEP_BEHIND) baFrames[baIdx - BA_KEEP_BEHIND] = null;
             baIdx++;
+            if (baIdx % BA_FPS === 0) baSyncAudio();
         } else if (baEnded) {
             clearInterval(baTimer);
+            baAudioPause();
             info.textContent = 'Hết rồi! Bấm ✕ hoặc ESC để quay lại.';
         } else {
-            info.textContent = 'Đang tải thêm frame...';
+            if (!baStalled) { baStalled = true; baAudioPause(); }
+            info.textContent = 'Đang tải thêm frame... (nhạc tạm dừng)';
         }
     }, 1000 / BA_FPS);
+}
+
+function baAudioStart() {
+    if (!baPlayer || !baPlayerReady) return;
+    try {
+        baPlayer.setVolume(currentVolume);
+        baPlayer.seekTo(BA_AUDIO_OFFSET, true);
+        baPlayer.playVideo();
+    } catch (e) {}
+}
+function baAudioPause()  { try { if (baPlayer && baPlayerReady) baPlayer.pauseVideo(); } catch (e) {} }
+function baAudioResume() { try { if (baPlayer && baPlayerReady) baPlayer.playVideo(); } catch (e) {} }
+function baAudioStop() {
+    try {
+        if (baPlayer && baPlayerReady) { baPlayer.pauseVideo(); baPlayer.seekTo(0, true); }
+    } catch (e) {}
+}
+function baSyncAudio() {
+    if (!baPlayer || !baPlayerReady || baStalled) return;
+    try {
+        if (baPlayer.getPlayerState() !== 1) return;
+        const want = baIdx / BA_FPS + BA_AUDIO_OFFSET;
+        const have = baPlayer.getCurrentTime();
+        if (Math.abs(have - want) > 0.5) baPlayer.seekTo(want, true);
+    } catch (e) {}
 }
 
 let secretBuf = '';
 function triggerBadApple() {
     if (baIsOpen()) return;
-    if (snakeState) { snakeState.alive = false; }
-    stopSnake();
-    document.getElementById('game-status').textContent = '🍎 Mã bí mật 1904 — mở khóa...';
-    setTimeout(openBadApple, 400);
+    if (window.snakeReachBadApple) window.snakeReachBadApple();
 }
 
 function closeBadApple() {
     baRunToken++;
     clearInterval(baTimer);
+    baStalled = false;
+    baAudioStop();
     document.getElementById('ba-modal').classList.remove('open');
+    if (baMainWasPlaying && activePlayer) { try { activePlayer.playVideo(); } catch (e) {} }
+    baMainWasPlaying = false;
 }
 
 window.addEventListener('resize', () => {

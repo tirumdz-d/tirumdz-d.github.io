@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tirum</title>
     <link rel="icon" type="image/png" href="avatar.png">
+    <meta name="description" content="Welcome to my space ✨">
+    <meta name="theme-color" content="#ffb830">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Tirum">
+    <meta property="og:title" content="Tirum">
+    <meta property="og:description" content="Welcome to my space ✨">
+    <meta property="og:url" content="https://tirumdz-d.github.io/">
+    <meta property="og:image" content="https://tirumdz-d.github.io/avatar.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Tirum">
+    <meta name="twitter:description" content="Welcome to my space ✨">
+    <meta name="twitter:image" content="https://tirumdz-d.github.io/avatar.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=VT323&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -259,6 +271,7 @@
 
         .song-name.changing { animation: songChange 0.35s ease both; }
 
+
         .volume-row {
             display: flex; align-items: center; gap: 8px;
             margin-top: 10px; padding-top: 8px;
@@ -459,6 +472,7 @@
             filter: drop-shadow(0 0 6px rgba(255,180,60,0.55));
             z-index: 3;
         }
+        
         .card-frame::after {
             content: '';
             position: absolute;
@@ -485,6 +499,7 @@
         @keyframes beamSpin {
             to { --beam-angle: 360deg; }
         }
+
         @supports not (background: conic-gradient(from var(--a,0deg), red, blue)) {
             .card-frame::before { animation: beamSpinFallback 4.5s linear infinite; }
             @keyframes beamSpinFallback {
@@ -627,6 +642,23 @@
         #desktop-hint .hint-vi {
             font-size: 11px; margin-top: 4px;
             color: rgba(255,200,120,0.6);
+        }
+
+        @keyframes glitchFlicker {
+            0%,100% { filter: none; transform: none; }
+            10% { filter: hue-rotate(90deg) saturate(2); transform: translateX(-3px); }
+            20% { filter: none; transform: translateX(3px) skewX(2deg); }
+            30% { filter: hue-rotate(-60deg); transform: translateX(-2px); }
+            45% { filter: none; transform: none; }
+            60% { filter: invert(1) hue-rotate(180deg); transform: translateX(2px); }
+            70% { filter: none; transform: none; }
+        }
+        body.glitch #card-wrap { animation: glitchFlicker 0.9s steps(1, end); }
+        #toast.mystery {
+            color: #8dffb8;
+            border-color: rgba(120,255,180,0.5);
+            text-shadow: 0 0 8px rgba(120,255,180,0.6);
+            letter-spacing: 1px;
         }
 
         .like-btn {
@@ -909,7 +941,6 @@
 
 </div>
 
-<!-- SUBTITLE ngoài card -->
 <div id="subtitle-wrap">
     <span id="subtitle-text"></span>
 </div>
@@ -954,6 +985,7 @@
 
 <div class="yt-container">
     <div id="player-ba"></div>
+    <div id="player-secret"></div>
     <div id="player0"></div>
     <div id="player1"></div>
     <div id="player2"></div>
@@ -1472,10 +1504,20 @@ window.onYouTubeIframeAPIReady = function () {
             onError: (e) => console.log('YT BA error', e.data),
         }
     });
+
+    secretPlayer = new YT.Player('player-secret', {
+        videoId: SECRET_VIDEO_ID,
+        playerVars: { autoplay:0, controls:0, disablekb:1, fs:0, modestbranding:1, rel:0, playsinline:1 },
+        events: {
+            onReady: (e) => { e.target.setVolume(currentVolume); secretReady = true; },
+            onStateChange: (e) => onSecretState(e),
+            onError: (e) => console.log('YT secret error', e.data),
+        }
+    });
 };
 
 function onStateChange(event, idx) {
-    if (idx !== currentSong) return;
+    if (secretActive || idx !== currentSong) return;
     if (event.data === YT.PlayerState.PLAYING) {
         playing = true;
         document.getElementById('play-icon').className = 'fa-solid fa-pause';
@@ -1513,6 +1555,7 @@ function prevSong() {
 }
 
 function stopCurrent() {
+    secretActive = false;
     clearInterval(progressTimer); playing = false;
     document.getElementById('play-icon').className = 'fa-solid fa-play';
     if (activePlayer && typeof activePlayer.stopVideo === 'function') activePlayer.stopVideo();
@@ -1560,6 +1603,7 @@ function setVolume(pct) {
     document.getElementById('vol-pct').textContent = Math.round(currentVolume) + '%';
     players.forEach(p => { if (p && typeof p.setVolume === 'function') p.setVolume(currentVolume); });
     if (baPlayer && baPlayerReady && typeof baPlayer.setVolume === 'function') baPlayer.setVolume(currentVolume);
+    if (secretPlayer && secretReady && typeof secretPlayer.setVolume === 'function') secretPlayer.setVolume(currentVolume);
     const ring = document.getElementById('sound-ring');
     if (ring) ring.classList.toggle('muted', currentVolume <= 0);
 }
@@ -1590,7 +1634,7 @@ function startTimer() {
         }
         document.getElementById('time-current').textContent = fmtTime(cur);
         document.getElementById('time-total').textContent = fmtTime(dur);
-        if (lyricOpen) updateLyric(cur);
+        if (lyricOpen && !secretActive) updateLyric(cur);
     }, 300);
 }
 
@@ -1755,26 +1799,18 @@ document.addEventListener('mouseenter', () => { dot.style.opacity='1'; ring.styl
     step();
 })();
 
+const VIEW_API = 'https://api.counterapi.dev/v1/tirumdz-d-bio/views';
 (async function loadViews() {
-    const visited = localStorage.getItem('bio_visited');
+    const el = document.getElementById('view-count');
+    const visited = localStorage.getItem('bio_visited_v2') === '1';
     try {
-        if (!visited) {
-            const r = await fetch('https://api.countapi.xyz/hit/tirumdz-d.github.io/visits');
-            const d = await r.json();
-            document.getElementById('view-count').textContent = d.value.toLocaleString();
-            localStorage.setItem('bio_visited', '1');
-        } else {
-            const r = await fetch('https://api.countapi.xyz/get/tirumdz-d.github.io/visits');
-            const d = await r.json();
-            document.getElementById('view-count').textContent = d.value.toLocaleString();
-        }
-    } catch {
-        const v = parseInt(localStorage.getItem('v') || '0');
-        if (!visited) {
-            localStorage.setItem('v', v + 1);
-            localStorage.setItem('bio_visited', '1');
-        }
-        document.getElementById('view-count').textContent = (v + (visited ? 0 : 1)).toLocaleString();
+        const r = await fetch(VIEW_API + (visited ? '/' : '/up'));
+        if (!r.ok && !(r.status === 404 && visited)) throw new Error('http ' + r.status);
+        const n = r.ok ? likeCountFrom(await r.json()) : 0;
+        el.textContent = (n ?? 0).toLocaleString();
+        if (!visited) localStorage.setItem('bio_visited_v2', '1');
+    } catch (err) {
+        el.textContent = '—';
     }
 })();
 
@@ -1793,7 +1829,7 @@ function showToast(msg) {
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2800);
 }
-    
+
 function addRipple(el, e) {
     el.classList.add('ripple-host');
     const wave = document.createElement('div');
@@ -2240,6 +2276,7 @@ async function loadLikes() {
     renderLikeState();
     try {
         const r = await fetch(LIKE_API + '/');
+        if (r.status === 404) { renderLike(0); return; }
         if (!r.ok) throw new Error('http ' + r.status);
         renderLike(likeCountFrom(await r.json()) ?? 0);
     } catch (e) {
@@ -2281,10 +2318,103 @@ async function toggleLike(e) {
 }
 loadLikes();
 
+const SECRET_WORD = 'binary';
+const SECRET_VIDEO_ID = '4jmnAA_foUI';
+let secretPlayer = null;
+let secretReady = false;
+let secretActive = false;
+let secretPrev = null;
+let secretWordBuf = '';
+
+function showMysteryToast(msg, ms) {
+    const t = document.getElementById('toast');
+    document.getElementById('toast-text').textContent = msg;
+    t.classList.add('mystery', 'show');
+    setTimeout(() => {
+        t.classList.remove('show');
+        setTimeout(() => t.classList.remove('mystery'), 500);
+    }, ms || 3000);
+}
+
+function playSecret() {
+    if (secretActive || baIsOpen()) return;
+
+    document.body.classList.add('glitch');
+    setTimeout(() => document.body.classList.remove('glitch'), 1000);
+    showMysteryToast('▮ tín hiệu 761 — đã nhận', 3000);
+    setTimeout(() => showMysteryToast('ai đó đã giấu một lời nhắn trong âm thanh này.', 3600), 3300);
+
+    if (!secretPlayer || !secretReady) return;
+
+    secretPrev = { wasPlaying: playing };
+    stopCurrent();
+    secretActive = true;
+    activePlayer = secretPlayer;
+
+    const nameEl = document.getElementById('song-display');
+    nameEl.classList.remove('changing');
+    void nameEl.offsetWidth;
+    nameEl.classList.add('changing');
+    nameEl.textContent = '▮ 761.mp3';
+    setWavePct(0);
+    document.getElementById('time-current').textContent = '00:00';
+    document.getElementById('time-total').textContent = '00:00';
+    activeLyricIdx = -1;
+    hideSubtitleNow();
+
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({ title: '761.mp3', artist: '???', album: "Tirum's Bio" });
+    }
+    try {
+        secretPlayer.setVolume(currentVolume);
+        secretPlayer.seekTo(0, true);
+        secretPlayer.playVideo();
+    } catch (e) {}
+}
+
+function onSecretState(e) {
+    if (!secretActive) return;
+    if (e.data === YT.PlayerState.PLAYING) {
+        playing = true;
+        document.getElementById('play-icon').className = 'fa-solid fa-pause';
+        startTimer();
+        if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
+    } else if (e.data === YT.PlayerState.PAUSED) {
+        playing = false;
+        document.getElementById('play-icon').className = 'fa-solid fa-play';
+        clearInterval(progressTimer);
+        if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
+    } else if (e.data === YT.PlayerState.ENDED) {
+        endSecret();
+    }
+}
+
+function endSecret() {
+    secretActive = false;
+    playing = false;
+    clearInterval(progressTimer);
+    document.getElementById('play-icon').className = 'fa-solid fa-play';
+    activePlayer = players[currentSong];
+    updateDisplay();
+    showMysteryToast('3301 — bạn chưa nghe thấy gì cả.', 3200);
+    if (secretPrev && secretPrev.wasPlaying && activePlayer) { try { activePlayer.playVideo(); } catch (e) {} }
+}
+
+document.addEventListener('keydown', e => {
+    if (!entered) return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
+    if (document.getElementById('game-modal').classList.contains('open') || baIsOpen()) { secretWordBuf = ''; return; }
+    if (typeof e.key !== 'string' || e.key.length !== 1) return;
+    secretWordBuf = (secretWordBuf + e.key.toLowerCase()).slice(-SECRET_WORD.length);
+    if (secretWordBuf === SECRET_WORD) { secretWordBuf = ''; playSecret(); }
+});
+
+
 const BA_DIR = 'frame/';
 const BA_PAD = 4;
 const BA_FPS = 30;
-const BA_AHEAD = 450;
+const BA_AHEAD = 300;
 const BA_KEEP_BEHIND = 40;
 const BA_VIDEO_ID = 'FtutLA63Cp8';
 const BA_AUDIO_OFFSET = 0;
@@ -2293,6 +2423,12 @@ let baPlayer = null;
 let baPlayerReady = false;
 let baStalled = false;
 let baMainWasPlaying = false;
+let baAudioHold = false;
+let baHoldSince = 0;
+let baBadSince = 0;
+let baAudioGaveUp = false;
+let baLastKick = 0;
+const BA_HOLD_MAX_MS = 5000;
 let baFrames = [];
 let baTimer = null;
 let baIdx = 0;
@@ -2349,7 +2485,7 @@ async function openBadApple() {
 
     (async function loadRest() {
         let n = start + 1;
-        const BATCH = 16;
+        const BATCH = 12;
         while (token === baRunToken && !baEnded) {
             while (token === baRunToken && baFrames.length - baIdx > BA_AHEAD) {
                 await new Promise(r => setTimeout(r, 250));
@@ -2377,16 +2513,23 @@ async function openBadApple() {
 
     baIdx = 0;
     baStalled = false;
+    baAudioHold = false; baBadSince = 0; baAudioGaveUp = false; baLastKick = 0;
     baAudioStart();
     baTimer = setInterval(() => {
         if (token !== baRunToken) return;
+        if (baAudioHold) {
+            const st = baAudioState();
+            if (st === 1) { baAudioHold = false; baBadSince = 0; baSyncAudio(); }
+            else if (Date.now() - baHoldSince > BA_HOLD_MAX_MS) { baAudioHold = false; baAudioGaveUp = true; }
+            else { baKick(st); info.textContent = 'Đang chờ nhạc...'; return; }
+        }
         if (baIdx < baFrames.length) {
             if (baStalled) { baStalled = false; baAudioResume(); }
             screen.textContent = baFrames[baIdx];
             info.textContent = 'Bad Apple!! — frame ' + (baIdx + 1) + (baEnded ? ' / ' + baFrames.length : '');
             if (baIdx > BA_KEEP_BEHIND) baFrames[baIdx - BA_KEEP_BEHIND] = null;
             baIdx++;
-            if (baIdx % BA_FPS === 0) baSyncAudio();
+            if (baIdx % 10 === 0) baSyncAudio();
         } else if (baEnded) {
             clearInterval(baTimer);
             baAudioPause();
@@ -2413,14 +2556,28 @@ function baAudioStop() {
         if (baPlayer && baPlayerReady) { baPlayer.pauseVideo(); baPlayer.seekTo(0, true); }
     } catch (e) {}
 }
+function baAudioState() { try { return baPlayer.getPlayerState(); } catch (e) { return -2; } }
+function baKick(st) {
+    const now = Date.now();
+    if (now - baLastKick < 600) return;
+    if (st === 2 || st === 5 || st === -1) { baLastKick = now; baAudioResume(); }
+}
 function baSyncAudio() {
     if (!baPlayer || !baPlayerReady || baStalled) return;
-    try {
-        if (baPlayer.getPlayerState() !== 1) return;
-        const want = baIdx / BA_FPS + BA_AUDIO_OFFSET;
-        const have = baPlayer.getCurrentTime();
-        if (Math.abs(have - want) > 0.5) baPlayer.seekTo(want, true);
-    } catch (e) {}
+    const st = baAudioState();
+    if (st === 0 || st === -2) return;
+    if (st === 1) {
+        baBadSince = 0;
+        try {
+            const want = baIdx / BA_FPS + BA_AUDIO_OFFSET;
+            if (Math.abs(baPlayer.getCurrentTime() - want) > 0.5) baPlayer.seekTo(want, true);
+        } catch (e) {}
+        return;
+    }
+    const now = Date.now();
+    if (!baBadSince) baBadSince = now;
+    baKick(st);
+    if (!baAudioGaveUp && now - baBadSince > 800) { baAudioHold = true; baHoldSince = now; }
 }
 
 let secretBuf = '';
@@ -2433,6 +2590,7 @@ function closeBadApple() {
     baRunToken++;
     clearInterval(baTimer);
     baStalled = false;
+    baAudioHold = false; baBadSince = 0;
     baAudioStop();
     document.getElementById('ba-modal').classList.remove('open');
     if (baMainWasPlaying && activePlayer) { try { activePlayer.playVideo(); } catch (e) {} }

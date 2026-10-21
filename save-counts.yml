@@ -1,0 +1,38 @@
+name: Save counts
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  save:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch counts and update Count.txt
+        run: |
+          get() {
+            curl -fsS --max-time 20 "https://api.counterapi.dev/v1/tirumdz-d-bio/$1/" \
+              | python3 -c "import sys,json; d=json.load(sys.stdin); n=d.get('count', d.get('value')); print(int(n))" 2>/dev/null || true
+          }
+          OLD_LIKE=$(grep -i '^Like=' Count.txt 2>/dev/null | cut -d= -f2 | tr -d '\r' || true)
+          OLD_VIEW=$(grep -i '^View=' Count.txt 2>/dev/null | cut -d= -f2 | tr -d '\r' || true)
+          LIKE=$(get likes)
+          VIEW=$(get views)
+          LIKE=${LIKE:-${OLD_LIKE:-0}}
+          VIEW=${VIEW:-${OLD_VIEW:-0}}
+          printf 'Like=%s\nView=%s\n' "$LIKE" "$VIEW" > Count.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Count.txt
+          if git diff --cached --quiet; then
+            echo "Không có gì thay đổi"
+          else
+            git commit -m "chore: update counts"
+            git push origin HEAD
+          fi

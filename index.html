@@ -18,7 +18,7 @@
     <meta name="twitter:description" content="Welcome to my space ✨">
     <meta name="twitter:image" content="https://tirumdz-d.github.io/avatar.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         * {
@@ -43,20 +43,19 @@
         }
         #cursor-dot {
             position: fixed; width: 8px; height: 8px; background: #fff;
-            border-radius: 50%; pointer-events: none; z-index: 99999;
+            border-radius: 50%; pointer-events: none; z-index: 100003;
             transform: translate(-50%,-50%);
             box-shadow: 0 0 6px rgba(255,255,255,0.8);
         }
         #cursor-ring {
             position: fixed; width: 28px; height: 28px;
             border: 1.5px solid rgba(255,255,255,0.65); border-radius: 50%;
-            pointer-events: none; z-index: 99998; transform: translate(-50%,-50%);
+            pointer-events: none; z-index: 100002; transform: translate(-50%,-50%);
             transition: width 0.2s, height 0.2s, border-color 0.2s;
         }
         body.hovering #cursor-ring { width: 44px; height: 44px; border-color: rgba(255,180,50,0.9); }
         body.hovering #cursor-dot { background: #ffb830; box-shadow: 0 0 10px rgba(255,180,30,0.9); }
         a, button, .play-btn, .ctrl-btn, .progress-track, .social-btn, .lyric-toggle, .like-btn { cursor: none !important; }
-
         @media (hover: none), (pointer: coarse) {
             body { cursor: auto; }
             a, button, .play-btn, .ctrl-btn, .progress-track, .social-btn, .lyric-toggle, .like-btn { cursor: pointer !important; }
@@ -152,7 +151,6 @@
         .status-details { flex: 1; }
         .status-title { font-family: 'VT323',monospace; font-size: 16px; margin-bottom: 3px; }
         .status-sub { font-family: 'VT323',monospace; font-size: 13px; opacity: 0.6; line-height: 1.5; }
-
         .music-section {
             margin: 0 14px 14px;
             border: 1px solid rgba(255,255,255,0.18);
@@ -223,7 +221,6 @@
             color: #fff; font-size: 15px; transition: all 0.2s;
         }
         .play-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.06); }
-
         @keyframes fadeInDown {
             from { opacity: 0; transform: translateY(-20px); }
             to   { opacity: 1; transform: translateY(0); }
@@ -257,20 +254,17 @@
             0%   { opacity:0; transform: translateY(-8px); }
             100% { opacity:1; transform: translateY(0); }
         }
-
-        .card { animation: fadeInScale 0.6s cubic-bezier(0.34,1.56,0.64,1) both; }
-        .banner { animation: fadeInDown 0.5s 0.1s ease both; }
-        .avatar-wrap { animation: fadeInScale 0.5s 0.25s cubic-bezier(0.34,1.56,0.64,1) both; }
-        .name-row { animation: slideInLeft 0.4s 0.35s ease both; }
-        .bio-text { animation: slideInLeft 0.4s 0.4s ease both; }
-        .social-row { animation: fadeInUp 0.4s 0.45s ease both; }
-        .section { animation: fadeInUp 0.4s 0.55s ease both; }
-        .music-section { animation: fadeInUp 0.4s 0.65s ease both; }
-
-        .avatar { animation: pulseGlow 3s 1.5s ease-in-out infinite; }
+        body:not(.locked) .card { animation: fadeInScale 0.6s cubic-bezier(0.34,1.56,0.64,1) backwards; }
+        body:not(.locked) .banner { animation: fadeInDown 0.5s 0.1s ease both; }
+        body:not(.locked) .avatar-wrap { animation: fadeInScale 0.5s 0.25s cubic-bezier(0.34,1.56,0.64,1) both; }
+        body:not(.locked) .name-row { animation: slideInLeft 0.4s 0.35s ease both; }
+        body:not(.locked) .bio-text { animation: slideInLeft 0.4s 0.4s ease both; }
+        body:not(.locked) .social-row { animation: fadeInUp 0.4s 0.45s ease both; }
+        body:not(.locked) .section { animation: fadeInUp 0.4s 0.55s ease both; }
+        body:not(.locked) .music-section { animation: fadeInUp 0.4s 0.65s ease both; }
+        body:not(.locked) .avatar { animation: pulseGlow 3s 1.5s ease-in-out infinite; }
 
         .song-name.changing { animation: songChange 0.35s ease both; }
-
         .volume-row {
             display: flex; align-items: center; gap: 8px;
             margin-top: 10px; padding-top: 8px;
@@ -300,7 +294,6 @@
         }
         .vol-track:hover .vol-thumb { transform: translateY(-50%) scale(1.3); }
         .vol-pct { font-family: 'VT323',monospace; font-size: 13px; opacity: 0.55; min-width: 30px; text-align: right; }
-
         .views-badge {
             margin-top: 18px;
             font-size: 12px; opacity: 0.55;
@@ -308,7 +301,6 @@
             font-family: 'VT323',monospace; font-size: 15px;
             animation: fadeInScale 0.5s 0.3s both;
         }
-
         .ripple-host { position: relative; overflow: hidden; }
         @keyframes ripple {
             to { transform: scale(4); opacity: 0; }
@@ -321,7 +313,6 @@
             animation: ripple 0.6s linear forwards;
             pointer-events: none;
         }
-
         .trail-dot {
             position: fixed;
             width: 6px; height: 6px;
@@ -336,7 +327,6 @@
             0%   { opacity: 0.9; transform: translate(-50%,-50%) scale(1); }
             100% { opacity: 0; transform: translate(-50%,-50%) scale(0.2) translateY(12px); }
         }
-
         #card-wrap {
             perspective: 1200px;
             display: flex; justify-content: center; align-items: center;
@@ -351,7 +341,6 @@
             transition: transform 0.15s ease-out;
             will-change: transform;
         }
-
         #rain {
             position: fixed; inset: 0;
             pointer-events: none; z-index: 1; overflow: hidden;
@@ -369,7 +358,6 @@
             90%  { opacity: 0.5; }
             100% { transform: translateY(100vh); opacity: 0; }
         }
-
         #intro {
             position: fixed; inset: 0;
             z-index: 100000;
@@ -437,11 +425,9 @@
             from { opacity: 0; transform: scale(0.8) translateY(14px); filter: blur(8px); }
             to   { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
         }
-
         body.locked #card-wrap,
         body.locked #subtitle-wrap { opacity: 0; pointer-events: none; }
         #card-wrap, #subtitle-wrap { transition: opacity 0.6s ease; }
-
         #card-wrap { position: relative; }
         .card { position: relative; z-index: 1; }
         .card-frame::before {
@@ -503,7 +489,6 @@
                 to { transform: rotate(360deg); }
             }
         }
-
         .confetti-piece {
             position: fixed;
             width: 7px; height: 11px;
@@ -515,7 +500,6 @@
             0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
             100% { transform: translateY(110vh) rotate(540deg); opacity: 0; }
         }
-
         #game-modal {
             position: fixed; inset: 0; z-index: 100005;
             display: none;
@@ -576,7 +560,6 @@
         }
         .mine-cell.revealed { background: rgba(0,0,0,0.25); }
         .mine-cell.flag { color: #ff6a6a; }
-
         #dpad {
             display: none;
             justify-content: center;
@@ -621,7 +604,62 @@
             font-family: 'VT323', monospace;
         }
         .game-restart:hover { background: rgba(255,160,30,0.3); }
-
+        #term {
+            position: relative;
+            width: min(92vw, 560px);
+            min-height: 240px;
+            border-radius: 16px;
+            overflow: hidden;
+            background:
+                linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03) 45%, rgba(255,255,255,0.08)),
+                rgba(12,12,16,0.30);
+            backdrop-filter: blur(28px) saturate(1.8) brightness(1.06);
+            -webkit-backdrop-filter: blur(28px) saturate(1.8) brightness(1.06);
+            border: 1px solid rgba(255,255,255,0.20);
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.30),
+                inset 0 -1px 0 rgba(255,255,255,0.06),
+                inset 0 0 28px rgba(255,255,255,0.05),
+                0 20px 60px rgba(0,0,0,0.5);
+            font-family: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Consolas, monospace;
+            color: #f2f2f2;
+            animation: termIn 0.6s cubic-bezier(0.2,0.9,0.3,1.1) both;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+        #term::before {
+            content: ''; position: absolute; inset: 0; border-radius: inherit;
+            background: radial-gradient(120% 70% at 8% 0%, rgba(255,255,255,0.18), transparent 55%);
+            pointer-events: none;
+        }
+        #intro.hiding #term { opacity: 0; transform: scale(0.96) translateY(-8px); }
+        .term-bar {
+            display: flex; align-items: center; gap: 8px;
+            padding: 11px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.10);
+            background: rgba(255,255,255,0.04);
+        }
+        .term-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+        .term-dot.r { background: #ff5f57; }
+        .term-dot.y { background: #febc2e; }
+        .term-dot.g { background: #28c840; }
+        .term-title { margin-left: 8px; font-size: 11px; color: rgba(255,255,255,0.45); }
+        .term-body { position: relative; padding: 18px 20px 24px; font-size: 13px; line-height: 1.8; min-height: 190px; }
+        .term-line { white-space: pre-wrap; word-break: break-word; }
+        .term-line .prompt { color: #3ddc84; }
+        .term-line .cmd { font-weight: 600; color: #fff; }
+        .term-line .dim { color: rgba(255,255,255,0.45); }
+        .term-line .ok { color: #3ddc84; }
+        .term-line .enter { font-weight: 700; color: #fff; }
+        .caret {
+            display: inline-block; width: 7px; height: 14px;
+            background: #fff; margin-left: 3px; vertical-align: -2px;
+            animation: caretBlink 1s steps(1) infinite;
+        }
+        @keyframes caretBlink { 50% { opacity: 0; } }
+        @keyframes termIn {
+            from { opacity: 0; transform: translateY(14px) scale(0.97); }
+            to   { opacity: 1; transform: none; }
+        }
         #desktop-hint {
             display: none;
             position: absolute;
@@ -640,7 +678,6 @@
             font-size: 11px; margin-top: 4px;
             color: rgba(255,200,120,0.6);
         }
-
         @keyframes glitchFlicker {
             0%,100% { filter: none; transform: none; }
             10% { filter: hue-rotate(90deg) saturate(2); transform: translateX(-3px); }
@@ -657,7 +694,6 @@
             text-shadow: 0 0 8px rgba(120,255,180,0.6);
             letter-spacing: 1px;
         }
-
         .like-btn {
             display: flex; align-items: center; gap: 6px;
             background: rgba(255,120,60,0.1);
@@ -687,7 +723,6 @@
             0%   { opacity: 1; transform: translate(0,0) scale(0.8); }
             100% { opacity: 0; transform: translate(var(--dx), -70px) scale(1.3); }
         }
-
         #ba-modal, #ba-modal * { cursor: default !important; }
         #ba-modal #ba-close { cursor: pointer !important; }
         #ba-modal {
@@ -715,7 +750,6 @@
             color: #fff; border-radius: 8px; padding: 4px 12px;
             font-size: 18px; cursor: pointer;
         }
-
         #sound-ring {
             position: absolute;
             inset: -16px;
@@ -752,7 +786,6 @@
             90%  { opacity: 0.6; }
             100% { transform: translateY(-100vh) scale(0.3); opacity: 0; }
         }
-
         #toast {
             position: fixed; top: 24px; left: 50%;
             transform: translateX(-50%) translateY(-80px);
@@ -771,13 +804,11 @@
             transform: translateX(-50%) translateY(0);
             opacity: 1;
         }
-
         #clock-badge {
             position: absolute; top: 14px; right: 0;
             font-family: 'VT323',monospace; font-size: 14px;
             opacity: 0.45; letter-spacing: 1px;
         }
-
         #subtitle-wrap {
             position: fixed; bottom: 38px; left: 50%;
             transform: translateX(-50%);
@@ -803,11 +834,16 @@
         }
     </style>
 </head>
-<body>
+<body class="locked">
 
 <div id="intro">
-    <div id="intro-text">click anywhere</div>
-    <div id="intro-sub">to enter my space</div>
+    <div id="term">
+        <div class="term-bar">
+            <span class="term-dot r"></span><span class="term-dot y"></span><span class="term-dot g"></span>
+            <span class="term-title">Tirum — ~/guest</span>
+        </div>
+        <div class="term-body" id="term-body"></div>
+    </div>
     <div id="desktop-hint">
         <div class="hint-en">Please Turn On Desktop site on your Browser</div>
         <div class="hint-vi">Hãy bật trang cho máy tính trên trình duyệt</div>
@@ -938,7 +974,6 @@
 
 </div>
 
-<!-- SUBTITLE ngoài card -->
 <div id="subtitle-wrap">
     <span id="subtitle-text"></span>
 </div>
@@ -995,6 +1030,7 @@
 <script>
 
 var entered = false;
+var termReady = false;
 (function detectMobile() {
     const mobile = (navigator.userAgentData && typeof navigator.userAgentData.mobile === 'boolean')
         ? navigator.userAgentData.mobile
@@ -1811,16 +1847,36 @@ async function readCountFile() {
     } catch (e) { return null; }
 }
 
-const VIEW_API = 'https://api.counterapi.dev/v1/tirumdz-d-bio/views';
+const COUNT_BASE = 'https://abacus.jasoncameron.dev';
+const COUNT_NS = 'tirumdz-d-bio';
+
+function countFrom(d) {
+    if (!d) return null;
+    const n = d.value ?? d.count;
+    return (typeof n === 'number') ? n : null;
+}
+async function countGet(key) {
+    const r = await fetch(COUNT_BASE + '/get/' + COUNT_NS + '/' + key);
+    if (r.status === 404) return 0;
+    if (!r.ok) throw new Error('http ' + r.status);
+    const n = countFrom(await r.json());
+    if (n === null) throw new Error('bad json');
+    return n;
+}
+async function countHit(key) {
+    const r = await fetch(COUNT_BASE + '/hit/' + COUNT_NS + '/' + key);
+    if (!r.ok) throw new Error('http ' + r.status);
+    const n = countFrom(await r.json());
+    if (n === null) throw new Error('bad json');
+    return n;
+}
 (async function loadViews() {
     const el = document.getElementById('view-count');
-    const visited = localStorage.getItem('bio_visited_v2') === '1';
+    const visited = localStorage.getItem('bio_visited_v3') === '1';
     try {
-        const r = await fetch(VIEW_API + (visited ? '/' : '/up'));
-        if (!r.ok && !(r.status === 404 && visited)) throw new Error('http ' + r.status);
-        const n = r.ok ? likeCountFrom(await r.json()) : 0;
-        el.textContent = (n ?? 0).toLocaleString();
-        if (!visited) localStorage.setItem('bio_visited_v2', '1');
+        const n = visited ? await countGet('views') : await countHit('views');
+        el.textContent = n.toLocaleString();
+        if (!visited) localStorage.setItem('bio_visited_v3', '1');
     } catch (err) {
         const saved = await readCountFile();
         el.textContent = (saved && typeof saved.view === 'number') ? saved.view.toLocaleString() : '—';
@@ -1908,36 +1964,37 @@ document.addEventListener('keydown', e => {
 })();
 
 (function cardTilt() {
-    const wrap = document.getElementById('card-wrap');
+    const frame = document.querySelector('.card-frame');
     const card = document.querySelector('.card');
-    if (!wrap || !card) return;
-    let raf = null;
+    if (!frame || !card) return;
 
-    wrap.addEventListener('mousemove', e => {
-        if (raf) cancelAnimationFrame(raf);
-        raf = requestAnimationFrame(() => {
-            const r = card.getBoundingClientRect();
-            const px = (e.clientX - r.left) / r.width  - 0.5;
-            const py = (e.clientY - r.top)  / r.height - 0.5;
-            const rotY = px * 9;
-            const rotX = -py * 9;
-            card.style.transform =
-                `rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(6px)`;
+    const MAX_DEG = 10;
+    const TOWARD = true;
+    const EASE = 0.09;
 
-            const shadowX = -px * 34;
-            const shadowY = 18 - py * 24;
-            card.style.boxShadow =
-                `${shadowX}px ${shadowY}px 42px rgba(150,60,0,0.35), 0 0 0 1px rgba(255,160,30,0.08)`;
-        });
+    let tx = 0, ty = 0, cx = 0, cy = 0;
+    frame.style.willChange = 'transform';
+    card.style.transition = 'none';
+
+    document.addEventListener('mousemove', e => {
+        tx = (e.clientX / window.innerWidth  - 0.5) * 2;
+        ty = (e.clientY / window.innerHeight - 0.5) * 2;
+    });
+    document.addEventListener('mouseout', e => {
+        if (!e.relatedTarget) { tx = 0; ty = 0; }
     });
 
-    wrap.addEventListener('mouseleave', () => {
-        if (raf) cancelAnimationFrame(raf);
-        card.style.transition = 'transform 0.5s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.5s ease';
-        card.style.transform = 'rotateX(0) rotateY(0) translateZ(0)';
-        card.style.boxShadow = '0 12px 40px rgba(180,80,0,0.25)';
-        setTimeout(() => card.style.transition = 'transform 0.15s ease-out', 500);
-    });
+    (function loop() {
+        cx += (tx - cx) * EASE;
+        cy += (ty - cy) * EASE;
+        const dir = TOWARD ? 1 : -1;
+        const rotX =  cy * MAX_DEG * dir;
+        const rotY = -cx * MAX_DEG * dir;
+        frame.style.transform = `rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg)`;
+        card.style.boxShadow =
+            `${(-cx * 34).toFixed(1)}px ${(18 - cy * 24).toFixed(1)}px 42px rgba(150,60,0,0.35), 0 0 0 1px rgba(255,160,30,0.08)`;
+        requestAnimationFrame(loop);
+    })();
 })();
 
 (function makeRain() {
@@ -1983,9 +2040,8 @@ document.addEventListener('keydown', e => {
     }
 
     function build() {
-        const rect = frame.getBoundingClientRect();
         const pad = 16;
-        const w = rect.width, h = rect.height;
+        const w = frame.offsetWidth, h = frame.offsetHeight;
 
         svg.setAttribute('viewBox', `0 0 ${w + pad*2} ${h + pad*2}`);
         svg.innerHTML = '';
@@ -2266,18 +2322,16 @@ function startSnake() {
     }
 }
 
-
-const LIKE_API = 'https://api.counterapi.dev/v1/tirumdz-d-bio/likes';
 let likeBusy = false;
+let likeTotals = { likes: null, unlikes: null };
 
-function likeCountFrom(d) {
-    if (!d) return null;
-    const n = d.count ?? d.value ?? d.up_count;
-    return (typeof n === 'number') ? n : null;
-}
 function renderLike(count) {
     const el = document.getElementById('like-count');
     el.textContent = (count === null || count === undefined) ? '—' : count.toLocaleString();
+}
+function renderLikeTotal() {
+    if (likeTotals.likes === null || likeTotals.unlikes === null) { renderLike(null); return; }
+    renderLike(Math.max(0, likeTotals.likes - likeTotals.unlikes));
 }
 function renderLikeState() {
     const liked = localStorage.getItem('bio_liked') === '1';
@@ -2288,10 +2342,9 @@ function renderLikeState() {
 async function loadLikes() {
     renderLikeState();
     try {
-        const r = await fetch(LIKE_API + '/');
-        if (r.status === 404) { renderLike(0); return; }
-        if (!r.ok) throw new Error('http ' + r.status);
-        renderLike(likeCountFrom(await r.json()) ?? 0);
+        const [a, b] = await Promise.all([countGet('likes'), countGet('unlikes')]);
+        likeTotals = { likes: a, unlikes: b };
+        renderLikeTotal();
     } catch (e) {
         const saved = await readCountFile();
         renderLike(saved && typeof saved.like === 'number' ? saved.like : null);
@@ -2318,12 +2371,13 @@ async function toggleLike(e) {
     const wasLiked = localStorage.getItem('bio_liked') === '1';
     const btn = document.getElementById('like-btn');
     try {
-        const r = await fetch(LIKE_API + (wasLiked ? '/down' : '/up'));
-        if (!r.ok) throw new Error('http ' + r.status);
-        const count = likeCountFrom(await r.json());
+        const key = wasLiked ? 'unlikes' : 'likes';
+        const other = wasLiked ? 'likes' : 'unlikes';
+        likeTotals[key] = await countHit(key);
+        if (likeTotals[other] === null) likeTotals[other] = await countGet(other);
         localStorage.setItem('bio_liked', wasLiked ? '0' : '1');
         renderLikeState();
-        if (count !== null) renderLike(Math.max(0, count));
+        renderLikeTotal();
         if (!wasLiked) { floatHearts(btn); showToast('❤ cảm ơn bạn đã thả tim'); }
     } catch (err) {
         showToast('Không kết nối được bộ đếm like');
@@ -2424,7 +2478,6 @@ document.addEventListener('keydown', e => {
     if (secretWordBuf === SECRET_WORD) { secretWordBuf = ''; playSecret(); }
 });
 
-
 const BA_DIR = 'frame/';
 const BA_PAD = 4;
 const BA_FPS = 30;
@@ -2432,7 +2485,7 @@ const BA_AHEAD = 300;
 const BA_KEEP_BEHIND = 40;
 const BA_VIDEO_ID = 'FtutLA63Cp8';
 const BA_AUDIO_OFFSET = 0;
-const BA_PREBUFFER = 60;  
+const BA_PREBUFFER = 60;
 let baPlayer = null;
 let baPlayerReady = false;
 let baStalled = false;
@@ -2778,10 +2831,58 @@ function startMinesweeper() {
     render();
 }
 
+(function termIntro() {
+    const body = document.getElementById('term-body');
+    const intro = document.getElementById('intro');
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+    function line(html) {
+        const d = document.createElement('div');
+        d.className = 'term-line';
+        d.innerHTML = html;
+        body.appendChild(d);
+        return d;
+    }
+    async function typed(cmd) {
+        const l = line('<span class="prompt">$</span> <span class="cmd"></span><span class="caret"></span>');
+        const out = l.querySelector('.cmd');
+        for (const ch of cmd) {
+            out.textContent += ch;
+            await sleep(32 + Math.random() * 28);
+        }
+        const caret = l.querySelector('.caret');
+        if (caret) caret.remove();
+    }
+
+    (async () => {
+        await sleep(350);
+        await typed('connect guest');
+        await sleep(200);
+        line('<span class="dim">resolving tirumdz-d.github.io/guest ...</span>');
+        await sleep(600);
+        line('<span class="ok">✓</span> <span class="ok">profile found</span>');
+        await sleep(400);
+        if (document.readyState !== 'complete') {
+            await Promise.race([
+                new Promise(r => window.addEventListener('load', r, { once: true })),
+                sleep(4000)
+            ]);
+        }
+        await sleep(200);
+        line('<span class="ok">✓ assets loaded</span>');
+        await sleep(400);
+        await typed('Welcome');
+        await sleep(250);
+        line('<span class="enter">click to enter</span><span class="caret"></span>');
+        termReady = true;
+        intro.classList.add('ready');
+    })();
+})();
+
 document.body.classList.add('locked');
 
 function enterBio() {
-    if (entered) return;
+    if (entered || !termReady) return;
     entered = true;
 
     const intro = document.getElementById('intro');
